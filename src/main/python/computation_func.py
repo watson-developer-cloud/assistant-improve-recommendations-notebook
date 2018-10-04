@@ -56,7 +56,7 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes):
     df_tbot_raw['Escalated_conversation'] = False
 
     # Get the list of valid effective dialog node ids
-    ineffective_nodes = df_escalate_nodes[df_escalate_nodes['valid']]['dialog_node'].tolist()
+    ineffective_nodes = df_escalate_nodes[df_escalate_nodes['Valid']]['Node ID'].tolist()
 
     # If nodes visited contains any of the ineffective node ids, get the conversation id
     conversation_id = [conversation for conversation in df_tbot_raw.loc[
@@ -97,12 +97,12 @@ def get_coverage_df(df_tbot_raw, df_coverage_nodes, conf_threshold):
     df_tbot_raw['Not Covered cause'] = None
 
     # Filter all the valid dialog node ids for non-coverage
-    df_coverage_valid = df_coverage_nodes[df_coverage_nodes['valid']]  # ['dialog_node'].tolist()
+    df_coverage_valid = df_coverage_nodes[df_coverage_nodes['Valid']]  # ['dialog_node'].tolist()
 
     # (1) Mark all messages that hit any non-coverage node including but not limited to 'anything_else' as 'Not covered'
     #  and update the 'Not Covered cause' column
-    for node in df_coverage_valid['dialog_node'].tolist():
-        cause = "'" + df_coverage_valid.loc[df_coverage_valid['dialog_node'] == node, 'conditions'].values[0] + "' node"
+    for node in df_coverage_valid['Node ID'].tolist():
+        cause = "'" + df_coverage_valid.loc[df_coverage_valid['Node ID'] == node, 'Condition'].values[0] + "' node"
         df_tbot_raw.loc[
             (df_tbot_raw['response.output.nodes_visited_s'].apply(lambda x: bool(intersection(x, node.split())))), [
                 'Covered', 'Not Covered cause']] = [False, cause]
