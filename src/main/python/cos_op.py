@@ -33,24 +33,26 @@ def create_signature_key(key, datestamp, region, service):
     return key_signing
 
 
-def generate_link(filename, credentials, expiration):
+def generate_link(filename, project_io, expiration):
     """Generate a signing downloadable link of a file
         Parameters
         ----------
         filename: file name
-        credentials: Cloud Object Storage accessing credentials
+        project_io: Watson Studio project io instance
         expiration: expiration time in seconds
     """
     region = ''
     http_method = 'GET'
-    endpoint = 'https://' + credentials['host']
+    endpoint = project_io.get_storage_metadata()['properties']['endpoint_url']
 
     cur_time = datetime.datetime.utcnow()
     timestamp = cur_time.strftime('%Y%m%dT%H%M%SZ')
     datestamp = cur_time.strftime('%Y%m%d')
 
     standardized_querystring = ('X-Amz-Algorithm=AWS4-HMAC-SHA256' +
-                                '&X-Amz-Credential=' + credentials['access_key_id'] + '/' + datestamp + '/' + region +
+                                '&X-Amz-Credential=' +
+                                project_io.get_storage_metadata()['properties']['credentials']['editor'][
+                                    'access_key_id'] + '/' + datestamp + '/' + region +
                                 '/s3/aws4_request' +
                                 '&X-Amz-Date=' + timestamp +
                                 '&X-Amz-Expires=' + str(expiration) +
@@ -58,10 +60,11 @@ def generate_link(filename, credentials, expiration):
 
     standardized_querystring_url_encoded = quote(standardized_querystring, safe='&=')
 
-    standardized_resource = '/' + credentials['BUCKET'] + '/' + filename
+    standardized_resource = '/' + project_io.get_storage_metadata()['properties']['bucket_name'] + '/' + filename
 
     payload_hash = 'UNSIGNED-PAYLOAD'
-    standardized_headers = 'host:' + credentials['host']
+    standardized_headers = 'host:' + project_io.get_storage_metadata()['properties']['endpoint_url'].replace('https://',
+                                                                                                             '')
     signed_headers = 'host'
 
     standardized_request = (http_method + '\n' +
@@ -81,14 +84,16 @@ def generate_link(filename, credentials, expiration):
            hashlib.sha256(standardized_request.encode('utf-8')).hexdigest())
 
     # generate the signature
-    signature_key = create_signature_key(credentials['secret_access_key'], datestamp, region, 's3')
+    signature_key = create_signature_key(
+        project_io.get_storage_metadata()['properties']['credentials']['editor']['secret_access_key'], datestamp,
+        region, 's3')
     signature = hmac.new(signature_key,
                          sts.encode('utf-8'),
                          hashlib.sha256).hexdigest()
 
     # create and send the request
     request_url = (endpoint + '/' +
-                   credentials['BUCKET'] + '/' +
+                   project_io.get_storage_metadata()['properties']['bucket_name'] + '/' +
                    filename + '?' +
                    standardized_querystring_url_encoded +
                    '&X-Amz-Signature=' +
@@ -96,16 +101,14 @@ def generate_link(filename, credentials, expiration):
     return request_url
 
 
-def generate_excel(dataframe_list, sheet_name_list, bucket=None, filename=None, upload=False, cos_client=None):
+def generate_excel_measure(dataframe_list, sheet_name_list, filename, project_io):
     """Generate a formatted excel file given a list of dataframes for measure notebook
         Parameters
         ----------
         dataframe_list: a list of dataframes
         sheet_name_list: a list of sheet names
-        bucket: bucket name
         filename: output file name
-        upload: indicate whether to update to Cloud Object Storage
-        cos_client: a Cloud Object Storage client
+        project_io: Watson Studio project io instance
     """
     with closing(BytesIO()) as output:
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
@@ -130,21 +133,17 @@ def generate_excel(dataframe_list, sheet_name_list, bucket=None, filename=None, 
                 worksheet.set_column('F:G', 35)
                 worksheet.set_column('H:AH', 20)
         writer.save()
-        if upload:
-            cos_client.put_object(Bucket=bucket, Key=filename, Body=output.getvalue())
+        project_io.save_data(filename, output.getvalue(), overwrite=True)
 
 
-def generate_excel_effectiveness(dataframe_list, sheet_name_list, bucket=None, filename=None, upload=False,
-                                 cos_client=None):
+def generate_excel_effectiveness(dataframe_list, sheet_name_list, filename, project_io):
     """Generate a formatted excel file given a list of dataframes for effectiveness notebook
         Parameters
         ----------
         dataframe_list: a list of dataframes
         sheet_name_list: a list of sheet names
-        bucket: bucket name
         filename: output file name
-        upload: indicate whether to update to Cloud Object Storage
-        cos_client: a Cloud Object Storage client
+        project_io: Watson Studio project io instance
     """
     with closing(BytesIO()) as output:
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
@@ -165,5 +164,4 @@ def generate_excel_effectiveness(dataframe_list, sheet_name_list, bucket=None, f
                 worksheet.set_column('A:A', 5)
                 worksheet.set_column('B:D', 30)
         writer.save()
-        if upload:
-            cos_client.put_object(Bucket=bucket, Key=filename, Body=output.getvalue())
+        project_io.save_data(filename, output.getvalue(), overwrite=True)

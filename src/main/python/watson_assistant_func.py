@@ -20,8 +20,7 @@ def get_logs(num_logs, log_list, project_creds, log_filter=None):
        log_df : Dataframe of fetched logs
     """
     # Unpack the keys from the dictionary to individual variables
-    project, cos, bucket, sdk_object, ws_id, ws_name = [project_creds.get(k) for k in
-                                                        ['project', 'cos', 'bucket', 'sdk_object', 'ws_id', 'ws_name']]
+    project, sdk_object, ws_id, ws_name = [project_creds.get(k) for k in ['project', 'sdk_object', 'ws_id', 'ws_name']]
     # Create file name by combining workspace name and filter
     filename = (ws_name + str(log_filter) + '_' + str(num_logs))
 
@@ -31,14 +30,13 @@ def get_logs(num_logs, log_list, project_creds, log_filter=None):
     if [file['name'] for file in project.get_files() if file['name'] == filename]:
         # Get file from cloud object storage
         print('Reading from file:', filename)
-        cos.download_file(Bucket=bucket, Key=filename, Filename='bot')
-        with open('bot', 'r') as f:
-            data1 = json.load(f)
-            # Read logs into dataframe
-            log_df = pd.DataFrame.from_records(data1)
-            # Display success message and return the dataframe
-            print('Workspace logs loaded successfully with', log_df.shape[0], 'records')
-            return log_df
+        data = project.get_file(filename).getvalue().decode('utf8')
+        data_json = json.loads(data)
+        # Read logs into dataframe
+        log_df = pd.DataFrame.from_records(data_json)
+        # Display success message and return the dataframe
+        print('Workspace logs loaded successfully with', log_df.shape[0], 'records')
+        return log_df
     else:
         try:
             current_cursor = None
