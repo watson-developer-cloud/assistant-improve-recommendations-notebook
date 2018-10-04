@@ -1,0 +1,61 @@
+# Java
+*.class
+
+build/
+liberty/
+target/
+dist/
+
+# Some MarkDown preview plugin generate .filename.html file that we want to ignore
+.*.html
+
+### Gradle ###
+.gradle
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+### Eclipse ###
+.classpath
+.project
+.factorypath
+.settings/
+.metadata
+bin/
+logs/
+
+# Ignore the service manifest project (subtree) files
+manifest/
+
+### OS X ###
+.DS_Store
+
+### Intelli J
+.idea
+*.iws
+
+
+### Generated files ###
+/manifest.yml
+generated-sources/
+
+### Vagrant ###
+.vagrant
+
+### Python ###
+*.pyc
+.pydevproject
+__pycache__/
+*.egg-info/
+
+
+### Log files ###
+*.log
+
+### test coverage ###
+.coverage
+nosetests.xml
+
+### test resources ###
+*.gz
