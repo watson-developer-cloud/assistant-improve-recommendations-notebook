@@ -165,6 +165,8 @@ def chk_is_valid_node(node_ids, node_name, node_conditions, nodes):
                 ignore_index=True)
     # Remove duplicates
     df_valid_nodes = df_valid_nodes.drop_duplicates(keep='first')
+    df_valid_nodes.columns = ['Condition', 'Node ID', 'Node Name', 'Type', 'Valid']
+    df_valid_nodes = df_valid_nodes.drop('Type', 1)
     return df_valid_nodes
 
 
@@ -178,7 +180,7 @@ def format_data(df):
        ----------
        df6 : Dataframe formatted by separating columns and changing datatypes
     """
-    
+
     # Separate the fields in request and response
     df1 = pd.concat([df.drop(['request', 'response'], axis=1), df['request'].apply(pd.Series).add_prefix('request_'),
                      pd.DataFrame(df['response']
