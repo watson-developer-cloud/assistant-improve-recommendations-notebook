@@ -25,7 +25,7 @@ Effectiveness notebook helps you understand relative performance of each intent 
     
     In project dashboard, create new notebook from .ipynb files.
 
-4. Follow the instruction in each of the notebook to add COS and Watson Assistant credentials
+4. Follow the instruction in each of the notebook to add project tokens and Watson Assistant credentials if necessary.
 
 5. You can now run the notebook
 
