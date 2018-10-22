@@ -123,13 +123,13 @@ def generate_excel_measure(dataframe_list, sheet_name_list, filename, project_io
             df.to_excel(writer, sheet_name=name)
             worksheet = writer.sheets[name]
             worksheet.set_row(0, 30, format_header)
+            worksheet.set_column('A:A', 5)
+            worksheet.set_column('B:B', 30)
+            worksheet.set_column('C:C', 30)
+            worksheet.set_column('D:D', 15)
+            worksheet.set_column('F:G', 35)
+            worksheet.set_column('H:AH', 20)
             for row in range(1, len(df) + 1, 2):
-                worksheet.set_column('A:A', 5)
-                worksheet.set_column('B:B', 30)
-                worksheet.set_column('C:C', 30)
-                worksheet.set_column('D:D', 15)
-                worksheet.set_column('F:G', 35)
-                worksheet.set_column('H:AH', 20)
                 worksheet.set_row(row, cell_format=data_format1)
                 worksheet.set_row(row + 1, cell_format=data_format2)
         writer.save()
@@ -158,10 +158,10 @@ def generate_excel_effectiveness(dataframe_list, sheet_name_list, filename, proj
             df.to_excel(writer, sheet_name=name)
             worksheet = writer.sheets[name]
             worksheet.set_row(0, 20, format_header)
+            worksheet.set_column('A:A', 5)
+            worksheet.set_column('B:D', 30)
             for row in range(1, len(df) + 1, 2):
                 worksheet.set_row(row, cell_format=data_format1)
                 worksheet.set_row(row + 1, cell_format=data_format2)
-                worksheet.set_column('A:A', 5)
-                worksheet.set_column('B:D', 30)
         writer.save()
         project_io.save_data(filename, output.getvalue(), overwrite=True)
