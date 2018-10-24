@@ -133,7 +133,11 @@ def generate_excel_measure(dataframe_list, sheet_name_list, filename, project_io
                 worksheet.set_row(row, cell_format=data_format1)
                 worksheet.set_row(row + 1, cell_format=data_format2)
         writer.save()
-        project_io.save_data(filename, output.getvalue(), overwrite=True)
+        if project_io is not None:
+            project_io.save_data(filename, output.getvalue(), overwrite=True)
+        else:
+            with open(filename, 'wb') as out:
+                out.write(output.getvalue())
 
 
 def generate_excel_effectiveness(dataframe_list, sheet_name_list, filename, project_io):
@@ -164,4 +168,8 @@ def generate_excel_effectiveness(dataframe_list, sheet_name_list, filename, proj
                 worksheet.set_row(row, cell_format=data_format1)
                 worksheet.set_row(row + 1, cell_format=data_format2)
         writer.save()
-        project_io.save_data(filename, output.getvalue(), overwrite=True)
+        if project_io is not None:
+            project_io.save_data(filename, output.getvalue(), overwrite=True)
+        else:
+            with open(filename, 'wb') as out:
+                out.write(output.getvalue())
