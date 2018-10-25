@@ -204,7 +204,8 @@ def format_data(df):
     """
 
     # Separate the fields in request and response
-    df1 = pd.concat([df.drop(['request', 'response'], axis=1), df['request'].apply(pd.Series).add_prefix('request_'),
+    df1 = pd.concat([df.drop(['request', 'response'], axis=1).reset_index(drop=True),
+                     df['request'].apply(pd.Series).add_prefix('request_').reset_index(drop=True),
                      pd.DataFrame(df['response']
                                   .tolist()).add_prefix('response_')], axis=1)  # type: pd.DataFrame
     df1['request_input'] = pd.io.json.json_normalize(df['request'])['input.text']
