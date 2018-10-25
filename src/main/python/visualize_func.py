@@ -79,10 +79,12 @@ def gbar(ax, x, y, cmap, width=0.5, bottom=5):
     """Generate gradient colored bars
        Parameters
        ----------
-       prec: precision.
-       helpful: helpfulness.
-       var_prec: precision variances.
-       var_help: helpfulness variances.
+       ax: axis
+       x: x value
+       y: y value
+       cmap: color map
+       width: width
+       bottom: bottom position
     """
     data = [[.6, .6], [.7, .7]]
     for left, top in zip(x, y):

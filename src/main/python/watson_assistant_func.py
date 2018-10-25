@@ -5,6 +5,7 @@ import time
 from watson_developer_cloud import WatsonApiException
 import os
 
+
 def get_logs(num_logs, log_list, project_creds, log_filter=None):
     """This function calls Watson Assistant API to retrieve logs, using pagination if necessary.
        The goal is to retrieve utterances (user inputs) from the logs.
