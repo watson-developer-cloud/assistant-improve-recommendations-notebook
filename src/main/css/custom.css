@@ -2,23 +2,10 @@
     h1 {
         font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue";
     }
-    h4{
-        margin-top:12px;
-        margin-bottom: 3px;
-    }
     div.text_cell_render{
         font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue";
         line-height: 145%;
         font-size: 120%;
-    }
-    .text_cell_render h5 {
-        font-weight: 300;
-        font-size: 22pt;
-        color: #4057A1;
-        font-style: italic;
-        margin-bottom: .5em;
-        margin-top: 0.5em;
-        display: block;
     }
     .warning{
         color: rgb( 240, 20, 20 )
