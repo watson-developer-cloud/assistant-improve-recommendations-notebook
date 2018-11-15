@@ -23,8 +23,8 @@ Effectiveness notebook helps you understand relative performance of each intent 
 
 3. Load Measure or Effectiveness notebook from Watson Studio community
     
-    Measure notebook: [link](https://dataplatform.cloud.ibm.com/exchange/public/entry/view/133dfc4cd1480bbe4eaa78d3f635e568)
-    Effectiveness notebook: [link](https://dataplatform.cloud.ibm.com/exchange/public/entry/view/133dfc4cd1480bbe4eaa78d3f636921c)
+    - Measure notebook: [link](https://dataplatform.cloud.ibm.com/exchange/public/entry/view/133dfc4cd1480bbe4eaa78d3f635e568)
+    - Effectiveness notebook: [link](https://dataplatform.cloud.ibm.com/exchange/public/entry/view/133dfc4cd1480bbe4eaa78d3f636921c)
 
 4. Follow the instruction in each of the notebook to add project tokens and Watson Assistant credentials if necessary.
 
