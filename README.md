@@ -20,6 +20,9 @@ You can run the above notebooks locally or in [Watson Studio](https://www.ibm.co
     1. Install Jupyter Notebook, see [Jupyter/IPython Notebook Quick Start Guide](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/install.html) for more details.
 
     2. Download Jupyter notebooks available in this repository's [notebook](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/tree/master/notebook) directory.
+    
+       - [Measure Notebook.ipynb](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Measure%20Notebook.ipynb)
+       - [Effectiveness Notebook.ipynb](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Effectiveness%20Notebook.ipynb)
 
     3. Follow the instructions in each of the notebook to add Watson Assistant credentials if necessary.
 
