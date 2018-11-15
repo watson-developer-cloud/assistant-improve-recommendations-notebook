@@ -3,7 +3,7 @@
 This repository houses Watson Assistant notebooks with a set of data operation and visualization functions.
 
 ## Introduction
-To help improving your Watson Assistant after you have deployed it to production, we prepared the following two Jupyter notebooks. These notebooks include practical steps for measuring, analyzing, and actively improving your virtual assistant in a continuous manner. You can use the notebooks here or from Watson Studio Community.
+To help improving your Watson Assistant after you have deployed it to production, we prepared the following two Jupyter notebooks. These notebooks include practical steps for measuring, analyzing, and actively improving your virtual assistant in a continuous manner. Check out [IBM Watson Assistant Continuous Improvement Best Practices](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/raw/master/notebook/IBM%20Watson%20Assistant%20Continuous%20Improvement%20Best%20Practices.pdf) for more details.
 
 ### Measure Notebook 
 Measure notebook contains a set of automated metrics that help you monitor and understand the behavior of your system. The goal is to understand where your assistant is doing well vs where it isn’t and to potentially focus your improvement effort to one of the problem areas identified. 
