@@ -21,9 +21,10 @@ Effectiveness notebook helps you understand relative performance of each intent 
     
     For more information regarding COS plans, see [Pricing](https://www.ibm.com/cloud-computing/bluemix/pricing-object-storage).
 
-3. Set up Measure or Effectiveness notebook
+3. Load Measure or Effectiveness notebook from Watson Studio community
     
-    In project dashboard, create new notebook from .ipynb files.
+    Measure notebook: [link](https://dataplatform.cloud.ibm.com/exchange/public/entry/view/133dfc4cd1480bbe4eaa78d3f635e568)
+    Effectiveness notebook: [link](https://dataplatform.cloud.ibm.com/exchange/public/entry/view/133dfc4cd1480bbe4eaa78d3f636921c)
 
 4. Follow the instruction in each of the notebook to add project tokens and Watson Assistant credentials if necessary.
 
