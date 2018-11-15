@@ -29,7 +29,7 @@ You can run the above notebooks locally or in [Watson Studio](https://www.ibm.co
     
        Sign up in [Watson Studio](https://www.ibm.com/cloud/watson-studio), or use an existing account. Lite plan is free to use.
 
-    2. Create a new project and add a Cloud Object Storage account.
+    2. Create a new project and add a Cloud Object Storage (COS) account.
     
        For more information regarding COS plans, see [Pricing](https://www.ibm.com/cloud-computing/bluemix/pricing-object-storage).
 
