@@ -13,24 +13,29 @@ Effectiveness notebook helps you understand relative performance of each intent 
 
 ## Getting Started
 
-1. Create a Watson Studio account
+You can run the above notebooks locally or in [Watson Studio](https://www.ibm.com/cloud/watson-studio):
+
+- _For running locally_
+
+    1. Install Jupyter Notebook, see [Jupyter/IPython Notebook Quick Start Guide](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/install.html) for more details
+
+    2. Download Jupyter notebooks available in this repository's [notebook](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/tree/master/notebook) directory.
+
+    3. Follow the instructions in each of the notebook to add Watson Assistant credentials if necessary
+
+- _For running in Watson Studio_
     
-    Sign up in [Watson Studio](https://www.ibm.com/cloud/watson-studio), or use an existing account. Lite plan is free to use.
-
-2. Create a new project and add a Cloud Object Storage account
+    1. Create a Watson Studio account
     
-    For more information regarding COS plans, see [Pricing](https://www.ibm.com/cloud-computing/bluemix/pricing-object-storage).
+       Sign up in [Watson Studio](https://www.ibm.com/cloud/watson-studio), or use an existing account. Lite plan is free to use.
 
-3. Load Measure or Effectiveness notebook from Watson Studio community
+    2. Create a new project and add a Cloud Object Storage account
     
-    - Measure notebook: [link](https://dataplatform.cloud.ibm.com/exchange/public/entry/view/133dfc4cd1480bbe4eaa78d3f635e568)
-    - Effectiveness notebook: [link](https://dataplatform.cloud.ibm.com/exchange/public/entry/view/133dfc4cd1480bbe4eaa78d3f636921c)
+       For more information regarding COS plans, see [Pricing](https://www.ibm.com/cloud-computing/bluemix/pricing-object-storage).
 
-4. Follow the instruction in each of the notebook to add project tokens and Watson Assistant credentials if necessary.
-
-5. You can now run the notebook
-
-Check the [Watson Studio documentation](https://dataplatform.cloud.ibm.com/docs/content/analyze-data/notebooks-parent.html?audience=wdp&context=wdp) for more details.
+    3. Copy [Measure](https://dataplatform.cloud.ibm.com/exchange/public/entry/view/133dfc4cd1480bbe4eaa78d3f635e568) or  [Effectiveness](https://dataplatform.cloud.ibm.com/exchange/public/entry/view/133dfc4cd1480bbe4eaa78d3f636921c) notebook from Watson Studio community into your project
+    
+    4. Follow the instructions in each of the notebook to add project tokens and Watson Assistant credentials if necessary
 
 ## License
 
