@@ -126,7 +126,6 @@ def get_logs_jupyter(num_logs, log_list, workspace_creds, log_filter=None):
                 log_list.extend(logs_response['logs'][:min_num])
                 print('\r{} logs retrieved'.format(len(log_list)), end='')
                 num_logs = num_logs - min_num
-                print(logs_response)
                 current_cursor = None
                 # Check if there is another page of logs to be fetched
                 if 'pagination' in logs_response:
