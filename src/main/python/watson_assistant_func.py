@@ -118,7 +118,7 @@ def get_logs_jupyter(num_logs, log_list, workspace_creds, log_filter=None):
             while num_logs > 0:
                 logs_response = sdk_object.list_logs(
                     workspace_id=ws_id,
-                    page_limit=2,
+                    page_limit=500,
                     cursor=current_cursor,
                     filter=log_filter
                 )
