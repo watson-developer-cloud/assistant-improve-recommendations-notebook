@@ -249,7 +249,7 @@ def coverage_barh(coverage, avg_conf, title, html=True, width=15, height=1.5):
     # Hide the spines
     ax.set_frame_on(False)
     # removing the tick marks
-    plt.tick_params(bottom="off", left="off")
+    plt.tick_params(bottom=False, left=False)
     fig.tight_layout()
     plt.close()
     # return html rendering of figure if html = True
