@@ -124,7 +124,7 @@ def get_coverage_df(df_tbot_raw, df_coverage_nodes, conf_threshold):
     # (1) Mark all messages that hit any non-coverage node including but not limited to 'anything_else' as 'Not covered'
     #  and update the 'Not Covered cause' column
     for node in df_coverage_valid['Node ID'].tolist():
-        cause = "'" + df_coverage_valid.loc[df_coverage_valid['Node ID'] == node, 'Condition'].values[0] + "' node"
+        cause = "'{}' node".format(df_coverage_valid.loc[df_coverage_valid['Node ID'] == node, 'Condition'].values[0])
         df_tbot_raw.loc[
             (df_tbot_raw['response.output.nodes_visited_s'].apply(lambda x: bool(intersection(x, node.split())))), [
                 'Covered', 'Not Covered cause']] = [False, cause]
