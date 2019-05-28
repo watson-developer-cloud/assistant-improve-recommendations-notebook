@@ -212,7 +212,7 @@ def format_data(df):
 
     # Add context and output fields
     df2 = pd.concat([df1.drop(['response_context', 'response_output'], axis=1),
-                     df1['response_context'].apply(pd.Series, dtype=‘int64’).add_prefix('response_context_'),
+                     df1['response_context'].apply(pd.Series, dtype='int64').add_prefix('response_context_'),
                      pd.DataFrame(df1['response_output'].tolist()).add_prefix('response_')],
                     axis=1)  # type: pd.DataFrame
     # Add context_system fields
