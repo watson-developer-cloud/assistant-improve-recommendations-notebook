@@ -219,10 +219,18 @@ def format_data(df):
     df3 = pd.concat([df2.drop(['response_context_system'], axis=1),
                      df2['response_context_system'].apply(pd.Series).add_prefix('response_')],
                     axis=1)  # type: pd.DataFrame
-    cols = ['log_id', 'response_timestamp', 'response_context_conversation_id', 'request_input', 'response_text',
-            'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_request_counter',
-            'response_dialog_stack', 'response_dialog_turn_counter', 'response_context_response_context_IntentStarted',
-            'response_context_response_context_IntentCompleted']
+
+    if 'response_context_response_context_IntentStarted' in df3.columns \
+            and 'response_context_response_context_IntentCompleted' in df3.columns:
+        cols = ['log_id', 'response_timestamp', 'response_context_conversation_id', 'request_input', 'response_text',
+                'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_request_counter',
+                'response_dialog_stack', 'response_dialog_turn_counter',
+                'response_context_response_context_IntentStarted', 'response_context_response_context_IntentCompleted']
+    else:
+        cols = ['log_id', 'response_timestamp', 'response_context_conversation_id', 'request_input', 'response_text',
+                'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_request_counter',
+                'response_dialog_stack', 'response_dialog_turn_counter']
+
     # Select a few required columns
     df4 = df3[cols].copy(deep=True)  # type: pd.DataFrame
     # Limit fetched intents to a maximum value of 3
@@ -274,12 +282,19 @@ def format_data(df):
         df6.reindex(columns=[*df6.columns.tolist(), *new_cols_list], fill_value='')
 
     # Rename columns
-    df6.rename(columns={'response_nodes_visited': 'response.output.nodes_visited_s',
-                        'response_context_conversation_id': 'response.context.conversation_id',
-                        'response_timestamp': 'response.timestamp',
-                        'response_context_response_context_IntentStarted': 'response_context_IntentStarted',
-                        'response_context_response_context_IntentCompleted': 'response_context_IntentCompleted'},
-               inplace=True)
+    if 'response_context_response_context_IntentStarted' in df6.columns \
+            and 'response_context_response_context_IntentCompleted' in df6.columns:
+        df6.rename(columns={'response_nodes_visited': 'response.output.nodes_visited_s',
+                            'response_context_conversation_id': 'response.context.conversation_id',
+                            'response_timestamp': 'response.timestamp',
+                            'response_context_response_context_IntentStarted': 'response_context_IntentStarted',
+                            'response_context_response_context_IntentCompleted': 'response_context_IntentCompleted'},
+                   inplace=True)
+    else:
+        df6.rename(columns={'response_nodes_visited': 'response.output.nodes_visited_s',
+                            'response_context_conversation_id': 'response.context.conversation_id',
+                            'response_timestamp': 'response.timestamp'},
+                   inplace=True)
     # Change format of numeric and date columns
     df6['response.top_intent_confidence'] = pd.to_numeric(df6['response.top_intent_confidence'])
     df6['response.timestamp'] = pd.to_datetime(df6['response.timestamp'])
