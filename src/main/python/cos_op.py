@@ -111,7 +111,7 @@ def generate_excel_measure(dataframe_list, sheet_name_list, filename, project_io
         project_io: Watson Studio project io instance
     """
     with closing(BytesIO()) as output:
-        writer = pd.ExcelWriter(output, engine='xlsxwriter')
+        writer = pd.ExcelWriter(output, engine='xlsxwriter', options={'remove_timezone': True})
         workbook = writer.book
         data_format1 = workbook.add_format({'bg_color': '#BBCCE2'})
         data_format2 = workbook.add_format({'bg_color': '#DEE6EF'})
@@ -150,7 +150,7 @@ def generate_excel_effectiveness(dataframe_list, sheet_name_list, filename, proj
         project_io: Watson Studio project io instance
     """
     with closing(BytesIO()) as output:
-        writer = pd.ExcelWriter(output, engine='xlsxwriter')
+        writer = pd.ExcelWriter(output, engine='xlsxwriter', options={'remove_timezone': True})
         workbook = writer.book
         data_format1 = workbook.add_format({'bg_color': '#BBCCE2'})
         data_format2 = workbook.add_format({'bg_color': '#DEE6EF'})
