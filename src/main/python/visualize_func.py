@@ -5,6 +5,8 @@ from io import BytesIO
 import sys
 import base64
 import decimal
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
 
 # Set CSS properties for th elements in dataframe
 th_props = [
@@ -241,8 +243,8 @@ def coverage_barh(coverage, avg_conf, title, html=True, width=15, height=1.5):
               'Not Covered ' + str(topdata) + '%']
     # props = dict(boxstyle='round', facecolor='wheat', alpha=0)
     # Center plot at 0,0
-    ax.set_ylim(ymin=0)
-    ax.set_xlim(xmin=0)
+    ax.set_ylim(bottom=0)
+    ax.set_xlim(left=0)
     ax.set_yticks([])
     # Add coverage and average confidence info. to plot
     plt.xticks([0, bottomdata], labels, size=13)
