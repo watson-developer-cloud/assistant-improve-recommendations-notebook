@@ -82,8 +82,7 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
     else:
         conversation_id = [conversation for conversation in df_tbot_raw.loc[
             df_tbot_raw['response.output.nodes_visited_s'].apply(
-                lambda x: bool(intersection(x, ineffective_nodes)))].loc[df_tbot_raw['contain_intent']][
-            'response.context.conversation_id']]
+                lambda x: bool(intersection(x, ineffective_nodes)))]['response.context.conversation_id']]
 
         # If top intent for a message is present in ineffective_intents list, get the conversation id
         conversation_id.extend(df_tbot_raw.loc[(df_tbot_raw['response.top_intent_intent'].isin(
