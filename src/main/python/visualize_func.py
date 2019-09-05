@@ -5,8 +5,7 @@ from io import BytesIO
 import sys
 import base64
 import decimal
-from pandas.plotting import register_matplotlib_converters
-register_matplotlib_converters()
+
 
 # Set CSS properties for th elements in dataframe
 th_props = [
