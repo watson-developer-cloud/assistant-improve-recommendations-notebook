@@ -57,6 +57,25 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
     # Add an 'Escalated_conversation' flag to dataframe
     df_tbot_raw['Escalated_conversation'] = False
 
+    # Load node titles
+    node_title_map = dict()
+    for idx, node in workspace_nodes.iterrows():
+        if str(node['title']) != 'nan':
+            node_title_map[node['dialog_node']] = node['title']
+
+    # Use node title in nodes_visited_s and response_dialog_stack if it exists
+    for idx, item in df_tbot_raw.iterrows():
+        node_id_visit_list = item['response.output.nodes_visited_s']
+        for seq_id, node_id in enumerate(node_id_visit_list):
+            if node_id in node_title_map:
+                node_id_visit_list[seq_id] = node_title_map[node_id]
+
+        node_stack_list = item['response_dialog_stack']
+        for stack_id, stack_item in enumerate(node_stack_list):
+            for key, item in stack_item.items():
+                if item in node_title_map:
+                    stack_item[key] = node_title_map[item]
+
     # Get the list of valid effective dialog node ids
     ineffective_nodes = df_escalate_nodes[df_escalate_nodes['Valid']]['Node ID'].tolist()
 
