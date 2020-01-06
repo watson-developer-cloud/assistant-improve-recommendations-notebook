@@ -2,7 +2,6 @@ import re
 import json
 import pandas as pd
 import time
-from watson_developer_cloud import WatsonApiException
 import os
 
 
@@ -63,9 +62,6 @@ def get_logs(num_logs, log_list, project_creds, log_filter=None):
                     else:
                         break
 
-        except WatsonApiException:
-            print('You\'ve reached the rate limit of log api, refer to https://www.ibm.com/watson/developercloud/assist'
-                  'ant/api/v1/curl.html?curl#list-logs for additional information')
         except Exception as ex:
             print(ex)
         finally:
@@ -128,9 +124,6 @@ def get_logs_jupyter(num_logs, log_list, workspace_creds, log_filter=None):
                     else:
                         break
 
-        except WatsonApiException:
-            print('You\'ve reached the rate limit of log api, refer to https://www.ibm.com/watson/developercloud/assist'
-                  'ant/api/v1/curl.html?curl#list-logs for additional information')
         except Exception as ex:
             print(ex)
         finally:
