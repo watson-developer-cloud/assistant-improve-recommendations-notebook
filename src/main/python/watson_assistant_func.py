@@ -2,7 +2,6 @@ import re
 import json
 import pandas as pd
 import time
-from watson_developer_cloud import WatsonApiException
 import os
 
 
@@ -23,10 +22,10 @@ def get_logs(num_logs, log_list, project_creds, log_filter=None):
     # Unpack the keys from the dictionary to individual variables
     project, sdk_object, ws_id, ws_name = [project_creds.get(k) for k in ['project', 'sdk_object', 'ws_id', 'ws_name']]
     # Create file name by combining workspace name and filter
-    filename = (ws_name + str(log_filter) + '_' + str(num_logs))
+    filename = 'logs_' + ws_id + '_' + str(num_logs)
 
     # Remove all special characters from file name
-    filename = re.sub('[^a-zA-Z0-9_\- .]', '', filename) + '.json'
+    filename = re.sub(r'[^a-zA-Z0-9_\- .]', '', filename) + '.json'
 
     if [file['name'] for file in project.get_files() if file['name'] == filename]:
         # Get file from cloud object storage
@@ -48,7 +47,7 @@ def get_logs(num_logs, log_list, project_creds, log_filter=None):
                     page_limit=500,
                     cursor=current_cursor,
                     filter=log_filter
-                )
+                ).get_result()
                 min_num = min(num_logs, len(logs_response['logs']))
                 log_list.extend(logs_response['logs'][:min_num])
                 print('\r{} logs retrieved'.format(len(log_list)), end='')
@@ -63,9 +62,6 @@ def get_logs(num_logs, log_list, project_creds, log_filter=None):
                     else:
                         break
 
-        except WatsonApiException:
-            print('You\'ve reached the rate limit of log api, refer to https://www.ibm.com/watson/developercloud/assist'
-                  'ant/api/v1/curl.html?curl#list-logs for additional information')
         except Exception as ex:
             print(ex)
         finally:
@@ -97,10 +93,10 @@ def get_logs_jupyter(num_logs, log_list, workspace_creds, log_filter=None):
     # Unpack the keys from the dictionary to individual variables
     sdk_object, ws_id, ws_name = [workspace_creds.get(k) for k in ['sdk_object', 'ws_id', 'ws_name']]
     # Create file name by combining workspace name and filter
-    filename = (ws_name + str(log_filter) + '_' + str(num_logs))
+    filename = 'logs_' + ws_id + '_' + str(num_logs)
 
     # Remove all special characters from file name
-    filename = re.sub('[^a-zA-Z0-9_\- .]', '', filename) + '.json'
+    filename = re.sub(r'[^a-zA-Z0-9_\- .]', '', filename) + '.json'
 
     if os.path.isfile(filename):
         # Get file from cloud object storage
@@ -121,7 +117,7 @@ def get_logs_jupyter(num_logs, log_list, workspace_creds, log_filter=None):
                     page_limit=500,
                     cursor=current_cursor,
                     filter=log_filter
-                )
+                ).get_result()
                 min_num = min(num_logs, len(logs_response['logs']))
                 log_list.extend(logs_response['logs'][:min_num])
                 print('\r{} logs retrieved'.format(len(log_list)), end='')
@@ -135,9 +131,6 @@ def get_logs_jupyter(num_logs, log_list, workspace_creds, log_filter=None):
                     else:
                         break
 
-        except WatsonApiException:
-            print('You\'ve reached the rate limit of log api, refer to https://www.ibm.com/watson/developercloud/assist'
-                  'ant/api/v1/curl.html?curl#list-logs for additional information')
         except Exception as ex:
             print(ex)
         finally:
