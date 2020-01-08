@@ -13,16 +13,18 @@ The Effectiveness notebook helps you understand relative performance of each int
 
 ## Getting Started
 
-We provide two versions of the above notebooks: Jupyter Notebook and [Watson Studio Notebook](https://dataplatform.cloud.ibm.com/docs/content/wsj/analyze-data/notebooks-parent.html).
+We provide two versions of the above notebooks Jupyter Notebook and [Watson Studio Notebook](https://dataplatform.cloud.ibm.com/docs/content/wsj/analyze-data/notebooks-parent.html).
 
 - _**Jupyter Notebook**_
 
     1. Install Jupyter Notebook, see [Jupyter/IPython Notebook Quick Start Guide](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/install.html) for more details.
 
-    2. Download the Jupyter notebooks available in this repository's [notebook](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/tree/master/notebook) directory.
+    2. Download the Jupyter notebooks available in this repository's [notebook](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/tree/master/notebook) directory. 
     
        - [Measure Notebook.ipynb](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Measure%20Notebook.ipynb)
        - [Effectiveness Notebook.ipynb](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Effectiveness%20Notebook.ipynb)
+       
+       __Note: These notebook files are not designed for Watson Studio environment__
        
     3. Install dependencies with `pip install -r requirements.txt`
 
