@@ -13,9 +13,9 @@ The Effectiveness notebook helps you understand relative performance of each int
 
 ## Getting Started
 
-You can run the above notebooks locally or in [Watson Studio](https://www.ibm.com/cloud/watson-studio):
+We provide two versions of the above notebooks: Jupyter Notebook and [Watson Studio Notebook](https://dataplatform.cloud.ibm.com/docs/content/wsj/analyze-data/notebooks-parent.html).
 
-- _For running locally_
+- _**Jupyter Notebook**_
 
     1. Install Jupyter Notebook, see [Jupyter/IPython Notebook Quick Start Guide](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/install.html) for more details.
 
@@ -23,10 +23,12 @@ You can run the above notebooks locally or in [Watson Studio](https://www.ibm.co
     
        - [Measure Notebook.ipynb](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Measure%20Notebook.ipynb)
        - [Effectiveness Notebook.ipynb](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Effectiveness%20Notebook.ipynb)
+       
+    3. Install dependencies with `pip install -r requirements.txt`
 
-    3. Follow the instructions in each of the notebooks. Be sure to add your Watson Assistant credentials if necessary.
+    4. Follow the instructions in each of the notebooks. Be sure to add your Watson Assistant credentials if necessary.
 
-- _For running in Watson Studio_
+- _**Watson Studio Notebook**_
     
     1. Create a Watson Studio account.
     
