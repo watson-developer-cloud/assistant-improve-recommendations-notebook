@@ -22,10 +22,10 @@ def get_logs(num_logs, log_list, project_creds, log_filter=None):
     # Unpack the keys from the dictionary to individual variables
     project, sdk_object, ws_id, ws_name = [project_creds.get(k) for k in ['project', 'sdk_object', 'ws_id', 'ws_name']]
     # Create file name by combining workspace name and filter
-    filename = (ws_name + str(log_filter) + '_' + str(num_logs))
+    filename = 'logs_' + ws_id + '_' + str(num_logs)
 
     # Remove all special characters from file name
-    filename = re.sub('[^a-zA-Z0-9_\- .]', '', filename) + '.json'
+    filename = re.sub(r'[^a-zA-Z0-9_\- .]', '', filename) + '.json'
 
     if [file['name'] for file in project.get_files() if file['name'] == filename]:
         # Get file from cloud object storage
@@ -86,10 +86,10 @@ def get_logs_jupyter(num_logs, log_list, workspace_creds, log_filter=None):
     # Unpack the keys from the dictionary to individual variables
     sdk_object, ws_id, ws_name = [workspace_creds.get(k) for k in ['sdk_object', 'ws_id', 'ws_name']]
     # Create file name by combining workspace name and filter
-    filename = (ws_name + str(log_filter) + '_' + str(num_logs))
+    filename = 'logs_' + ws_id + '_' + str(num_logs)
 
     # Remove all special characters from file name
-    filename = re.sub('[^a-zA-Z0-9_\- .]', '', filename) + '.json'
+    filename = re.sub(r'[^a-zA-Z0-9_\- .]', '', filename) + '.json'
 
     if os.path.isfile(filename):
         # Get file from cloud object storage
