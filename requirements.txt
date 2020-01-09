@@ -1,0 +1,5 @@
+# Standardize specific versions
+matplotlib>=2.2.3
+pandas>=0.20.3
+numpy>=1.16.0
+jupyter
