@@ -1,5 +1,9 @@
 # Standardize specific versions
 matplotlib>=2.2.3
-pandas>=0.20.3
+pandas==0.20.3
 numpy>=1.16.0
+XlsxWriter==1.2.7
+xlrd==1.2.0
+scikit-learn==0.22.1
+pillow
 jupyter
