@@ -78,6 +78,7 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
 
     # Get the list of valid effective dialog node ids
     ineffective_nodes = df_escalate_nodes[df_escalate_nodes['Valid']]['Node ID'].tolist()
+    ineffective_nodes = [node if node not in node_title_map else node_title_map[node] for node in ineffective_nodes]
 
     # If nodes visited contains any of the ineffective node ids, get the conversation id
     if filter_non_intent_node:
