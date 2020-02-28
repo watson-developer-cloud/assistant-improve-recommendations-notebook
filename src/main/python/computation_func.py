@@ -40,7 +40,7 @@ def intersection(list1, list2):
     return list3
 
 
-def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter_non_intent_node, workspace_nodes=None):
+def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter_non_intent_node=False, workspace_nodes=None):
     """This function checks the conversations in df_Tbot_raw for escalations, flags them and returns the resulting
     updated dataframe.
        Parameters
