@@ -351,7 +351,7 @@ def show_coverage_over_time(df_coverage, interval='day'):
                    y_range=(0, 100), title='Coverage over time')
 
         p.line(x='response_datetime_interval', y='Coverage', source=coverage_time, line_width=1.5, color='#4fa8f6')
-        p.circle(x='response_datetime_interval', y='Coverage', source=coverage_time, size=10, color="#4fa8f6", alpha=1)
+        p.circle(x='response_datetime_interval', y='Coverage', source=coverage_time, size=5, color="#4fa8f6", alpha=1)
 
         p.xaxis.formatter = DatetimeTickFormatter(
             seconds=["%Y-%m-%d %H:%M:%S"],
