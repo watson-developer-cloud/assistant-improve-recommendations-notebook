@@ -305,7 +305,12 @@ def show_coverage_over_time(df_coverage, interval='day'):
             d.replace(second=0, microsecond=0, minute=0, hour=d.hour) + timedelta(minutes=(d.minute // 5) * 5) for d in
             df_coverage['response.timestamp']]
         delta = timedelta(minutes=5)
-    elif interval == 'half':
+    elif interval == '15-minute':
+        df_coverage['response_datetime_interval'] = [
+            d.replace(second=0, microsecond=0, minute=0, hour=d.hour) + timedelta(minutes=(d.minute // 15) * 15) for d in
+            df_coverage['response.timestamp']]
+        delta = timedelta(minutes=15)
+    elif interval == '30-minute':
         df_coverage['response_datetime_interval'] = [
             d.replace(second=0, microsecond=0, minute=0, hour=d.hour) + timedelta(minutes=(d.minute // 30) * 30) for d
             in df_coverage['response.timestamp']]
@@ -319,6 +324,11 @@ def show_coverage_over_time(df_coverage, interval='day'):
         df_coverage['response_datetime_interval'] = [d.replace(second=0, microsecond=0, minute=0, hour=0)
                                                      for d in df_coverage['response.timestamp']]
         delta = timedelta(days=0.5)
+    elif interval == 'week':
+        df_coverage['response_datetime_interval'] = [
+            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(minutes=(d.day // 7) * 7) for d in
+            df_coverage['response.timestamp']]
+        delta = timedelta(days=1)
     elif interval == 'month':
         df_coverage['response_datetime_interval'] = [
             d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) for d in
