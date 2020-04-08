@@ -295,6 +295,7 @@ def round_decimal(x, digits=0):
 
 
 def show_coverage_over_time(df_coverage, interval='day'):
+    delta = None
     if interval == 'minute':
         df_coverage['response_datetime_interval'] = [
             d.replace(second=0, microsecond=0, minute=d.minute, hour=d.hour) + timedelta(minutes=(d.second // 30)) for d
@@ -325,9 +326,9 @@ def show_coverage_over_time(df_coverage, interval='day'):
             df_coverage['response.timestamp']]
         delta = timedelta(days=15)
     else:
-        print('Invalid interval, please choose from {"minute", "5-minute", "half", "hour", "day", "month"}')
+        print('Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
 
-    if interval:
+    if delta:
 
         covered_counts = df_coverage[['response_datetime_interval', 'Covered']].groupby(
             ['response_datetime_interval', 'Covered']).agg({'Covered': 'count'})
