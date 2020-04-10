@@ -40,7 +40,7 @@ def intersection(list1, list2):
     return list3
 
 
-def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter_non_intent_node, workspace_nodes=None):
+def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter_non_intent_node=False, workspace_nodes=None):
     """This function checks the conversations in df_Tbot_raw for escalations, flags them and returns the resulting
     updated dataframe.
        Parameters
@@ -227,7 +227,7 @@ def format_data(df):
                      df['request'].apply(pd.Series).add_prefix('request_').reset_index(drop=True),
                      pd.DataFrame(df['response']
                                   .tolist()).add_prefix('response_')], axis=1)  # type: pd.DataFrame
-    df1['request_input'] = pd.io.json.json_normalize(df['request'])['input.text']
+    df1['request_input'] = pd.json_normalize(df['request'])['input.text']
 
     # Add context and output fields
     df2 = pd.concat([df1.drop(['response_context', 'response_output'], axis=1),
