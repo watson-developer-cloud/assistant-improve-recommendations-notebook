@@ -24,7 +24,7 @@ def get_assistant_definition(sdk_object, assistant_info, export=False):
 
     if assistant_definition:
         # Store the workspace details in a dataframe
-        df_assistant = pd.json_normalize(assistant_definition)
+        df_assistant = pd.io.json.json_normalize(assistant_definition)
 
         # Set `export_file` to True for exporting assistant definition to json file
         assistant_definition_file = 'definition_'
