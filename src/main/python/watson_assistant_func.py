@@ -5,41 +5,61 @@ import time
 import os
 
 
-def get_assistant_definition(sdk_object, assistant_info, export=False):
+def get_assistant_definition(sdk_object, assistant_info, project=None, reset=False):
     workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
 
+    assistant_definition_file = 'definition_'
     if len(workspace_id) > 0:
-        # Fetch the workspace definition
-        print('Loading workspace data using workspace id: {}'.format(workspace_id))
-        assistant_definition = sdk_object.get_workspace(workspace_id=workspace_id, export=True,
-                                                        include_audit=True).get_result()
+        assistant_definition_file += 'workspace_{}.json'.format(workspace_id)
     elif len(skill_id) > 0:
-        # Fetch the skill definition
-        print('Loading skill definition using skill id: {}'.format(skill_id))
-        assistant_definition = sdk_object.get_workspace(workspace_id=skill_id, export=True,
-                                                        include_audit=True).get_result()
+        assistant_definition_file += 'skill_{}.json'.format(skill_id)
     else:
         print('Please provide a valid Workspace ID or Skill ID!')
-        assistant_definition = None
+        return None
 
-    if assistant_definition:
-        # Store the workspace details in a dataframe
-        df_assistant = pd.json_normalize(assistant_definition)
-
-        # Set `export_file` to True for exporting assistant definition to json file
-        assistant_definition_file = 'definition_'
-        if export:
-            if len(workspace_id) > 0:
-                assistant_definition_file += 'workspace_{}.json'.format(workspace_id)
-            elif len(skill_id) > 0:
-                assistant_definition_file += 'skill_{}.json'.format(skill_id)
-            with open(assistant_definition_file, 'w') as f:
-                json.dump(assistant_definition, f)
-                print('Assistant definition {} exported'.format(assistant_definition_file))
-
+    if os.path.isfile(assistant_definition_file) and reset is False:
+        # Get file from cloud object storage
+        print('Reading from file:', assistant_definition_file)
+        with open(assistant_definition_file) as data:
+            data_json = json.load(data)
+        # Read logs into datafram
+        print('Assistant definition is loaded into dataframe')
+        df_assistant = pd.io.json.json_normalize(data_json)
         return df_assistant
     else:
-        return None
+        if len(workspace_id) > 0:
+            # Fetch the workspace definition
+            print('Loading workspace data using workspace id: {}'.format(workspace_id))
+            assistant_definition = sdk_object.get_workspace(workspace_id=workspace_id, export=True,
+                                                            include_audit=True).get_result()
+        elif len(skill_id) > 0:
+            # Fetch the skill definition
+            print('Loading skill definition using skill id: {}'.format(skill_id))
+            assistant_definition = sdk_object.get_workspace(workspace_id=skill_id, export=True,
+                                                            include_audit=True).get_result()
+        else:
+            print('Please provide a valid Workspace ID or Skill ID!')
+            assistant_definition = None
+
+        if assistant_definition:
+            # Store the workspace details in a dataframe
+            df_assistant = pd.io.json.json_normalize(assistant_definition)
+
+            # Set `export_file` to True for exporting assistant definition to json file
+            if reset:
+                if project is not None:
+                    with open(assistant_definition_file, 'wb') as fp:
+                        project.save_data(assistant_definition_file, json.dumps(assistant_definition), overwrite=True)
+                        # Display success message
+                        print('Assistant definition {} exported as a project asset'.format(fp.name))
+                else:
+                    with open(assistant_definition_file, 'w') as f:
+                        json.dump(assistant_definition, f)
+                        print('Assistant definition {} exported'.format(assistant_definition_file))
+
+            return df_assistant
+        else:
+            return None
 
 
 def get_logs(num_logs, log_list, project_creds, log_filter=None):
