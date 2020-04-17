@@ -24,7 +24,7 @@ def get_assistant_definition(sdk_object, assistant_info, project=None, reset=Fal
             data_json = json.load(data)
         # Read logs into datafram
         print('Assistant definition is loaded into dataframe')
-        df_assistant = pd.io.json.json_normalize(data_json)
+        df_assistant = pd.json_normalize(data_json)
         return df_assistant
     else:
         if len(workspace_id) > 0:
