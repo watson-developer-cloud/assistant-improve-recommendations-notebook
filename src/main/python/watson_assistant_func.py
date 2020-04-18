@@ -199,7 +199,7 @@ def get_logs_jupyter(num_logs, log_list, workspace_creds, log_filter=None):
             return log_df
 
 
-def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, reset=False):
+def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=None, reset=False):
     """This function calls Watson Assistant API to retrieve logs, using pagination if necessary.
        The goal is to retrieve utterances (user inputs) from the logs.
        Parameters
@@ -236,7 +236,18 @@ def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, reset=Fa
 
     log_filter = ','.join(filters)
 
-    if os.path.isfile(filename) and reset is False:
+    if project and reset is False:
+        if [file['name'] for file in project.get_files() if file['name'] == filename]:
+            # Get file from cloud object storage
+            print('Reading from file:', filename)
+            data = project.get_file(filename).getvalue().decode('utf8')
+            data_json = json.loads(data)
+            # Read logs into dataframe
+            log_df = pd.DataFrame.from_records(data_json)
+            # Display success message and return the dataframe
+            print('Loaded {} logs into dataframe'.format(log_df.shape[0]))
+            return log_df
+    elif os.path.isfile(filename) and reset is False:
         # Get file from cloud object storage
         print('Reading from file:', filename)
         with open(filename) as data:
@@ -282,8 +293,14 @@ def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, reset=Fa
                 print('\nLoading {} logs into dataframe ...'.format(len(log_list)))
                 log_df = pd.DataFrame(log_list)
                 print('Saving logs into {} ... '.format(filename))
-                log_df.to_json(filename)
-                print('Completed')
+                if project:
+                    with open(filename, 'wb') as fp:
+                        project.save_data(filename, log_df.to_json(orient='records'), overwrite=True)
+                        # Display success message
+                        print('File', fp.name, 'exported a project asset')
+                else:
+                    log_df.to_json(filename)
+                    print('Completed')
                 return log_df
             else:
                 return None
