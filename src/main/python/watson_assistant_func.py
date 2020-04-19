@@ -29,7 +29,7 @@ def get_assistant_definition(sdk_object, assistant_info, project=None, reset=Fal
     else:
         if len(workspace_id) > 0:
             # Fetch the workspace definition
-            print('Loading workspace data using workspace id: {}'.format(workspace_id))
+            print('Loading workspace definition using workspace id: {}'.format(workspace_id))
             assistant_definition = sdk_object.get_workspace(workspace_id=workspace_id, export=True,
                                                             include_audit=True).get_result()
         elif len(skill_id) > 0:
@@ -51,11 +51,11 @@ def get_assistant_definition(sdk_object, assistant_info, project=None, reset=Fal
                     with open(assistant_definition_file, 'wb') as fp:
                         project.save_data(assistant_definition_file, json.dumps(assistant_definition), overwrite=True)
                         # Display success message
-                        print('Assistant definition {} exported as a project asset'.format(fp.name))
+                        print('Definition {} exported as a project asset'.format(fp.name))
                 else:
                     with open(assistant_definition_file, 'w') as f:
                         json.dump(assistant_definition, f)
-                        print('Assistant definition {} exported'.format(assistant_definition_file))
+                        print('Definition {} exported'.format(assistant_definition_file))
 
             return df_assistant
         else:

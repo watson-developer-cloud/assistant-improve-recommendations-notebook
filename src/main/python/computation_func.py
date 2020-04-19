@@ -40,7 +40,7 @@ def intersection(list1, list2):
     return list3
 
 
-def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter_non_intent_node=False, workspace_nodes=None):
+def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter_non_intent_node=False, assistant_nodes=None):
     """This function checks the conversations in df_Tbot_raw for escalations, flags them and returns the resulting
     updated dataframe.
        Parameters
@@ -49,7 +49,7 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
        ineffective_intents: list of intents
        df_escalate_nodes: dataframe with escalation dialog nodes
        filter_non_intent_node: whether to filter out utterances whose last visited node does not contain intents
-       workspace_nodes: workspace nodes
+       assistant_nodes: assistant nodes
        Returns
        ----------
        df_tbot_raw : Dataframe with 'Escalated conversation' flag added and updated for each conversation
@@ -59,7 +59,7 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
 
     # Load node titles
     node_title_map = dict()
-    for idx, node in workspace_nodes.iterrows():
+    for idx, node in assistant_nodes.iterrows():
         if str(node['title']) != 'nan':
             node_title_map[node['dialog_node']] = node['title']
 
@@ -85,7 +85,7 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
         df_tbot_raw['last_node'] = df_tbot_raw['response.output.nodes_visited_s'].str[-1].apply(
             lambda x: x if x else [''])
         df_tbot_raw['last_node_value'] = df_tbot_raw['last_node'].apply(
-            lambda x: workspace_nodes.loc[workspace_nodes['dialog_node'] == x]['conditions'].values)
+            lambda x: assistant_nodes.loc[assistant_nodes['dialog_node'] == x]['conditions'].values)
         df_tbot_raw['last_node_value'] = df_tbot_raw['last_node_value'].apply(lambda x: x if x else ['']).str[0]
         df_tbot_raw['contain_intent'] = df_tbot_raw['last_node_value'].apply(
             lambda x: bool(re.match('#[a-zA-Z_0-9]+', str(x))))

@@ -9,7 +9,7 @@ from bokeh.io import show, output_notebook
 from bokeh.plotting import figure
 from bokeh.models.formatters import DatetimeTickFormatter
 from bokeh.models import HoverTool
-from datetime import date, datetime, timedelta
+from datetime import timedelta
 import pandas as pd
 
 
