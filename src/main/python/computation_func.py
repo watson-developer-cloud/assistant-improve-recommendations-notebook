@@ -222,7 +222,12 @@ def format_data(df):
        df6 : Dataframe formatted by separating columns and changing datatypes
     """
 
+    if len(df) == 0:
+        print('No logs found, please check your data')
+        return None
+
     # Separate the fields in request and response
+    print('Extracting request and response ...')
     df1 = pd.concat([df.drop(['request', 'response'], axis=1).reset_index(drop=True),
                      df['request'].apply(pd.Series).add_prefix('request_').reset_index(drop=True),
                      pd.DataFrame(df['response']
@@ -230,6 +235,7 @@ def format_data(df):
     df1['request_input'] = pd.json_normalize(df['request'])['input.text']
 
     # Add context and output fields
+    print('Extracting context and output ...')
     df2 = pd.concat([df1.drop(['response_context', 'response_output'], axis=1),
                      df1['response_context'].apply(pd.Series).add_prefix('response_context_'),
                      pd.DataFrame(df1['response_output'].tolist()).add_prefix('response_')],
@@ -250,6 +256,7 @@ def format_data(df):
                 'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_request_counter',
                 'response_dialog_stack', 'response_dialog_turn_counter']
 
+    print('Extracting intents ...')
     # Select a few required columns
     df4 = df3[cols].copy(deep=True)  # type: pd.DataFrame
     # Limit fetched intents to a maximum value of 3
