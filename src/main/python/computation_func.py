@@ -223,12 +223,11 @@ def format_data(df):
     """
 
     # Separate the fields in request and response
-    # TODO: replace pd.io.json.json_normalize with pd.json_normalize after updating Studio version
     df1 = pd.concat([df.drop(['request', 'response'], axis=1).reset_index(drop=True),
                      df['request'].apply(pd.Series).add_prefix('request_').reset_index(drop=True),
                      pd.DataFrame(df['response']
                                   .tolist()).add_prefix('response_')], axis=1)  # type: pd.DataFrame
-    df1['request_input'] = pd.io.json.json_normalize(df['request'])['input.text']
+    df1['request_input'] = pd.json_normalize(df['request'])['input.text']
 
     # Add context and output fields
     df2 = pd.concat([df1.drop(['response_context', 'response_output'], axis=1),
