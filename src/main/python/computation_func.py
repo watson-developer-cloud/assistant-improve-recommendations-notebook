@@ -326,4 +326,6 @@ def format_data(df):
     df6['response.timestamp'] = pd.to_datetime(df6['response.timestamp'])
     df6['Date'] = [datetime.datetime.date(d) for d in df6['response.timestamp']]  # extracting date from timestamp
     df6['Customer ID (must retain for delete)'] = ''  # Adding a column to retain customer id
+
+    print('Completed!')
     return df6
