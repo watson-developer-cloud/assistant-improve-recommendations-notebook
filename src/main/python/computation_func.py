@@ -40,7 +40,7 @@ def intersection(list1, list2):
     return list3
 
 
-def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter_non_intent_node=False, workspace_nodes=None):
+def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter_non_intent_node=False, assistant_nodes=None):
     """This function checks the conversations in df_Tbot_raw for escalations, flags them and returns the resulting
     updated dataframe.
        Parameters
@@ -49,7 +49,7 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
        ineffective_intents: list of intents
        df_escalate_nodes: dataframe with escalation dialog nodes
        filter_non_intent_node: whether to filter out utterances whose last visited node does not contain intents
-       workspace_nodes: workspace nodes
+       assistant_nodes: assistant nodes
        Returns
        ----------
        df_tbot_raw : Dataframe with 'Escalated conversation' flag added and updated for each conversation
@@ -59,7 +59,7 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
 
     # Load node titles
     node_title_map = dict()
-    for idx, node in workspace_nodes.iterrows():
+    for idx, node in assistant_nodes.iterrows():
         if str(node['title']) != 'nan':
             node_title_map[node['dialog_node']] = node['title']
 
@@ -85,7 +85,7 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
         df_tbot_raw['last_node'] = df_tbot_raw['response.output.nodes_visited_s'].str[-1].apply(
             lambda x: x if x else [''])
         df_tbot_raw['last_node_value'] = df_tbot_raw['last_node'].apply(
-            lambda x: workspace_nodes.loc[workspace_nodes['dialog_node'] == x]['conditions'].values)
+            lambda x: assistant_nodes.loc[assistant_nodes['dialog_node'] == x]['conditions'].values)
         df_tbot_raw['last_node_value'] = df_tbot_raw['last_node_value'].apply(lambda x: x if x else ['']).str[0]
         df_tbot_raw['contain_intent'] = df_tbot_raw['last_node_value'].apply(
             lambda x: bool(re.match('#[a-zA-Z_0-9]+', str(x))))
@@ -222,15 +222,20 @@ def format_data(df):
        df6 : Dataframe formatted by separating columns and changing datatypes
     """
 
+    if len(df) == 0:
+        print('No logs found, please check your data')
+        return None
+
     # Separate the fields in request and response
-    # TODO: replace pd.io.json.json_normalize with pd.json_normalize after updating Studio version
+    print('Extracting request and response ...')
     df1 = pd.concat([df.drop(['request', 'response'], axis=1).reset_index(drop=True),
                      df['request'].apply(pd.Series).add_prefix('request_').reset_index(drop=True),
                      pd.DataFrame(df['response']
                                   .tolist()).add_prefix('response_')], axis=1)  # type: pd.DataFrame
-    df1['request_input'] = pd.io.json.json_normalize(df['request'])['input.text']
+    df1['request_input'] = pd.json_normalize(df['request'])['input.text']
 
     # Add context and output fields
+    print('Extracting context and output ...')
     df2 = pd.concat([df1.drop(['response_context', 'response_output'], axis=1),
                      df1['response_context'].apply(pd.Series).add_prefix('response_context_'),
                      pd.DataFrame(df1['response_output'].tolist()).add_prefix('response_')],
@@ -251,6 +256,7 @@ def format_data(df):
                 'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_request_counter',
                 'response_dialog_stack', 'response_dialog_turn_counter']
 
+    print('Extracting intents ...')
     # Select a few required columns
     df4 = df3[cols].copy(deep=True)  # type: pd.DataFrame
     # Limit fetched intents to a maximum value of 3
@@ -320,4 +326,6 @@ def format_data(df):
     df6['response.timestamp'] = pd.to_datetime(df6['response.timestamp'])
     df6['Date'] = [datetime.datetime.date(d) for d in df6['response.timestamp']]  # extracting date from timestamp
     df6['Customer ID (must retain for delete)'] = ''  # Adding a column to retain customer id
+
+    print('Completed!')
     return df6
