@@ -227,15 +227,15 @@ def export_result_excel(df_effective, sample_size=100, project_io=None):
     df_excel['Response Timestamp'] = df_excel['Response Timestamp'].dt.tz_localize(None)
 
     # Prepare dataframe containing all utterances sorted by Conversation ID and Response Timestamp
-    df_all = df_excel.reset_index(drop=True).sort_values(by=['Conversation ID', 'Response Timestamp'])
+    df_all = df_excel.sort_values(by=['Conversation ID', 'Response Timestamp']).reset_index(drop=True)
 
     # Prepare dataframe containing covered utterances sorted by Conversation ID and Response Timestamp
-    df_covered = df_excel[df_excel['Covered?'] == True].reset_index(drop=True).sort_values(
-        by=['Conversation ID', 'Response Timestamp'])
+    df_covered = df_excel[df_excel['Covered?']==True].sort_values(
+        by=['Conversation ID', 'Response Timestamp']).reset_index(drop=True)
 
     # Prepare dataframe containing not covered utterances sorted by Conversation ID and Response Timestamp
-    df_not_covered = df_excel[df_excel['Covered?'] == False].reset_index(drop=True).sort_values(
-        by=['Conversation ID', 'Response Timestamp'])
+    df_not_covered = df_excel[df_excel['Covered?']==False].sort_values(
+        by=['Conversation ID', 'Response Timestamp']).reset_index(drop=True)
 
     # Convert to Excel format and save to local or upload to COS if project_io is provided
     generate_excel_measure([df_all, df_covered, df_not_covered],
@@ -243,7 +243,7 @@ def export_result_excel(df_effective, sample_size=100, project_io=None):
                            project_io=project_io)
 
     # Prepare dataframe containing escalated conversations
-    df_escalated_true = df_excel.loc[df_excel['Escalated conversation?'] == True]
+    df_escalated_true = df_excel.loc[df_excel['Escalated conversation?']==True]
 
     # Sample escalated conversations
     if sample_size > 0:
@@ -255,10 +255,10 @@ def export_result_excel(df_effective, sample_size=100, project_io=None):
             by=['Conversation ID', 'Response Timestamp']).reset_index(drop=True)
 
     # Prepare dataframe containing covered utterances in escalated conversations sorted by Conversation ID and Response Timestamp
-    df_escalated_covered = df_escalated_true[df_escalated_true['Covered?'] == True].reset_index(drop=True)
+    df_escalated_covered = df_escalated_true[df_escalated_true['Covered?']==True].reset_index(drop=True)
 
     # Prepare dataframe containing not covered utterances in escalated conversations sorted by Conversation ID and Response Timestamp
-    df_escalated_not_covered = df_escalated_true[df_escalated_true['Covered?'] == False].reset_index(drop=True)
+    df_escalated_not_covered = df_escalated_true[df_escalated_true['Covered?']==False].reset_index(drop=True)
 
     # Covert to Excel format and upload to COS
     generate_excel_measure([df_escalated_true, df_escalated_covered, df_escalated_not_covered],
@@ -266,7 +266,7 @@ def export_result_excel(df_effective, sample_size=100, project_io=None):
                            filename=escalated_sample_file, project_io=project_io)
 
     # Prepare dataframe containing non-escalated conversations
-    df_not_escalated = df_excel.loc[df_excel['Escalated conversation?'] == False].reset_index(drop=True)
+    df_not_escalated = df_excel.loc[df_excel['Escalated conversation?']==False].reset_index(drop=True)
 
     # Sample escalated conversations
     if sample_size > 0:
@@ -275,13 +275,13 @@ def export_result_excel(df_effective, sample_size=100, project_io=None):
         sampled_conversation_ids = np.random.choice(conversation_ids, sample_size)
         df_not_escalated = df_not_escalated[
             df_not_escalated['Conversation ID'].isin(sampled_conversation_ids)].sort_values(
-            by=['Conversation ID', 'Response Timestamp'])
+            by=['Conversation ID', 'Response Timestamp']).reset_index(drop=True)
 
     # Prepare dataframe containing covered utterances in escalated conversations sorted by Conversation ID and Response Timestamp
-    df_not_escalated_covered = df_not_escalated[df_not_escalated['Covered?'] == True].reset_index(drop=True)
+    df_not_escalated_covered = df_not_escalated[df_not_escalated['Covered?']==True].reset_index(drop=True)
 
     # Generate not escalated and not covered sample file
-    df_not_escalated_not_covered = df_not_escalated[df_not_escalated['Covered?'] == False].reset_index(drop=True)
+    df_not_escalated_not_covered = df_not_escalated[df_not_escalated['Covered?']==False].reset_index(drop=True)
 
     # Covert to Excel format and upload to COS
     generate_excel_measure([df_not_escalated, df_not_escalated_covered, df_not_escalated_not_covered],
