@@ -332,17 +332,17 @@ def show_coverage_over_time(df_coverage, interval='day'):
     elif interval == 'day':
         df_coverage['response_datetime_interval'] = [d.replace(second=0, microsecond=0, minute=0, hour=0)
                                                      for d in df_coverage['response.timestamp']]
-        delta = timedelta(days=0.5)
+        delta = timedelta(days=1)
     elif interval == 'week':
         df_coverage['response_datetime_interval'] = [
             d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(minutes=(d.day // 7) * 7) for d in
             df_coverage['response.timestamp']]
-        delta = timedelta(days=1)
+        delta = timedelta(days=7)
     elif interval == 'month':
         df_coverage['response_datetime_interval'] = [
             d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) for d in
             df_coverage['response.timestamp']]
-        delta = timedelta(days=15)
+        delta = timedelta(days=30)
     else:
         print('Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
 
