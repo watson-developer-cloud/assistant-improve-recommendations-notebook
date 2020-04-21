@@ -176,7 +176,7 @@ def generate_excel_effectiveness(dataframe_list, sheet_name_list, filename, proj
                 out.write(output.getvalue())
 
 
-def export_result_excel(df_effective, sample_size=100):
+def export_result_excel(df_effective, sample_size=100, project_io=None):
     # Copy the effective dataframe
     df_excel = df_effective.copy(deep=True)
     # Rename columns to generate excel
@@ -240,7 +240,7 @@ def export_result_excel(df_effective, sample_size=100):
     # Convert to Excel format and save to local or upload to COS if project_io is provided
     generate_excel_measure([df_all, df_covered, df_not_covered],
                            ['All_Utterances', 'Covered_Utterances', 'Not_Covered_Utterances'], filename=all_file,
-                           project_io=None)
+                           project_io=project_io)
 
     # Prepare dataframe containing escalated conversations
     df_escalated_true = df_excel.loc[df_excel['Escalated conversation?'] == True]
@@ -263,7 +263,7 @@ def export_result_excel(df_effective, sample_size=100):
     # Covert to Excel format and upload to COS
     generate_excel_measure([df_escalated_true, df_escalated_covered, df_escalated_not_covered],
                            ['All_Utterances', 'Covered_Utterances', 'Not_Covered_Utterances'],
-                           filename=escalated_sample_file, project_io=None)
+                           filename=escalated_sample_file, project_io=project_io)
 
     # Prepare dataframe containing non-escalated conversations
     df_not_escalated = df_excel.loc[df_excel['Escalated conversation?'] == False].reset_index(drop=True)
@@ -286,4 +286,4 @@ def export_result_excel(df_effective, sample_size=100):
     # Covert to Excel format and upload to COS
     generate_excel_measure([df_not_escalated, df_not_escalated_covered, df_not_escalated_not_covered],
                            ['All_Utterances', 'Covered_Utterances', 'Not_Covered_Utterances'],
-                           filename=non_escalated_sample_file, project_io=None)
+                           filename=non_escalated_sample_file, project_io=project_io)
