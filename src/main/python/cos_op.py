@@ -5,6 +5,7 @@ import hmac
 import pandas as pd
 from contextlib import closing
 from io import BytesIO
+import numpy as np
 
 
 def get_hash(key, msg):
@@ -173,3 +174,116 @@ def generate_excel_effectiveness(dataframe_list, sheet_name_list, filename, proj
         else:
             with open(filename, 'wb') as out:
                 out.write(output.getvalue())
+
+
+def export_result_excel(df_effective, sample_size=100, project_io=None):
+    # Copy the effective dataframe
+    df_excel = df_effective.copy(deep=True)
+    # Rename columns to generate excel
+    df_excel = df_excel.rename(columns={'log_id': 'Log ID', 'response.context.conversation_id': 'Conversation ID',
+                                        'response.timestamp': 'Response Timestamp',
+                                        'request_input': 'Utterance Text',
+                                        'response_text': 'Response Text',
+                                        'response.top_intent_intent': 'Detected top intent',
+                                        'response.top_intent_confidence': 'Detected top intent confidence',
+                                        'Intent 2 intent': 'Intent 2', 'Intent 2 confidence': 'Intent 2 Confidence',
+                                        'Intent 3 intent': 'Intent 3', 'Intent 3 confidence': 'Intent 3 Confidence',
+                                        'response_entities': 'Detected Entities',
+                                        'Escalated_conversation': 'Escalated conversation?',
+                                        'Covered': 'Covered?', 'Not Covered cause': 'Not covered - cause',
+                                        'response.output.nodes_visited_s': 'Dialog Flow',
+                                        'response_dialog_stack': 'Dialog stack',
+                                        'response_dialog_request_counter': 'Dialog request counter',
+                                        'response_dialog_turn_counter': 'Dialog turn counter'
+                                        })
+
+    existing_columns = ['Log ID', 'Conversation ID', 'Response Timestamp', 'Customer ID (must retain for delete)',
+                        'Utterance Text', 'Response Text', 'Detected top intent', 'Detected top intent confidence',
+                        'Intent 2', 'Intent 2 Confidence', 'Confidence gap (between 1 and 2)', 'Intent 3',
+                        'Intent 3 Confidence',
+                        'Detected Entities', 'Escalated conversation?', 'Covered?', 'Not covered - cause',
+                        'Dialog Flow', 'Dialog stack', 'Dialog request counter', 'Dialog turn counter']
+    # Add new columns for annotating problematic logs
+    new_columns_excel = ['Response Correct (Y/N)?', 'Response Helpful (Y/N)?',
+                         'Root cause (Problem with Intent, entity, dialog)',
+                         'Wrong intent? If yes, put the correct intent. Otherwise leave it blank',
+                         'New intent needed? (A new intent. Otherwise leave blank)',
+                         'Add Utterance to Training data (Y/N)',
+                         'Entity missed? If yes, put the missed entity value. Otherwise leave it blank',
+                         'New entity needed? If yes, put the entity name',
+                         'New entity value? If yes, put the entity value', 'New dialog logic needed?',
+                         'Wrong dialog node? If yes, put the node name. Otherwise leave it blank',
+                         'No dialog node triggered']
+
+    # Add the new columns to the dataframe
+    df_excel = df_excel.reindex(columns=[*existing_columns, *new_columns_excel], fill_value='')
+
+    # Set output filename
+    all_file = 'All.xlsx'
+    escalated_sample_file = 'Escalated_sample.xlsx'
+    non_escalated_sample_file = 'NotEscalated_sample.xlsx'
+
+    # Remove timezone infomation
+    df_excel['Response Timestamp'] = df_excel['Response Timestamp'].dt.tz_localize(None)
+
+    # Prepare dataframe containing all utterances sorted by Conversation ID and Response Timestamp
+    df_all = df_excel.reset_index(drop=True).sort_values(by=['Conversation ID', 'Response Timestamp'])
+
+    # Prepare dataframe containing covered utterances sorted by Conversation ID and Response Timestamp
+    df_covered = df_excel[df_excel['Covered?'] == True].reset_index(drop=True).sort_values(
+        by=['Conversation ID', 'Response Timestamp'])
+
+    # Prepare dataframe containing not covered utterances sorted by Conversation ID and Response Timestamp
+    df_not_covered = df_excel[df_excel['Covered?'] == False].reset_index(drop=True).sort_values(
+        by=['Conversation ID', 'Response Timestamp'])
+
+    # Convert to Excel format and save to local or upload to COS if project_io is provided
+    generate_excel_measure([df_all, df_covered, df_not_covered],
+                           ['All_Utterances', 'Covered_Utterances', 'Not_Covered_Utterances'], filename=all_file,
+                           project_io=project_io)
+
+    # Prepare dataframe containing escalated conversations
+    df_escalated_true = df_excel.loc[df_excel['Escalated conversation?'] == True]
+
+    # Sample escalated conversations
+    if sample_size > 0:
+        # Get unique escalated conversation ids
+        conversation_ids = df_escalated_true['Conversation ID'].unique()
+        sampled_conversation_ids = np.random.choice(conversation_ids, sample_size)
+        df_escalated_true = df_escalated_true[
+            df_escalated_true['Conversation ID'].isin(sampled_conversation_ids)].sort_values(
+            by=['Conversation ID', 'Response Timestamp']).reset_index(drop=True)
+
+    # Prepare dataframe containing covered utterances in escalated conversations sorted by Conversation ID and Response Timestamp
+    df_escalated_covered = df_escalated_true[df_escalated_true['Covered?'] == True].reset_index(drop=True)
+
+    # Prepare dataframe containing not covered utterances in escalated conversations sorted by Conversation ID and Response Timestamp
+    df_escalated_not_covered = df_escalated_true[df_escalated_true['Covered?'] == False].reset_index(drop=True)
+
+    # Covert to Excel format and upload to COS
+    generate_excel_measure([df_escalated_true, df_escalated_covered, df_escalated_not_covered],
+                           ['All_Utterances', 'Covered_Utterances', 'Not_Covered_Utterances'],
+                           filename=escalated_sample_file, project_io=project_io)
+
+    # Prepare dataframe containing non-escalated conversations
+    df_not_escalated = df_excel.loc[df_excel['Escalated conversation?'] == False].reset_index(drop=True)
+
+    # Sample escalated conversations
+    if sample_size > 0:
+        # Get unique non-escalated conversation ids
+        conversation_ids = df_not_escalated['Conversation ID'].unique()
+        sampled_conversation_ids = np.random.choice(conversation_ids, sample_size)
+        df_not_escalated = df_not_escalated[
+            df_not_escalated['Conversation ID'].isin(sampled_conversation_ids)].sort_values(
+            by=['Conversation ID', 'Response Timestamp'])
+
+    # Prepare dataframe containing covered utterances in escalated conversations sorted by Conversation ID and Response Timestamp
+    df_not_escalated_covered = df_not_escalated[df_not_escalated['Covered?'] == True].reset_index(drop=True)
+
+    # Generate not escalated and not covered sample file
+    df_not_escalated_not_covered = df_not_escalated[df_not_escalated['Covered?'] == False].reset_index(drop=True)
+
+    # Covert to Excel format and upload to COS
+    generate_excel_measure([df_not_escalated, df_not_escalated_covered, df_not_escalated_not_covered],
+                           ['All_Utterances', 'Covered_Utterances', 'Not_Covered_Utterances'],
+                           filename=non_escalated_sample_file, project_io=project_io)
