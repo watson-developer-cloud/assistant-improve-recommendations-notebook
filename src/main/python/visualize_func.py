@@ -373,7 +373,8 @@ def show_coverage_over_time(df_coverage, interval='day'):
 
         p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
                    x_range=(start_datetime, end_datetime),
-                   y_range=(0, 100), title='Coverage over time')
+                   y_range=(max(np.floor(coverage_data['Coverage'].min()) - 10, 0),
+                            min(np.floor(coverage_data['Coverage'].max()) + 10, 100)), title='Coverage over time')
 
         p.line(x='response_datetime_interval', y='Coverage', source=coverage_data, line_width=1.5, color='#4fa8f6')
 
