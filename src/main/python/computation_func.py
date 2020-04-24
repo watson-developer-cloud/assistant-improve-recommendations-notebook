@@ -145,7 +145,7 @@ def get_coverage_df(df_tbot_raw, df_coverage_nodes, conf_threshold):
     for node in df_coverage_valid['Node ID'].tolist():
         cause = "'{}' node".format(df_coverage_valid.loc[df_coverage_valid['Node ID'] == node, 'Condition'].values[0])
         df_tbot_raw.loc[
-            (df_tbot_raw['response.output.nodes_visited_s'].apply(lambda x: bool(intersection(x, node.split())))), [
+            (df_tbot_raw['response.output.nodes_visited_s'].apply(lambda x: bool(intersection(x, node)))), [
                 'Covered', 'Not Covered cause']] = [False, cause]
 
     # (2) Mark all messages  that did not meet confidence threshold set as 'Not covered' and update the 'Not Covered
