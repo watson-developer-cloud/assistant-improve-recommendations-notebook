@@ -76,23 +76,27 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
                 if item in node_title_map:
                     stack_item[key] = node_title_map[item]
 
-    # Get the list of valid effective dialog node ids
-    ineffective_nodes = df_escalate_nodes[df_escalate_nodes['Valid']]['Node ID'].tolist()
-    ineffective_nodes = [node if node not in node_title_map else node_title_map[node] for node in ineffective_nodes]
+    ineffective_nodes = None
+    if df_escalate_nodes.size > 0:
+        # Get the list of valid effective dialog node ids
+        ineffective_nodes = df_escalate_nodes[df_escalate_nodes['Valid']]['Node ID'].tolist()
+        ineffective_nodes = [node if node not in node_title_map else node_title_map[node] for node in ineffective_nodes]
 
     # If nodes visited contains any of the ineffective node ids, get the conversation id
     if filter_non_intent_node:
-        df_tbot_raw['last_node'] = df_tbot_raw['response.output.nodes_visited_s'].str[-1].apply(
-            lambda x: x if x else [''])
-        df_tbot_raw['last_node_value'] = df_tbot_raw['last_node'].apply(
-            lambda x: assistant_nodes.loc[assistant_nodes['dialog_node'] == x]['conditions'].values)
-        df_tbot_raw['last_node_value'] = df_tbot_raw['last_node_value'].apply(lambda x: x if x else ['']).str[0]
-        df_tbot_raw['contain_intent'] = df_tbot_raw['last_node_value'].apply(
-            lambda x: bool(re.match('#[a-zA-Z_0-9]+', str(x))))
-        conversation_id = [conversation for conversation in df_tbot_raw.loc[
-            df_tbot_raw['response.output.nodes_visited_s'].apply(
-                lambda x: bool(intersection(x, ineffective_nodes)))].loc[df_tbot_raw['contain_intent']][
-            'response.context.conversation_id']]
+        conversation_id = list()
+        if ineffective_nodes:
+            df_tbot_raw['last_node'] = df_tbot_raw['response.output.nodes_visited_s'].str[-1].apply(
+                lambda x: x if x else [''])
+            df_tbot_raw['last_node_value'] = df_tbot_raw['last_node'].apply(
+                lambda x: assistant_nodes.loc[assistant_nodes['dialog_node'] == x]['conditions'].values)
+            df_tbot_raw['last_node_value'] = df_tbot_raw['last_node_value'].apply(lambda x: x if x else ['']).str[0]
+            df_tbot_raw['contain_intent'] = df_tbot_raw['last_node_value'].apply(
+                lambda x: bool(re.match('#[a-zA-Z_0-9]+', str(x))))
+            conversation_id = [conversation for conversation in df_tbot_raw.loc[
+                df_tbot_raw['response.output.nodes_visited_s'].apply(
+                    lambda x: bool(intersection(x, ineffective_nodes)))].loc[df_tbot_raw['contain_intent']][
+                'response.context.conversation_id']]
 
         # If top intent for a message is present in ineffective_intents list, get the conversation id
         conversation_id.extend(df_tbot_raw.loc[(df_tbot_raw['response.top_intent_intent'].isin(
@@ -100,9 +104,11 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
                                    df_tbot_raw['contain_intent']].tolist())
 
     else:
-        conversation_id = [conversation for conversation in df_tbot_raw.loc[
-            df_tbot_raw['response.output.nodes_visited_s'].apply(
-                lambda x: bool(intersection(x, ineffective_nodes)))]['response.context.conversation_id']]
+        conversation_id = list()
+        if ineffective_nodes:
+            conversation_id = [conversation for conversation in df_tbot_raw.loc[
+                df_tbot_raw['response.output.nodes_visited_s'].apply(
+                    lambda x: bool(intersection(x, ineffective_nodes)))]['response.context.conversation_id']]
 
         # If top intent for a message is present in ineffective_intents list, get the conversation id
         conversation_id.extend(df_tbot_raw.loc[(df_tbot_raw['response.top_intent_intent'].isin(
