@@ -9,7 +9,8 @@ from bokeh.io import show, output_notebook
 from bokeh.plotting import figure
 from bokeh.models.formatters import DatetimeTickFormatter
 from bokeh.models import HoverTool
-from datetime import date, datetime, timedelta
+from datetime import timedelta
+import pandas as pd
 
 
 # Set CSS properties for th elements in dataframe
@@ -294,6 +295,13 @@ def round_decimal(x, digits=0):
     return float(x.quantize(decimal.Decimal(string), rounding='ROUND_HALF_UP'))
 
 
+def datetime_range(start, end, delta):
+    current = start
+    while current <= end:
+        yield current
+        current += delta
+
+
 def show_coverage_over_time(df_coverage, interval='day'):
     delta = None
     if interval == 'minute':
@@ -324,22 +332,21 @@ def show_coverage_over_time(df_coverage, interval='day'):
     elif interval == 'day':
         df_coverage['response_datetime_interval'] = [d.replace(second=0, microsecond=0, minute=0, hour=0)
                                                      for d in df_coverage['response.timestamp']]
-        delta = timedelta(days=0.5)
+        delta = timedelta(days=1)
     elif interval == 'week':
         df_coverage['response_datetime_interval'] = [
             d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(minutes=(d.day // 7) * 7) for d in
             df_coverage['response.timestamp']]
-        delta = timedelta(days=1)
+        delta = timedelta(days=7)
     elif interval == 'month':
         df_coverage['response_datetime_interval'] = [
             d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) for d in
             df_coverage['response.timestamp']]
-        delta = timedelta(days=15)
+        delta = timedelta(days=30)
     else:
         print('Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
 
     if delta:
-
         covered_counts = df_coverage[['response_datetime_interval', 'Covered']].groupby(
             ['response_datetime_interval', 'Covered']).agg({'Covered': 'count'})
         coverage_grp = covered_counts.groupby(level=0).apply(lambda x: round(100 * x / float(x.sum()), 2)).rename(
@@ -347,7 +354,7 @@ def show_coverage_over_time(df_coverage, interval='day'):
         covered_counts.columns = ['Count']
         covered_counts = covered_counts.reset_index()
         coverage_grp = coverage_grp.merge(covered_counts, how='left', on=['response_datetime_interval', 'Covered'])
-        coverage_time = coverage_grp[coverage_grp['Covered'] == True].reset_index(drop=True)
+        coverage_time = coverage_grp[coverage_grp['Covered']==True].reset_index(drop=True)
 
         start_datetime = coverage_time.response_datetime_interval.iloc[0]
         end_datetime = coverage_time.response_datetime_interval.iloc[-1]
@@ -355,14 +362,21 @@ def show_coverage_over_time(df_coverage, interval='day'):
             start_datetime -= delta
             end_datetime += delta
 
+        time_index_df = pd.DataFrame([dt for dt in datetime_range(start_datetime, end_datetime, delta)],
+                                     columns=['response_datetime_interval'])
+
+        coverage_data = time_index_df.merge(coverage_time, how='left', on=['response_datetime_interval'])
+        coverage_data['Count'] = coverage_data['Count'].fillna(0)
+        coverage_data['Coverage'] = coverage_data['Coverage'].fillna(0)
+
         output_notebook(hide_banner=True)
 
         p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
-                   x_range=(start_datetime - delta, end_datetime + delta),
-                   y_range=(0, 100), title='Coverage over time')
+                   x_range=(start_datetime, end_datetime),
+                   y_range=(max(np.floor(coverage_data['Coverage'].min()) - 10, 0),
+                            min(np.floor(coverage_data['Coverage'].max()) + 10, 100)), title='Coverage over time')
 
-        p.line(x='response_datetime_interval', y='Coverage', source=coverage_time, line_width=1.5, color='#4fa8f6')
-        p.circle(x='response_datetime_interval', y='Coverage', source=coverage_time, size=5, color="#4fa8f6", alpha=1)
+        p.line(x='response_datetime_interval', y='Coverage', source=coverage_data, line_width=1.5, color='#4fa8f6')
 
         p.xaxis.formatter = DatetimeTickFormatter(
             seconds=["%Y-%m-%d %H:%M:%S"],
