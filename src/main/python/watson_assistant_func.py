@@ -3,6 +3,8 @@ import json
 import pandas as pd
 import time
 import os
+import csv
+import traceback
 
 
 def get_assistant_definition(sdk_object, assistant_info, project=None, reset=False, filename='assistant_definition'):
@@ -198,7 +200,7 @@ def get_logs_jupyter(num_logs, log_list, workspace_creds, log_filter=None):
             return log_df
 
 
-def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=None, reset=False, filename='logs'):
+def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=None, reset=False, filename=None, generate_csv=False):
     """This function calls Watson Assistant API to retrieve logs, using pagination if necessary.
        The goal is to retrieve utterances (user inputs) from the logs.
        Parameters
@@ -207,32 +209,42 @@ def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=
        assistant_info : dict, containing information regarding sdk_object, assistant id, and name
        filters: string, a list of query filters
        reset: boolean, whether to reset log file
+       filename: prefix of the name of the log file
+       generate_csv: if generating a CSV of messages
        Returns
        ----------
        log_df : DataFrame of fetched logs
     """
     log_list = list()
     workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
-    # Create file name
-    if workspace_id is not None and len(workspace_id) > 0:
-        filename += '_workspace_' + workspace_id
-    if assistant_id is not None and len(assistant_id) > 0:
-        filename += '_assistant_' + assistant_id
-        filters.append('request.context.system.assistant_id::{}'.format(assistant_id))
-    if skill_id is not None and len(skill_id) > 0:
-        filename += '_skill_' + skill_id
-        filters.append('workspace_id::{}'.format(skill_id))
 
-    if filename == 'logs':
+    if filename is None:
+        filename = 'logs'
+        # Create file name
+        if workspace_id is not None and len(workspace_id) > 0:
+            filename += '_workspace_' + workspace_id
+        if assistant_id is not None and len(assistant_id) > 0:
+            filename += '_assistant_' + assistant_id
+            filters.append('request.context.system.assistant_id::{}'.format(assistant_id))
+        if skill_id is not None and len(skill_id) > 0:
+            filename += '_skill_' + skill_id
+            filters.append('workspace_id::{}'.format(skill_id))
+        # Remove all special characters from file name
+        filename = re.sub(r'[^a-zA-Z0-9_\- .]', '', filename) + '.json'
+
+    if (workspace_id is None or len(workspace_id) == 0) \
+            and (assistant_id is None or len(assistant_id) == 0) \
+            and (skill_id is None or len(skill_id) == 0):
         print('Please provide a valid Workspace ID, Assistant ID, or Skill ID!')
         return None
 
-    print('Fetching logs ... ')
-
-    # Remove all special characters from file name
-    filename = re.sub(r'[^a-zA-Z0-9_\- .]', '', filename) + '.json'
+    if assistant_id is not None and len(assistant_id) > 0:
+        filters.append('request.context.system.assistant_id::{}'.format(assistant_id))
+    if skill_id is not None and len(skill_id) > 0:
+        filters.append('workspace_id::{}'.format(skill_id))
 
     log_filter = ','.join(filters)
+    log_df = None
 
     if project and reset is False:
         if [file['name'] for file in project.get_files() if file['name'] == filename]:
@@ -244,7 +256,6 @@ def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=
             log_df = pd.DataFrame.from_records(data_json)
             # Display success message and return the dataframe
             print('Loaded {} logs into dataframe'.format(log_df.shape[0]))
-            return log_df
     elif os.path.isfile(filename) and reset is False:
         # Get file from cloud object storage
         print('Reading from file:', filename)
@@ -254,7 +265,6 @@ def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=
         log_df = pd.DataFrame.from_records(data_json)
         # Display success message and return the dataframe
         print('Loaded {} logs into dataframe'.format(log_df.shape[0]))
-        return log_df
     else:
         try:
             current_cursor = None
@@ -285,7 +295,7 @@ def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=
                     else:
                         break
         except Exception as ex:
-            print(ex)
+            traceback.print_tb(ex.__traceback__)
         finally:
             if len(log_list) > 0:
                 print('\nLoading {} logs into dataframe ...'.format(len(log_list)))
@@ -299,6 +309,15 @@ def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=
                 else:
                     log_df.to_json(filename)
                     print('Completed')
-                return log_df
-            else:
-                return None
+
+    if generate_csv and log_df is not None:
+        csv_filename = os.path.splitext(filename)[0] + '.csv'
+        messages = [[r['input']['text']] for r in log_df['request']]
+        print('\nSaving {} messages into CSV {}'.format(len(messages), csv_filename))
+
+        with open(csv_filename, 'w') as f:
+            writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            writer.writerows(messages)
+            print('File', f.name, 'saved')
+
+    return log_df
