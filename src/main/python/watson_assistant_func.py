@@ -5,22 +5,21 @@ import time
 import os
 
 
-def get_assistant_definition(sdk_object, assistant_info, project=None, reset=False):
+def get_assistant_definition(sdk_object, assistant_info, project=None, reset=False, filename='assistant_definition'):
     workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
 
-    assistant_definition_file = 'definition_'
     if len(workspace_id) > 0:
-        assistant_definition_file += 'workspace_{}.json'.format(workspace_id)
+        filename += '_workspace_{}.json'.format(workspace_id)
     elif len(skill_id) > 0:
-        assistant_definition_file += 'skill_{}.json'.format(skill_id)
+        filename += '_skill_{}.json'.format(skill_id)
     else:
         print('Please provide a valid Workspace ID or Skill ID!')
         return None
 
-    if os.path.isfile(assistant_definition_file) and reset is False:
+    if os.path.isfile(filename) and reset is False:
         # Get file from cloud object storage
-        print('Reading from file:', assistant_definition_file)
-        with open(assistant_definition_file) as data:
+        print('Reading from file:', filename)
+        with open(filename) as data:
             data_json = json.load(data)
         # Read logs into datafram
         print('Assistant definition is loaded into dataframe')
@@ -48,14 +47,14 @@ def get_assistant_definition(sdk_object, assistant_info, project=None, reset=Fal
             # Set `export_file` to True for exporting assistant definition to json file
             if reset:
                 if project is not None:
-                    with open(assistant_definition_file, 'wb') as fp:
-                        project.save_data(assistant_definition_file, json.dumps(assistant_definition), overwrite=True)
+                    with open(filename, 'wb') as fp:
+                        project.save_data(filename, json.dumps(assistant_definition), overwrite=True)
                         # Display success message
                         print('Definition {} exported as a project asset'.format(fp.name))
                 else:
-                    with open(assistant_definition_file, 'w') as f:
+                    with open(filename, 'w') as f:
                         json.dump(assistant_definition, f)
-                        print('Definition {} exported'.format(assistant_definition_file))
+                        print('Definition {} exported'.format(filename))
 
             return df_assistant
         else:
@@ -199,7 +198,7 @@ def get_logs_jupyter(num_logs, log_list, workspace_creds, log_filter=None):
             return log_df
 
 
-def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=None, reset=False):
+def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=None, reset=False, filename='logs'):
     """This function calls Watson Assistant API to retrieve logs, using pagination if necessary.
        The goal is to retrieve utterances (user inputs) from the logs.
        Parameters
@@ -215,7 +214,6 @@ def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=
     log_list = list()
     workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
     # Create file name
-    filename = 'logs'
     if workspace_id is not None and len(workspace_id) > 0:
         filename += '_workspace_' + workspace_id
     if assistant_id is not None and len(assistant_id) > 0:
