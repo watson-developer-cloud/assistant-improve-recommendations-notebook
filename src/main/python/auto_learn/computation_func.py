@@ -80,28 +80,32 @@ def extract_disambiguation_utterances(df_formatted):
         if contain_disambiguation and contain_more:
             num_both_conversations += 1
 
-    print('Summary:\n' + '=' * 10 + '\n')
-    print('\tTotal utterances: {}'.format(len(df_formatted.log_id.unique())))
-    print('\tTotal conversations: {}'.format(len(conversation_ids)))
-    print('\tAverage utterances per conversation: {}'.format(
-        round(len(df_formatted.log_id.unique()) / len(conversation_ids), 1)))
+    print('\n\nData Statistics:')
+    utterance_statistics = {}
+    utterance_statistics['Utterance'] = ['Total', 'Disambiguation', 'More Options', 'Both']
+    utterance_statistics['Count'] = [len(df_formatted.log_id.unique()), num_disambiguation_utterances, num_more_utterances, num_both_utterances]
+    utterance_statistics['Percentage'] = ['100.0%', '{}%'.format(round(
+        num_disambiguation_utterances / len(df_formatted.log_id.unique()) * 100, 1)), '{}%'.format(round(
+        num_more_utterances / len(df_formatted.log_id.unique()) * 100, 1)), '{}%'.format(round(
+        num_both_utterances / len(df_formatted.log_id.unique()) * 100, 1))]
 
-    print('\nDisambiguation and More Options\n' + '=' * 10 + '\n')
-    print('\tUtterances triggering Disambiguation: {} ({}%)'.format(num_disambiguation_utterances, round(
-        num_disambiguation_utterances / len(df_formatted.log_id.unique()) * 100, 1)))
-    print('\tConversations containing Disambiguation only: {} ({}%)'.format(num_disambiguation_conversations, round(
-        num_disambiguation_conversations / len(conversation_ids) * 100, 1)))
+    statistics_pd = pd.DataFrame.from_dict(utterance_statistics)
+    statistics_pd = statistics_pd.set_index('Utterance')
+    utterance_html = statistics_pd.to_html().replace('     <th>Utterance</th>\n      <th></th>\n      <th></th>\n    </tr>\n', '').replace('<th></th>\n', '<th>Utterance</th>\n')
 
-    print('\n\tUtterances triggering More Options: {} ({}%)'.format(num_more_utterances, round(
-        num_more_utterances / len(df_formatted.log_id.unique()) * 100, 1)))
-    print('\tConversations containing More Options only: {} ({}%)'.format(num_more_conversations, round(
-        num_more_conversations / len(conversation_ids) * 100, 1)))
+    conversation_statistics = {}
+    conversation_statistics['Conversation'] = ['Total', 'Disambiguation', 'More Options', 'Both']
+    conversation_statistics['Count'] = [len(conversation_ids), num_disambiguation_conversations, num_more_conversations, num_both_conversations]
+    conversation_statistics['Percentage'] = ['100.0%', '{}%'.format(round(
+        num_disambiguation_conversations / len(conversation_ids) * 100, 1)), '{}%'.format(round(
+        num_more_conversations / len(conversation_ids) * 100, 1)), '{}%'.format(round(num_both_conversations / len(conversation_ids) * 100,
+                                                                   1))]
 
-    print('\n\tUtterances triggering both: {} ({}%)'.format(num_both_utterances, round(
-        num_both_utterances / len(df_formatted.log_id.unique()) * 100, 1)))
-    print('\tConversations containing both: {} ({}%)'.format(num_both_conversations,
-                                                             round(num_both_conversations / len(conversation_ids) * 100,
-                                                                   1)))
+    statistics_pd = pd.DataFrame.from_dict(conversation_statistics)
+    statistics_pd = statistics_pd.set_index('Conversation')
+    conversation_html = statistics_pd.to_html().replace('     <th>Conversation</th>\n      <th></th>\n      <th></th>\n    </tr>\n', '').replace('<th></th>\n', '<th>Conversation</th>\n')
+
+    display(HTML('<style>.aParent div {{\n float: left;\nclear: none;padding: 20px; \n\}}</style><div class="aParent"><div>{}</div><div>{}</div></div>'.format(utterance_html, conversation_html)))
 
     return disambiguation_utterances.sort_values(by='request_timestamp').reset_index(drop=True)
 
