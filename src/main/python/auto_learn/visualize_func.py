@@ -1,5 +1,6 @@
 from bokeh.io import push_notebook, show, output_notebook
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, LinearColorMapper, ColorBar, LinearColorMapper, BasicTicker, PrintfTickFormatter, Select, CustomJS, LinearAxis, Range1d, BoxAnnotation, Toggle
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, LinearColorMapper, ColorBar, LinearColorMapper, \
+    BasicTicker, PrintfTickFormatter, Select, CustomJS, LinearAxis, Range1d, BoxAnnotation, Toggle
 from bokeh.layouts import row, column
 from bokeh.plotting import figure
 from bokeh.models.formatters import DatetimeTickFormatter
@@ -228,11 +229,11 @@ def show_node_effort(disambiguation_utterances, assistant_nodes=None, interval=N
                 var selected_node_id = cb_obj.value
                 var effort_scores = data['effort_score' + '_' + selected_node_id]
                 var new_effort_scores = [];
-    
+
                 for (var i = 0; i < effort_scores.length; i++) {
                     new_effort_scores.push(effort_scores[i])
                 }
-    
+
                 source.data['effort_score'] = new_effort_scores
                 source.change.emit();
             """)
@@ -313,12 +314,14 @@ def show_input_effort(disambiguation_utterances, top, interval=None):
         end_delta = timedelta(days=15)
         bar_width = 15 * 24 * 60 * 60 * 1000
     else:
-        print('Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
+        print(
+            'Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
 
     if delta:
         input_effort_df = disambiguation_utterances[
             ['request_datetime_interval', 'request_input_text', 'effort_score']].groupby(
-            ['request_datetime_interval', 'request_input_text']).agg({'effort_score': 'mean', 'request_input_text': 'count'})
+            ['request_datetime_interval', 'request_input_text']).agg(
+            {'effort_score': 'mean', 'request_input_text': 'count'})
 
         input_effort_df.columns = ['effort_score', 'count']
 
@@ -391,19 +394,19 @@ def show_input_effort(disambiguation_utterances, top, interval=None):
                 var new_data = [];
                 var selected_input = cb_obj.value
                 title.text = 'Input: "' + selected_input + '"'
-    
-    
+
+
                 var selected_id = options.indexOf(selected_input)
-    
+
                 var effort_scores = data['effort_score' + '_' + selected_id]
-    
-    
+
+
                 var new_effort_scores = [];
-    
+
                 for (var i = 0; i < effort_scores.length; i++) {
                     new_effort_scores.push(effort_scores[i])
                 }
-    
+
                 source.data['effort_score'] = new_effort_scores
                 source.change.emit();
             """)
@@ -483,7 +486,8 @@ def show_disambiguation_click(disambiguation_utterances, interval=None):
         end_delta = timedelta(days=15)
         bar_width = 15 * 24 * 60 * 60 * 1000
     else:
-        print('Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
+        print(
+            'Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
 
     if delta:
         click_detail_pd = disambiguation_utterances[['request_datetime_interval', 'select_rank_d']].groupby(
@@ -517,7 +521,8 @@ def show_disambiguation_click(disambiguation_utterances, interval=None):
         vis_df['total'] = vis_df[["click_on_%d" % i for i in range(1, 6)]].sum(axis=1)
 
         colors = tuple(
-            [(int(255 * (0.1 + 0.7 * (1 - i * 0.2))), int(255 * (0.4 + 0.4 * (1 - i * 0.2))), int(255 * 0.8), 0.8) for i in
+            [(int(255 * (0.1 + 0.7 * (1 - i * 0.2))), int(255 * (0.4 + 0.4 * (1 - i * 0.2))), int(255 * 0.8), 0.8) for i
+             in
              range(5)])
 
         output_notebook(hide_banner=True)
@@ -638,7 +643,8 @@ def show_more_options_click(disambiguation_utterances, interval=None):
         end_delta = timedelta(days=15)
         bar_width = 15 * 24 * 60 * 60 * 1000
     else:
-        print('Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
+        print(
+            'Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
 
     if delta:
         click_detail_pd = disambiguation_utterances[['request_datetime_interval', 'select_rank_a']].groupby(
@@ -682,7 +688,8 @@ def show_more_options_click(disambiguation_utterances, interval=None):
         legend_names = ["Click-%d" % i for i in range(1, 6)]
 
         colors = tuple(
-            [(int(255 * (0.1 + 0.7 * (1 - i * 0.2))), int(255 * (0.4 + 0.4 * (1 - i * 0.2))), int(255 * 0.8), 0.8) for i in
+            [(int(255 * (0.1 + 0.7 * (1 - i * 0.2))), int(255 * (0.4 + 0.4 * (1 - i * 0.2))), int(255 * 0.8), 0.8) for i
+             in
              range(5)])
 
         p.vbar_stack(names, x='request_datetime_interval', color=colors, source=vis_df, width=bar_width,
@@ -867,7 +874,8 @@ def show_click_vs_effort(disambiguation_utterances, interval):
         end_delta = timedelta(minutes=30)
         bar_width = 50 * 60 * 1000
         for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
-            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0, hour=start_timestamp.hour)
+            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0,
+                                                             hour=start_timestamp.hour)
             time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=end_timestamp.hour)
     elif interval == 'day':
         disambiguation_utterances['request_datetime_interval'] = [d.replace(second=0, microsecond=0, minute=0, hour=0)
@@ -888,9 +896,11 @@ def show_click_vs_effort(disambiguation_utterances, interval):
         end_delta = timedelta(days=3)
         bar_width = 5 * 24 * 60 * 60 * 1000
         for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
-            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(
+            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0, hour=0,
+                                                             day=1) + timedelta(
                 minutes=(start_timestamp.day // 7) * 7)
-            time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(
+            time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=0,
+                                                           day=1) + timedelta(
                 minutes=(end_timestamp.day // 7) * 7)
     elif interval == 'month':
         disambiguation_utterances['request_datetime_interval'] = [
@@ -904,7 +914,8 @@ def show_click_vs_effort(disambiguation_utterances, interval):
             time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0, hour=0, day=1)
             time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=0, day=1)
     else:
-        print('Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
+        print(
+            'Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
 
     if delta:
         effort_agg = disambiguation_utterances[['request_datetime_interval', 'effort_score']].groupby(
@@ -950,12 +961,14 @@ def show_click_vs_effort(disambiguation_utterances, interval):
         output_notebook(hide_banner=True)
 
         colors = tuple(
-            [(int(255 * (0.1 + 0.7 * (1 - i * 0.2))), int(255 * (0.4 + 0.4 * (1 - i * 0.2))), int(255 * 0.8), 0.8) for i in
+            [(int(255 * (0.1 + 0.7 * (1 - i * 0.2))), int(255 * (0.4 + 0.4 * (1 - i * 0.2))), int(255 * 0.8), 0.8) for i
+             in
              range(3)])
 
         p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
                    x_range=(start_datetime - start_delta, end_datetime + end_delta),
-                   y_range=(0, effort_data['effort_score_sum'].max() * 1.3), title='Customer effort vs clicks over time')
+                   y_range=(0, effort_data['effort_score_sum'].max() * 1.3),
+                   title='Customer effort vs clicks over time')
         p.yaxis.axis_label = 'Customer Effort'
 
         # Setting the second y axis range name and range
@@ -972,7 +985,8 @@ def show_click_vs_effort(disambiguation_utterances, interval):
                      hover_line_color='#1C679A')
         p.line(x='request_datetime_interval', y='effort_score_sum', source=effort_data, line_width=1.5, color='#D82377',
                legend_label='Total Effort')
-        p.circle(x='request_datetime_interval', y='effort_score_sum', source=effort_data, size=5, color="#D82377", alpha=1)
+        p.circle(x='request_datetime_interval', y='effort_score_sum', source=effort_data, size=5, color="#D82377",
+                 alpha=1)
 
         p.legend.click_policy = "hide"
         p.legend.orientation = "horizontal"
@@ -1027,7 +1041,7 @@ def show_click_vs_effort(disambiguation_utterances, interval):
                     } else {
                         box.visible = false
                     }
-        
+
                 """)
 
             toggle.js_on_change('active', select_callback)
@@ -1040,18 +1054,16 @@ def split_tol(test_list, tol):
     last = test_list[0]
     res = [last]
     for ele in test_list:
-        if ele-last == tol:
+        if ele - last == tol:
             last = ele
             res = []
             res.append(ele)
-        elif ele-last > tol:
+        elif ele - last > tol:
             res.append(ele)
             if len(res) > 1:
                 yield res
                 last = ele
                 res = [ele]
-
-# disambiguation_utterances.loc[disambiguation_utterances['index'] == 313, 'auto_learn_apply'] = None
 
 
 def show_effort_over_time(disambiguation_utterances, interval):
@@ -1071,6 +1083,13 @@ def show_effort_over_time(disambiguation_utterances, interval):
             for x in intervals]
     else:
         time_intervals = list()
+
+    start_preview_idx = disambiguation_utterances.auto_learn_preview.first_valid_index()
+    end_preview_idx = disambiguation_utterances.auto_learn_preview.last_valid_index()
+    if start_preview_idx is None and end_preview_idx is None:
+        preview_data = False
+    else:
+        preview_data = True
 
     # start_timestamp = disambiguation_utterances.iloc[start_applied_idx].request_timestamp
     # end_timestamp = disambiguation_utterances.iloc[end_applied_idx].request_timestamp
@@ -1130,7 +1149,8 @@ def show_effort_over_time(disambiguation_utterances, interval):
             disambiguation_utterances.request_timestamp]
         delta = timedelta(minutes=60)
         for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
-            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0, hour=start_timestamp.hour)
+            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0,
+                                                             hour=start_timestamp.hour)
             time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=end_timestamp.hour)
     elif interval == 'day':
         disambiguation_utterances['request_datetime_interval'] = [d.replace(second=0, microsecond=0, minute=0, hour=0)
@@ -1145,9 +1165,11 @@ def show_effort_over_time(disambiguation_utterances, interval):
             disambiguation_utterances.request_timestamp]
         delta = timedelta(days=7)
         for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
-            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(
+            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0, hour=0,
+                                                             day=1) + timedelta(
                 minutes=(start_timestamp.day // 7) * 7)
-            time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(
+            time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=0,
+                                                           day=1) + timedelta(
                 minutes=(end_timestamp.day // 7) * 7)
     elif interval == 'month':
         disambiguation_utterances['request_datetime_interval'] = [
@@ -1213,7 +1235,7 @@ def show_effort_over_time(disambiguation_utterances, interval):
         preview_line = p.line(x='request_datetime_interval', y='preview_effort_score_sum', line_dash="4 4",
                               legend_label='Total Effort (preview)',
                               source=effort_data,
-                              line_width=1.5, color='#878787')
+                              line_width=1.5, color='#878787', visible=preview_data)
         effort_data['preview_total_color'] = '#878787'
         effort_data['preview_total_size'] = 5
         effort_data['preview_total_fill_color'] = '#878787'
@@ -1222,7 +1244,7 @@ def show_effort_over_time(disambiguation_utterances, interval):
                                   size='preview_total_size',
                                   line_color="preview_total_color", fill_color="preview_total_fill_color",
                                   legend_label='Total Effort (preview)',
-                                  alpha=1)
+                                  alpha=1, visible=preview_data)
         p.add_layout(preview_line)
         p.add_layout(preview_circle)
 
@@ -1260,11 +1282,6 @@ def show_effort_over_time(disambiguation_utterances, interval):
         p.add_layout(preview_normal_line)
         p.add_layout(preview_normal_circle)
 
-        # p.line(x='request_datetime_interval', y='effort_score_mean', legend_label='Average Effort',
-        #        y_range_name="Average customer effort", source=effort_data, line_width=1.5, color='#4fa8f6')
-
-        # p.legend.click_policy = "hide"
-        # p.legend.orientation = "horizontal"
         p.xaxis.formatter = DatetimeTickFormatter(
             seconds=["%Y-%m-%d %H:%M:%S"],
             minsec=["%Y-%m-%d %H:%M:%S"],
@@ -1295,14 +1312,14 @@ def show_effort_over_time(disambiguation_utterances, interval):
         p.title.text_font_size = '12pt'
         p.axis.major_label_text_font_size = "10pt"
 
-        toggle = Toggle(label="Auto Learning Applied Period", button_type="default", active=False, align='center')
+        toggle = Toggle(label="Auto Learning Applied Period", button_type="default", active=True, align='center')
         toggle_mean = Toggle(label="Average Customer Effort", button_type="default", active=False, align='center')
         toggle_sum = Toggle(label="Total Customer Effort", button_type="default", active=True, align='center')
         if len(time_intervals) > 0:
             for [start_timestamp, end_timestamp] in time_intervals:
                 box = BoxAnnotation(left=start_timestamp, right=end_timestamp,
                                     line_width=1, line_color='black', line_dash='dashed',
-                                    fill_alpha=0.2, fill_color='orange', visible=False)
+                                    fill_alpha=0.2, fill_color='orange', visible=True)
                 p.add_layout(box)
 
             select_callback = CustomJS(args=dict(toggle=toggle, box=box), code="""
@@ -1311,7 +1328,7 @@ def show_effort_over_time(disambiguation_utterances, interval):
                     } else {
                         box.visible = false
                     }
-    
+
                 """)
             toggle.js_on_change('active', select_callback)
 
@@ -1321,9 +1338,12 @@ def show_effort_over_time(disambiguation_utterances, interval):
         element_dict = dict(legend=p.legend[0], title=p.title, y_axis=p.yaxis[0], y_range=p.y_range,
                             total_range=effort_data['effort_score_sum'].max() * 1.1,
                             normal_range=effort_data['effort_score_mean'].max() * 1.1, total_items=total_items,
-                            avg_items=avg_items, toggle_mean=toggle_mean, toggle_sum=toggle_sum, actual_line=actual_line,
-                            actual_circle=actual_circle, preview_line=preview_line, preview_circle=preview_circle,
-                            normal_line=normal_line, normal_circle=normal_circle, preview_normal_line=preview_normal_line,
+                            avg_items=avg_items, toggle_mean=toggle_mean, toggle_sum=toggle_sum,
+                            actual_line=actual_line,
+                            actual_circle=actual_circle, preview_data=preview_data, preview_line=preview_line,
+                            preview_circle=preview_circle,
+                            normal_line=normal_line, normal_circle=normal_circle,
+                            preview_normal_line=preview_normal_line,
                             preview_normal_circle=preview_normal_circle)
         normalize_callback = CustomJS(args=element_dict, code="""
             if(toggle_mean.active==true) {
@@ -1333,21 +1353,25 @@ def show_effort_over_time(disambiguation_utterances, interval):
                  actual_circle.visible = false
                  preview_line.visible = false
                  preview_circle.visible = false
-                 preview_normal_line.visible = true
-                 preview_normal_circle.visible = true
+                 if (preview_data==true) {
+                    preview_normal_line.visible = true
+                    preview_normal_circle.visible = true
+                 }
                  legend.items = avg_items
                  y_range.end = normal_range
                  y_axis.axis_label='Average Customer Effort'
                  title.text='Average customer effort over time'
                  toggle_sum.active=false
-    
+
             } else {
                 normal_line.visible = false
                 normal_circle.visible = false
                 actual_line.visible = true
                 actual_circle.visible = true
-                preview_line.visible = true
-                preview_circle.visible = true
+                if (preview_data==true) {
+                    preview_line.visible = true
+                    preview_circle.visible = true
+                }
                 preview_normal_line.visible = false
                 preview_normal_circle.visible = false
                 legend.items = total_items
@@ -1363,17 +1387,19 @@ def show_effort_over_time(disambiguation_utterances, interval):
                 normal_circle.visible = false
                 actual_line.visible = true
                 actual_circle.visible = true
-                preview_line.visible = true
-                preview_circle.visible = true
+                if (preview_data==true) {
+                    preview_line.visible = true
+                    preview_circle.visible = true
+                }
                 preview_normal_line.visible = false
                 preview_normal_circle.visible = false
                 legend.items = total_items
                 y_range.end = total_range
                 y_axis.axis_label='Total Customer Effort'
                 title.text='Total customer effort over time'
-    
+
                  toggle_mean.active=false
-    
+
             } else {
                  normal_line.visible = true
                  normal_circle.visible = true
@@ -1381,8 +1407,10 @@ def show_effort_over_time(disambiguation_utterances, interval):
                  actual_circle.visible = false
                  preview_line.visible = false
                  preview_circle.visible = false
-                 preview_normal_line.visible = true
-                 preview_normal_circle.visible = true
+                 if (preview_data==true) {
+                     preview_normal_line.visible = true
+                     preview_normal_circle.visible = true
+                 }
                  legend.items = avg_items
                  y_range.end = normal_range
                  y_axis.axis_label='Average Customer Effort'
@@ -1403,11 +1431,11 @@ def show_effort_over_time(disambiguation_utterances, interval):
         statistics = {}
         statistics['Number of Intervals'] = len(effort_data['request_datetime_interval'])
         statistics['Average Improving %'] = ["{0:.1f}%".format(effort_data['improve'].mean())]
-        statistics['Max Improving %'] = ["{0:.1f}%".format(effort_data['improve'].max())]
-        statistics['Max Improving Interval'] = [
+        statistics['Highest Improving %'] = ["{0:.1f}%".format(effort_data['improve'].max())]
+        statistics['Highest Improved Interval'] = [
             str(effort_data.iloc[effort_data['improve'].idxmax()]['request_datetime_interval'].tz_convert(None))]
-        statistics['Min Improving %'] = ["{0:.1f}%".format(effort_data['improve'].min())]
-        statistics['Min Improving Interval'] = [
+        statistics['Lowest Improving %'] = ["{0:.1f}%".format(effort_data['improve'].min())]
+        statistics['Lowest Improved Interval'] = [
             str(effort_data.iloc[effort_data['improve'].idxmin()]['request_datetime_interval'].tz_convert(None))]
 
         statistics_pd = pd.DataFrame.from_dict(statistics)
@@ -1419,16 +1447,19 @@ def show_effort_over_time(disambiguation_utterances, interval):
             ['preview_total_color', 'preview_total_size', 'preview_total_fill_color', 'normal_mean_color',
              'normal_mean_size', 'normal_mean_fill_color', 'total_color', 'total_size', 'total_fill_color',
              'preview_mean_color', 'preview_mean_size', 'preview_mean_fill_color'], axis=1)
-        detailed_data['request_datetime_interval'] = detailed_data['request_datetime_interval'].dt.tz_convert(None).apply(
+        detailed_data['request_datetime_interval'] = detailed_data['request_datetime_interval'].dt.tz_convert(
+            None).apply(
             lambda x: str(x))
         detailed_data['improve'] = detailed_data['improve'].apply(lambda x: "{0:.1f}%".format(x))
         detailed_data['effort_score_sum'] = detailed_data['effort_score_sum'].apply(lambda x: round(x, 0))
-        detailed_data['preview_effort_score_sum'] = detailed_data['preview_effort_score_sum'].apply(lambda x: round(x, 0))
+        detailed_data['preview_effort_score_sum'] = detailed_data['preview_effort_score_sum'].apply(
+            lambda x: round(x, 0))
         detailed_data['effort_score_mean'] = detailed_data['effort_score_mean'].apply(lambda x: "{0:.1f}".format(x))
         detailed_data['preview_effort_score_mean'] = detailed_data['preview_effort_score_mean'].apply(
             lambda x: "{0:.1f}".format(x))
 
-        detailed_data.columns = ['Timestamp', 'Average Effort', 'Total Effort', 'Count', 'Average Effort (preview)',
+        detailed_data.columns = ['Time Interval', 'Average Effort', 'Total Effort', 'Number of Utterances',
+                                 'Average Effort (preview)',
                                  'Total Effort (preview)', 'Improving %']
 
         detailed_data_source = ColumnDataSource(detailed_data)
@@ -1445,7 +1476,7 @@ def show_effort_over_time(disambiguation_utterances, interval):
                 const n = circle1.data;
                 const a = circle2.data;
                 const p = circle3.data;
-    
+
                 for (var i = 0; i < d['preview_total_size'].length; i++) {
                     if (i == source1.selected['indices'][0]) {
                         d['preview_total_size'][i] = 15
@@ -1457,7 +1488,7 @@ def show_effort_over_time(disambiguation_utterances, interval):
                         d['preview_total_fill_color'][i] = '#878787'
                     }                
                 }
-    
+
                 for (var i = 0; i < n['normal_mean_size'].length; i++) {
                     if (i == source1.selected['indices'][0]) {
                         n['normal_mean_size'][i] = 15
@@ -1488,369 +1519,6 @@ def show_effort_over_time(disambiguation_utterances, interval):
         detailed_data_source.selected.js_on_change('indices', callback_test)
 
         layout = column(p, row(toggle_sum, toggle_mean, toggle, sizing_mode="stretch_width"),
-                        row(data_table, sizing_mode="stretch_width"), row(detailed_data_table, sizing_mode="stretch_width"))
+                        row(data_table, sizing_mode="stretch_width"),
+                        row(detailed_data_table, sizing_mode="stretch_width"))
         show(layout)
-
-
-def show_effort_over_time_(disambiguation_utterances, interval):
-    delta = None
-    start_applied_idx = disambiguation_utterances.auto_learn_apply.first_valid_index()
-    end_applied_idx = disambiguation_utterances.auto_learn_apply.last_valid_index()
-
-    if start_applied_idx is not None and end_applied_idx is not None:
-        none_list = disambiguation_utterances[start_applied_idx:end_applied_idx][
-            disambiguation_utterances[start_applied_idx:end_applied_idx]['auto_learn_apply'].isnull()].index.tolist()
-        none_list.insert(0, start_applied_idx)
-        none_list.append(end_applied_idx)
-        intervals = list(split_tol(none_list, 1))
-        time_intervals = [
-            [disambiguation_utterances.iloc[x[0]].request_timestamp,
-             disambiguation_utterances.iloc[x[-1]].request_timestamp]
-            for x in intervals]
-    else:
-        time_intervals = list()
-
-    # start_timestamp = disambiguation_utterances.iloc[start_applied_idx].request_timestamp
-    # end_timestamp = disambiguation_utterances.iloc[end_applied_idx].request_timestamp
-
-    if interval == 'minute':
-        disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=d.minute, hour=d.hour) + timedelta(minutes=(d.second // 30)) for d
-            in disambiguation_utterances.request_timestamp]
-        delta = timedelta(minutes=1)
-
-        for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
-            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=start_timestamp.minute,
-                                                             hour=start_timestamp.hour) + timedelta(
-                minutes=(start_timestamp.second // 30))
-            time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=end_timestamp.minute,
-                                                           hour=end_timestamp.hour) + timedelta(
-                minutes=(end_timestamp.second // 30))
-    elif interval == '5-minute':
-        disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=d.hour) + timedelta(minutes=(d.minute // 5) * 5) for d in
-            disambiguation_utterances.request_timestamp]
-        delta = timedelta(minutes=5)
-        for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
-            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0,
-                                                             hour=start_timestamp.hour) + timedelta(
-                minutes=(start_timestamp.minute // 5) * 5)
-            time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0,
-                                                           hour=end_timestamp.hour) + timedelta(
-                minutes=(end_timestamp.minute // 5) * 5)
-    elif interval == '15-minute':
-        disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=d.hour) + timedelta(minutes=(d.minute // 15) * 15) for d
-            in disambiguation_utterances.request_timestamp]
-        delta = timedelta(minutes=15)
-        for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
-            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0,
-                                                             hour=start_timestamp.hour) + timedelta(
-                minutes=(start_timestamp.minute // 15) * 15)
-            time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0,
-                                                           hour=end_timestamp.hour) + timedelta(
-                minutes=(end_timestamp.minute // 15) * 15)
-    elif interval == '30-minute':
-        disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=d.hour) + timedelta(minutes=(d.minute // 30) * 30) for d
-            in disambiguation_utterances.request_timestamp]
-        delta = timedelta(minutes=30)
-        for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
-            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0,
-                                                             hour=start_timestamp.hour) + timedelta(
-                minutes=(start_timestamp.minute // 30) * 30)
-            time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0,
-                                                           hour=end_timestamp.hour) + timedelta(
-                minutes=(end_timestamp.minute // 30) * 30)
-    elif interval == 'hour':
-        disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=d.hour) for d in
-            disambiguation_utterances.request_timestamp]
-        delta = timedelta(minutes=60)
-        for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
-            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0, hour=start_timestamp.hour)
-            time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=end_timestamp.hour)
-    elif interval == 'day':
-        disambiguation_utterances['request_datetime_interval'] = [d.replace(second=0, microsecond=0, minute=0, hour=0)
-                                                                  for d in disambiguation_utterances.request_timestamp]
-        delta = timedelta(days=1)
-        for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
-            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0, hour=0)
-            time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=0)
-    elif interval == 'week':
-        disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(minutes=(d.day // 7) * 7) for d in
-            disambiguation_utterances.request_timestamp]
-        delta = timedelta(days=7)
-        for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
-            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(
-                minutes=(start_timestamp.day // 7) * 7)
-            time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(
-                minutes=(end_timestamp.day // 7) * 7)
-    elif interval == 'month':
-        disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) for d in
-            disambiguation_utterances.request_timestamp]
-        delta = timedelta(days=30)
-        for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
-            time_intervals[idx][0] = start_timestamp.replace(second=0, microsecond=0, minute=0, hour=0, day=1)
-            time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=0, day=1)
-    else:
-        print(
-            'Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
-
-    if delta:
-        effort_agg = disambiguation_utterances[
-            ['request_datetime_interval', 'effort_score', 'preview_effort_score']].groupby(
-            ['request_datetime_interval'], as_index=False).agg(
-            {'effort_score': ['mean', 'sum', 'count'], 'preview_effort_score': ['mean', 'sum']})
-
-        effort_agg.columns = ['request_datetime_interval', 'effort_score_mean', 'effort_score_sum', 'count',
-                              'preview_effort_score_mean', 'preview_effort_score_sum']
-
-        start_datetime = effort_agg.request_datetime_interval.iloc[0]
-        end_datetime = effort_agg.request_datetime_interval.iloc[-1]
-        if start_datetime == end_datetime:
-            start_datetime -= delta
-            end_datetime += delta
-
-        time_index_df = pd.DataFrame([dt for dt in datetime_range(start_datetime, end_datetime, delta)],
-                                     columns=['request_datetime_interval'])
-
-        effort_data = time_index_df.merge(effort_agg, how='left', on=['request_datetime_interval'])
-        effort_data['effort_score_mean'] = effort_data['effort_score_mean'].fillna(0)
-        effort_data['effort_score_sum'] = effort_data['effort_score_sum'].fillna(0)
-        effort_data['preview_effort_score_mean'] = effort_data['preview_effort_score_mean'].fillna(0)
-        effort_data['preview_effort_score_sum'] = effort_data['preview_effort_score_sum'].fillna(0)
-        effort_data['count'] = effort_data['count'].fillna(0)
-
-        output_notebook(hide_banner=True)
-
-        p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
-                   x_range=(start_datetime, end_datetime),
-                   y_range=(0, effort_data['effort_score_sum'].max() * 1.1), title='Total customer effort over time')
-        p.yaxis.axis_label = 'Total Customer Effort'
-
-        p.extra_y_ranges["effort_score_mean"] = Range1d(start=0, end=effort_data['effort_score_mean'].max() * 1.1)
-
-        p.grid.minor_grid_line_color = '#eeeeee'
-
-        actual_line = p.line(x='request_datetime_interval', y='effort_score_sum', legend_label='Total Effort',
-                             source=effort_data,
-                             line_width=1.5, color='#D82377')
-        effort_data['total_color'] = '#D82377'
-        effort_data['total_size'] = 5
-        effort_data['total_fill_color'] = '#D82377'
-        source_actual_circle = ColumnDataSource(effort_data)
-        actual_circle = p.circle(x='request_datetime_interval', y='effort_score_sum', legend_label='Total Effort',
-                                 source=source_actual_circle, size='total_size', fill_color="total_fill_color",
-                                 color='total_color', alpha=1)
-        p.add_layout(actual_line)
-        p.add_layout(actual_circle)
-
-        normal_line = p.line(x='request_datetime_interval', y='effort_score_mean', source=effort_data,
-                             legend_label='Average Effort',
-                             line_width=1.5, color='#4fa8f6', y_range_name="effort_score_mean", visible=False)
-
-        effort_data['normal_mean_color'] = '#4fa8f6'
-        effort_data['normal_mean_size'] = 5
-        effort_data['normal_mean_fill_color'] = '#4fa8f6'
-        normal_source_circle = ColumnDataSource(effort_data)
-
-        normal_circle = p.circle(x='request_datetime_interval', y='effort_score_mean', source=normal_source_circle,
-                                 size='normal_mean_size',
-                                 legend_label='Average Effort', fill_color="normal_mean_fill_color",
-                                 color='normal_mean_color', alpha=1, y_range_name="effort_score_mean", visible=False)
-        p.add_layout(normal_line)
-        p.add_layout(normal_circle)
-
-        preview_normal_line = p.line(x='request_datetime_interval', y='preview_effort_score_mean',
-                                     legend_label='Average Effort (preview)', y_range_name="effort_score_mean",
-                                     visible=False, line_dash="4 4", source=effort_data,
-                                     line_width=1.5, color='#878787')
-
-        p.xaxis.formatter = DatetimeTickFormatter(
-            seconds=["%Y-%m-%d %H:%M:%S"],
-            minsec=["%Y-%m-%d %H:%M:%S"],
-            minutes=["%Y-%m-%d %H:%M:%S"],
-            hourmin=["%Y-%m-%d %H:%M:%S"],
-            hours=["%Y-%m-%d %H:%M:%S"],
-            days=["%Y-%m-%d %H:%M:%S"],
-            months=["%Y-%m-%d %H:%M:%S"],
-            years=["%Y-%m-%d %H:%M:%S"],
-        )
-        p.xaxis.major_label_orientation = 0.5
-        hover = HoverTool(
-            tooltips=[
-                ("Datetime", "@request_datetime_interval{%Y-%m-%d %H:%M:%S}"),
-                ("Number of Utterances", "@count{0}"),
-                ("Total Effort", "@effort_score_sum{0}"),
-                ("Total Effort (preview)", "@preview_effort_score_sum{0}"),
-                ("Average Effort", "@effort_score_mean{0}"),
-                ("Average Effort (preview)", "@preview_effort_score_mean{0}")
-            ],
-            formatters={
-                '@request_datetime_interval': 'datetime'
-            },
-        )
-        p.add_tools(hover)
-
-        p.title.align = 'center'
-        p.title.text_font_size = '12pt'
-        p.axis.major_label_text_font_size = "10pt"
-
-        toggle = Toggle(label="Auto Learning Applied Period", button_type="default", active=False, align='center')
-        toggle_mean = Toggle(label="Average Customer Effort", button_type="default", active=False, align='center')
-        toggle_sum = Toggle(label="Total Customer Effort", button_type="default", active=True, align='center')
-        if len(time_intervals) > 0:
-            for [start_timestamp, end_timestamp] in time_intervals:
-                box = BoxAnnotation(left=start_timestamp, right=end_timestamp,
-                                    line_width=1, line_color='black', line_dash='dashed',
-                                    fill_alpha=0.2, fill_color='orange', visible=False)
-                p.add_layout(box)
-
-            select_callback = CustomJS(args=dict(toggle=toggle, box=box), code="""
-                    if(toggle.active==true) {
-                         box.visible = true
-                    } else {
-                        box.visible = false
-                    }
-    
-                """)
-            toggle.js_on_change('active', select_callback)
-
-        total_items = p.legend[0].items[:1]
-        avg_items = p.legend[0].items[1:2]
-        p.legend[0].items = total_items
-        element_dict = dict(legend=p.legend[0], title=p.title, y_axis=p.yaxis[0], y_range=p.y_range,
-                            total_range=effort_data['effort_score_sum'].max() * 1.1,
-                            normal_range=effort_data['effort_score_mean'].max() * 1.1, total_items=total_items,
-                            avg_items=avg_items, toggle_mean=toggle_mean, toggle_sum=toggle_sum, actual_line=actual_line,
-                            actual_circle=actual_circle,
-                            normal_line=normal_line, normal_circle=normal_circle)
-        normalize_callback = CustomJS(args=element_dict, code="""
-            if(toggle_mean.active==true) {
-                 normal_line.visible = true
-                 normal_circle.visible = true
-                 actual_line.visible = false
-                 actual_circle.visible = false
-                 legend.items = avg_items
-                 y_range.end = normal_range
-                 y_axis.axis_label='Average Customer Effort'
-                 title.text='Average customer effort over time'
-                 toggle_sum.active=false
-    
-            } else {
-                normal_line.visible = false
-                normal_circle.visible = false
-                actual_line.visible = true
-                actual_circle.visible = true
-                legend.items = total_items
-                y_range.end = total_range
-                y_axis.axis_label='Total Customer Effort'
-                title.text='Total customer effort over time'
-                toggle_sum.active=true
-            }
-        """)
-        normalize_callback_sum = CustomJS(args=element_dict, code="""
-            if(toggle_sum.active==true) {
-                        normal_line.visible = false
-                normal_circle.visible = false
-                actual_line.visible = true
-                actual_circle.visible = true
-                legend.items = total_items
-                y_range.end = total_range
-                y_axis.axis_label='Total Customer Effort'
-                title.text='Total customer effort over time'
-    
-                 toggle_mean.active=false
-    
-            } else {
-                 normal_line.visible = true
-                 normal_circle.visible = true
-                 actual_line.visible = false
-                 actual_circle.visible = false
-                 legend.items = avg_items
-                 y_range.end = normal_range
-                 y_axis.axis_label='Average Customer Effort'
-                 title.text='Average customer effort over time'
-                toggle_mean.active=true
-            }
-        """)
-        toggle_mean.js_on_change('active', normalize_callback)
-        toggle_sum.js_on_change('active', normalize_callback_sum)
-        p.legend.click_policy = "hide"
-        p.legend.orientation = "horizontal"
-        p.legend.location = 'bottom_right'
-        #     table_source = ColumnDataSource(top_confused_pairs)
-        effort_data['improve'] = (effort_data['effort_score_mean'] - effort_data['preview_effort_score_mean']) / \
-                                 effort_data['effort_score_mean'] * 100
-        effort_data['improve'] = effort_data['improve'].fillna(0)
-
-        statistics = {}
-        statistics['Number of Intervals'] = len(effort_data['request_datetime_interval'])
-        statistics['Average Improving %'] = ["{0:.1f}%".format(effort_data['improve'].mean())]
-        statistics['Max Improving %'] = ["{0:.1f}%".format(effort_data['improve'].max())]
-        statistics['Max Improving Interval'] = [
-            str(effort_data.iloc[effort_data['improve'].idxmax()]['request_datetime_interval'].tz_convert(None))]
-        statistics['Min Improving %'] = ["{0:.1f}%".format(effort_data['improve'].min())]
-        statistics['Min Improving Interval'] = [
-            str(effort_data.iloc[effort_data['improve'].idxmin()]['request_datetime_interval'].tz_convert(None))]
-
-        statistics_pd = pd.DataFrame.from_dict(statistics)
-        table_source = ColumnDataSource(statistics_pd)
-        columns = [TableColumn(field=Ci, title=Ci) for Ci in statistics_pd.columns]
-        data_table = DataTable(source=table_source, columns=columns, height=60, index_position=None)
-
-        detailed_data = effort_data.copy().drop(
-            ['normal_mean_color', 'normal_mean_size', 'normal_mean_fill_color', 'total_color', 'total_size',
-             'total_fill_color'], axis=1)
-        detailed_data['request_datetime_interval'] = detailed_data['request_datetime_interval'].dt.tz_convert(None).apply(
-            lambda x: str(x))
-        detailed_data['improve'] = detailed_data['improve'].apply(lambda x: "{0:.1f}%".format(x))
-        detailed_data['effort_score_sum'] = detailed_data['effort_score_sum'].apply(lambda x: round(x, 0))
-        detailed_data['preview_effort_score_sum'] = detailed_data['preview_effort_score_sum'].apply(lambda x: round(x, 0))
-        detailed_data['effort_score_mean'] = detailed_data['effort_score_mean'].apply(lambda x: "{0:.1f}".format(x))
-        detailed_data['preview_effort_score_mean'] = detailed_data['preview_effort_score_mean'].apply(
-            lambda x: "{0:.1f}".format(x))
-
-        detailed_data.columns = ['Timestamp', 'Average Effort', 'Total Effort', 'Count', 'Average Effort (preview)',
-                                 'Total Effort (preview)', 'Improving %']
-
-        detailed_data_source = ColumnDataSource(detailed_data)
-        detailed_columns = [TableColumn(field=Ci, title=Ci) for Ci in detailed_data.columns]
-        detailed_data_table = DataTable(source=detailed_data_source, columns=detailed_columns, height=200,
-                                        index_position=None)
-
-        # actual_circle.glyph.to_json_string(True)
-
-        callback_test = CustomJS(args=dict(title=p.title, source1=detailed_data_source, circle1=normal_source_circle,
-                                           circle2=source_actual_circle), code="""
-                const n = circle1.data;
-                const a = circle2.data;
-    
-    
-                for (var i = 0; i < n['normal_mean_size'].length; i++) {
-                    if (i == source1.selected['indices'][0]) {
-                        n['normal_mean_size'][i] = 15
-                    } else {
-                        n['normal_mean_size'][i] = 5
-                    }                
-                }
-                for (var i = 0; i < a['total_size'].length; i++) {
-                    if (i == source1.selected['indices'][0]) {
-                        a['total_size'][i] = 15
-                    } else {
-                        a['total_size'][i] = 5
-                    }                
-                }
-    
-                circle1.change.emit();
-                circle2.change.emit();
-        """)
-
-        detailed_data_source.selected.js_on_change('indices', callback_test)
-
-        layout = column(p, row(toggle_sum, toggle_mean, toggle, sizing_mode="stretch_width"))
-        show(layout)
-

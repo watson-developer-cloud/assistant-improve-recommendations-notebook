@@ -243,7 +243,7 @@ def format_logs(df):
                     df['response_context'].apply(pd.Series).add_prefix('response_context_'),
                     pd.DataFrame(df['response_output'].tolist()).add_prefix('response_')], axis=1)
 
-    print('Extracting suggestions ...')
+    print('Extracting disambiguation traffic ...')
     df = pd.concat([df.drop(['response_generic'], axis=1),
                     df['response_generic'].apply(pd.Series).add_prefix('response_generic_')], axis=1)
     df = pd.concat([df.drop(['response_generic_0'], axis=1),
@@ -262,7 +262,7 @@ def format_logs(df):
                         df.response_debug.replace({np.nan: None}).apply(extract_autolearn_debug)], axis=1)
 
     if 'response_alternate_responses' in df:
-        print('Extracting more options ...')
+        print('Extracting more options traffic ...')
         df = pd.concat([df.drop(['response_alternate_responses'], axis=1),
                          df['response_alternate_responses'].apply(pd.Series).add_prefix('response_alternate_responses_')],
                         axis=1)
