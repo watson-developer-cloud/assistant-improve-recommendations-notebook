@@ -140,8 +140,8 @@ def generate_cooccurrence_matrix(data, workspace_nodes=None):
 def extract_suggestions(items):
     suggestions = list()
     for item in items:
-        if item['label'] == 'None of the above':
-            dialog_node = 'None of the above'
+        if item['label'] == 'None of the above.':
+            dialog_node = 'None of the above.'
         else:
             dialog_node = item['dialog_node']
         if 'intents' in item['value']:
@@ -295,7 +295,7 @@ def get_rank(item):
         more_option_dialog_node_list = [s[3] for s in item.more_option_list]
         if item.request_input_suggestion_id in more_option_id_list:
             select_pos = more_option_id_list.index(item.request_input_suggestion_id)
-            if item.more_option_list[select_pos][2] == 'None of the above':
+            if item.more_option_list[select_pos][2] == 'None of the above.':
                 select_pos = -1
             return None, select_pos, more_option_dialog_node_list[select_pos]
         else:
@@ -332,7 +332,7 @@ def calculate_preview_effort(item):
                 selected_more_option_intent = more_option_id_intent[item.request_input_suggestion_id]
                 preview_more_option_intents = [s['intent'] if 'intent' in s else s['label'] for s in
                                                preview_data['more_option']]
-                if selected_more_option_intent == 'None of the above':
+                if selected_more_option_intent == 'None of the above.':
                     effort_score = 200
                 else:
                     if selected_more_option_intent in preview_more_option_intents:

@@ -26,7 +26,7 @@ def show_top_node_effort(disambiguation_utterances, top=10, assistant_nodes=None
     dialog_node_effort_overall_df = dialog_node_effort_overall_df.reset_index()
 
     dialog_node_effort_overall_df = dialog_node_effort_overall_df[
-        dialog_node_effort_overall_df.selected_dialog_node != 'None of the above']
+        dialog_node_effort_overall_df.selected_dialog_node != 'None of the above.']
 
     for idx, item in dialog_node_effort_overall_df.iterrows():
         if item.selected_dialog_node in node_title_map:
