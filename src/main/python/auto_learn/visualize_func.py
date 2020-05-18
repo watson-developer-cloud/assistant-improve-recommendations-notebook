@@ -1068,8 +1068,12 @@ def split_tol(test_list, tol):
 
 def show_effort_over_time(disambiguation_utterances, interval):
     delta = None
-    start_applied_idx = disambiguation_utterances.auto_learn_apply.first_valid_index()
-    end_applied_idx = disambiguation_utterances.auto_learn_apply.last_valid_index()
+    if 'auto_learn_apply' in disambiguation_utterances:
+        start_applied_idx = disambiguation_utterances.auto_learn_apply.first_valid_index()
+        end_applied_idx = disambiguation_utterances.auto_learn_apply.last_valid_index()
+    else:
+        start_applied_idx = None
+        end_applied_idx = None
 
     if start_applied_idx is not None and end_applied_idx is not None:
         none_list = disambiguation_utterances[start_applied_idx:end_applied_idx][
@@ -1084,8 +1088,12 @@ def show_effort_over_time(disambiguation_utterances, interval):
     else:
         time_intervals = list()
 
-    start_preview_idx = disambiguation_utterances.auto_learn_preview.first_valid_index()
-    end_preview_idx = disambiguation_utterances.auto_learn_preview.last_valid_index()
+    if 'auto_learn_preview' in disambiguation_utterances:
+        start_preview_idx = disambiguation_utterances.auto_learn_preview.first_valid_index()
+        end_preview_idx = disambiguation_utterances.auto_learn_preview.last_valid_index()
+    else:
+        start_preview_idx = None
+        end_preview_idx = None
     if start_preview_idx is None and end_preview_idx is None:
         preview_data = False
     else:
