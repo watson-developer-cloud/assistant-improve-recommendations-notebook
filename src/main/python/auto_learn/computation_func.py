@@ -61,8 +61,10 @@ def extract_disambiguation_utterances(df_formatted):
                     auto_learn_apply = None
             if utterance.response_generic_0_response_type == 'suggestion':
                 suggestions = utterance.response_generic_0_suggestions
-                auto_learn_preview = utterance.auto_learn_preview
-                auto_learn_apply = utterance.auto_learn_apply
+                if auto_learn_preview in utterance:
+                    auto_learn_preview = utterance.auto_learn_preview
+                if auto_learn_apply in utterance:
+                    auto_learn_apply = utterance.auto_learn_apply
                 num_disambiguation_utterances += 1
                 if not contain_disambiguation:
                     contain_disambiguation = True
@@ -306,7 +308,9 @@ def get_rank(item):
 
 def calculate_preview_effort(item):
     effort_score = -1
-    preview_data = item.auto_learn_preview
+    preview_data = None
+    if 'auto_learn_preview' in item:
+        preview_data = item.auto_learn_preview
     if preview_data is None:
         return effort_score
     disambiguation_id_intent = {s[0]: s[1][0]['intent'] if len(s[1]) > 0 else s[2] for s in item.suggestion_list}
