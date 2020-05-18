@@ -790,8 +790,13 @@ def show_click_vs_effort(disambiguation_utterances, interval):
     delta = None
     bar_width = None
 
-    start_applied_idx = disambiguation_utterances.auto_learn_apply.first_valid_index()
-    end_applied_idx = disambiguation_utterances.auto_learn_apply.last_valid_index()
+    if 'auto_learn_apply' in disambiguation_utterances:
+        start_applied_idx = disambiguation_utterances.auto_learn_apply.first_valid_index()
+        end_applied_idx = disambiguation_utterances.auto_learn_apply.last_valid_index()
+    else:
+        start_applied_idx = None
+        end_applied_idx = None
+
     if start_applied_idx is not None and end_applied_idx is not None:
         none_list = disambiguation_utterances[start_applied_idx:end_applied_idx][
             disambiguation_utterances[start_applied_idx:end_applied_idx]['auto_learn_apply'].isnull()].index.tolist()
