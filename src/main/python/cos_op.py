@@ -246,7 +246,7 @@ def export_result_excel(df_effective, sample_size=100, project_io=None):
     df_escalated_true = df_excel.loc[df_excel['Escalated conversation?']==True]
 
     # Sample escalated conversations
-    if sample_size > 0:
+    if sample_size > 0 and len(df_escalated_true) > 0:
         # Get unique escalated conversation ids
         conversation_ids = df_escalated_true['Conversation ID'].unique()
         sampled_conversation_ids = np.random.choice(conversation_ids, sample_size)
