@@ -1,5 +1,4 @@
 import argparse
-from ibm_cloud_sdk_core.authenticators import BasicAuthenticator
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson import AssistantV1
 
@@ -87,8 +86,7 @@ if __name__ == '__main__':
     args = parse_args()
     print(vars(args))
 
-    authenticator = BasicAuthenticator('apikey', args.apikey)
-    # authenticator = IAMAuthenticator(args.apikey)
+    authenticator = IAMAuthenticator(args.apikey)
     sdk_object = AssistantV1(version=args.version, authenticator=authenticator)
     sdk_object.set_service_url(args.url)
 
