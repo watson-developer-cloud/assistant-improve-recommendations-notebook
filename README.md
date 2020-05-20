@@ -11,6 +11,11 @@ The Measure notebook contains a set of automated metrics that help you monitor a
 ### Effectiveness Notebook 
 The Effectiveness notebook helps you understand relative performance of each intent and entity as well as the confusion between your intents. This information helps you prioritize your improvement effort. 
 
+### Logs Notebook
+The Logs notebook helps you fetch logs using Watson Assistant API.  You can fetch logs with various filters, and save them as a JSON file, or export the utterances in the logs into a CSV file.  The JSON file can be loaded into the Measure notebook.  The CSV file can be updated to Watson Assistant service for intent recommendation.  
+
+Alternatively, you can run python scripts [`get_logs`](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/src/main/python/get_logs.py) and [`export_csv_for_intent_recommendation`](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/src/main/python/export_csv_for_intent_recommendation.py) to fetch logs and export them to intent recommendation CSV, respectively.  Run `python get_logs -h` and `python export_csv_for_intent_recommendation.py -h` for usage.
+
 ## Getting Started
 
 We provide two versions of the above notebooks Jupyter Notebook and [Watson Studio Notebook](https://dataplatform.cloud.ibm.com/docs/content/wsj/analyze-data/notebooks-parent.html).
@@ -23,6 +28,7 @@ We provide two versions of the above notebooks Jupyter Notebook and [Watson Stud
     
        - [Measure Notebook.ipynb](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Measure%20Notebook.ipynb)
        - [Effectiveness Notebook.ipynb](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Effectiveness%20Notebook.ipynb)
+       - [Logs Notebook.ipynd](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Logs%20Notebook.ipynb)
        
        __Note: These notebook files are not designed for Watson Studio environment__
        
