@@ -16,7 +16,7 @@ The Logs notebook helps you fetch logs using Watson Assistant API.  You can fetc
 
 Alternatively, you can run python scripts [`fetch_logs`](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/src/main/python/fetch_logs.py) and [`export_csv_for_intent_recommendation`](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/src/main/python/export_csv_for_intent_recommendation.py) to fetch logs and export them to [intent recommendation CSV](https://cloud.ibm.com/docs/assistant?topic=assistant-intent-recommendations#intent-recommendations-data-resources), respectively.  Run `python get_logs -h` and `python export_csv_for_intent_recommendation.py -h` for usage.  For example, to generate intent recommendation CSV from logs:
 
-- Fetch logs by keeping utterances with confidence `response.intents::confidence` between 0.1 and 0.6, and save to JSON file `OUTPUT_JSON_FILE`
+- Fetch logs by keeping first user utterances in conversations with confidence `response.intents::confidence` between 0.1 and 0.6, and save to JSON file `OUTPUT_JSON_FILE`
   ```angular2
   python src/main/python/fetch_logs.py \
   --url URL --version VERSION --apikey API_KEY --skill_id SKILL_ID --assistant_id ASSISTANT_ID \
