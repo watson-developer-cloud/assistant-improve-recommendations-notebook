@@ -28,7 +28,7 @@ We provide two versions of the above notebooks Jupyter Notebook and [Watson Stud
     
        - [Measure Notebook.ipynb](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Measure%20Notebook.ipynb)
        - [Effectiveness Notebook.ipynb](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Effectiveness%20Notebook.ipynb)
-       - [Logs Notebook.ipynd](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Logs%20Notebook.ipynb)
+       - [Logs Notebook.ipynb](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/notebook/Logs%20Notebook.ipynb)
        
        __Note: These notebook files are not designed for Watson Studio environment__
        
