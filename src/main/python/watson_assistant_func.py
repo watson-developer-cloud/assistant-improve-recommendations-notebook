@@ -122,7 +122,6 @@ def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=[], pr
     if (workspace_id is None or len(workspace_id) == 0) \
             and (skill_id is None or len(skill_id) == 0):
         raise ValueError('Please provide a valid Workspace ID, or Skill ID!')
-        return None
 
     # check if filename exists before retrieving logs
     if filename and not overwrite:
@@ -130,10 +129,9 @@ def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=[], pr
             for file in project.get_files():
                 if file['name'] == filename:
                     raise FileExistsError('{} exists, set overwrite=True to overwrite'.format(filename))
-                    return None
+
         elif os.path.exists(filename):
             raise FileExistsError('{} exists, set overwrite=True to overwrite'.format(filename))
-            return None
 
     # adding default filters based on assistant_id and workspace_id
     if assistant_id is not None and len(assistant_id) > 0:
@@ -213,7 +211,7 @@ def export_csv_for_intent_recommendation(logs,
         messages = [[m] for m in set(messages)]
     else:
         messages = [[m] for m in messages]
-    print('\nExporting {} messages into CSV...'.format(len(messages), filename))
+    print('\nExporting {} messages into CSV...'.format(len(messages)))
 
     if project:
         with open(filename, 'wb') as fp:
