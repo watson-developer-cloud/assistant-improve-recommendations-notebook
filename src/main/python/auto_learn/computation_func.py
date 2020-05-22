@@ -167,7 +167,11 @@ def extract_suggestions(items):
     for item in items:
         if len(item['value']['intents']) == 0:
             dialog_node = item['label']
-            none_node = True
+            if len(item['output']['generic']) > 0:
+                if item['output']['generic'][0]['response_type'] == 'search_skill':
+                    none_node = False
+            else:
+                none_node = True
         else:
             dialog_node = item['dialog_node']
             none_node = False
