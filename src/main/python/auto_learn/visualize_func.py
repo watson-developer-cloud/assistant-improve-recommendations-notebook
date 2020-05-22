@@ -10,6 +10,7 @@ from bokeh.palettes import brewer
 from bokeh.transform import transform
 import pandas as pd
 from datetime import date, datetime, timedelta
+import numpy as np
 
 
 def show_top_node_effort(disambiguation_utterances, top=10, assistant_nodes=None):
@@ -17,6 +18,11 @@ def show_top_node_effort(disambiguation_utterances, top=10, assistant_nodes=None
     for idx, node in assistant_nodes.iterrows():
         if str(node['title']) != 'nan':
             node_title_map[node['dialog_node']] = node['title']
+
+    none_above_node_name = list(disambiguation_utterances[disambiguation_utterances[
+                                                              'is_none_above_node'] == True].selected_dialog_node.unique())
+    if len(none_above_node_name) > 1:
+        print('Found more than one \'None of the Above\' nodes.')
 
     dialog_node_effort_overall_df = disambiguation_utterances[['selected_dialog_node', 'effort_score']].groupby(
         'selected_dialog_node').agg({'effort_score': 'mean', 'selected_dialog_node': 'size'}).sort_values(
@@ -26,7 +32,7 @@ def show_top_node_effort(disambiguation_utterances, top=10, assistant_nodes=None
     dialog_node_effort_overall_df = dialog_node_effort_overall_df.reset_index()
 
     dialog_node_effort_overall_df = dialog_node_effort_overall_df[
-        dialog_node_effort_overall_df.selected_dialog_node != 'None of the above.']
+        ~dialog_node_effort_overall_df['selected_dialog_node'].isin(none_above_node_name)]
 
     for idx, item in dialog_node_effort_overall_df.iterrows():
         if item.selected_dialog_node in node_title_map:
@@ -148,6 +154,15 @@ def show_node_effort(disambiguation_utterances, assistant_nodes=None, interval=N
             ['request_datetime_interval', 'selected_dialog_node'], as_index=False).agg({'effort_score': 'mean'})
 
         valid_effort_nodes = dialog_node_effort_df['selected_dialog_node'].unique()
+
+        none_above_node_name = list(disambiguation_utterances[disambiguation_utterances[
+                                                                  'is_none_above_node'] == True].selected_dialog_node.unique())
+        if len(none_above_node_name) > 1:
+            print('Found more than one \'None of the Above\' nodes.')
+
+        if len(none_above_node_name) > 0:
+            index = np.argwhere(valid_effort_nodes == none_above_node_name[0])
+            valid_effort_nodes = np.delete(valid_effort_nodes, index)
 
         node_title_map = dict()
         for idx, node in assistant_nodes.iterrows():
@@ -493,6 +508,10 @@ def show_disambiguation_click(disambiguation_utterances, interval=None):
         click_detail_pd = disambiguation_utterances[['request_datetime_interval', 'select_rank_d']].groupby(
             ['request_datetime_interval', 'select_rank_d'], as_index=False).size().reset_index()
 
+        if click_detail_pd.shape[0] == 0:
+            print('No Disambiguation click found.')
+            return
+
         start_datetime = click_detail_pd.request_datetime_interval.iloc[0]
         end_datetime = click_detail_pd.request_datetime_interval.iloc[-1]
         if start_datetime == end_datetime:
@@ -650,6 +669,10 @@ def show_more_options_click(disambiguation_utterances, interval=None):
         click_detail_pd = disambiguation_utterances[['request_datetime_interval', 'select_rank_a']].groupby(
             ['request_datetime_interval', 'select_rank_a'], as_index=False).size().reset_index()
 
+        if click_detail_pd.shape[0] == 0:
+            print('No More Options click found.')
+            return
+
         start_datetime = click_detail_pd.request_datetime_interval.iloc[0]
         end_datetime = click_detail_pd.request_datetime_interval.iloc[-1]
 
@@ -750,8 +773,8 @@ def show_cooccured_heatmap(cooccurrence_matrix):
     source = ColumnDataSource(df)
     mapper = LinearColorMapper(palette=tuple(reversed(brewer['Blues'][256])), low=df['count'].min(),
                                high=df['count'].max())
-
-    p = figure(plot_width=700, plot_height=600, title="Node Co-occurrence Map",
+    num_elements = cooccurrence_matrix.shape[0]
+    p = figure(plot_width=700 + 8 * num_elements, plot_height=600 + 8 * num_elements, title="Node Co-occurrence Map",
                x_range=list(cooccurrence_matrix.index), y_range=list(reversed(cooccurrence_matrix.columns)),
                toolbar_location=None, tools="hover")
 
@@ -923,6 +946,15 @@ def show_click_vs_effort(disambiguation_utterances, interval):
             'Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
 
     if delta:
+
+        none_above_node_name = list(disambiguation_utterances[disambiguation_utterances[
+                                                                  'is_none_above_node'] == True].selected_dialog_node.unique())
+
+        if len(none_above_node_name) > 1:
+            print('Found more than one \'None of the Above\' nodes.')
+        elif len(none_above_node_name) == 0:
+            none_above_node_name = ['None of the Above']
+
         effort_agg = disambiguation_utterances[['request_datetime_interval', 'effort_score']].groupby(
             ['request_datetime_interval'], as_index=False).agg({'effort_score': ['mean', 'sum', 'count']})
 
@@ -942,7 +974,7 @@ def show_click_vs_effort(disambiguation_utterances, interval):
             ['request_datetime_interval', 'request_input_suggestion_id']].groupby(['request_datetime_interval'],
                                                                                   as_index=False).agg(
             {'request_input_suggestion_id': 'count'})
-        none_click_count = disambiguation_utterances.loc[disambiguation_utterances.select_rank_a == -1][
+        none_click_count = disambiguation_utterances.loc[disambiguation_utterances.is_none_above_node == True][
             ['request_datetime_interval', 'request_input_suggestion_id']].groupby(['request_datetime_interval'],
                                                                                   as_index=False).agg(
             {'request_input_suggestion_id': 'count'})
@@ -984,7 +1016,7 @@ def show_click_vs_effort(disambiguation_utterances, interval):
         p.grid.minor_grid_line_color = '#eeeeee'
 
         names = ['disambiguation_count', 'alternate_click_count', 'none_click_count']
-        legend_names = ['Disambiguation', 'More Options', 'None of the Above']
+        legend_names = ['Disambiguation', 'More Options', none_above_node_name[0]]
         p.vbar_stack(names, x='request_datetime_interval', color=colors, source=effort_data, width=bar_width,
                      legend_label=legend_names, line_color=None, y_range_name="clicks", hover_fill_color='#1C679A',
                      hover_line_color='#1C679A')
@@ -1012,7 +1044,7 @@ def show_click_vs_effort(disambiguation_utterances, interval):
                 ("Datetime", "@request_datetime_interval{%Y-%m-%d %H:%M:%S}"),
                 ("Disambiguation", "@disambiguation_count"),
                 ("More Options", "@alternate_click_count"),
-                ("None of the Above", "@none_click_count"),
+                (none_above_node_name[0], "@none_click_count"),
                 ("Total Clicks", "@total_clicks"),
                 ("Total Effort", "@effort_score_sum{0}")
             ],

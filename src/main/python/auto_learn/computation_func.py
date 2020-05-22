@@ -61,9 +61,9 @@ def extract_disambiguation_utterances(df_formatted):
                     auto_learn_apply = None
             if utterance.response_generic_0_response_type == 'suggestion':
                 suggestions = utterance.response_generic_0_suggestions
-                if auto_learn_preview in utterance:
+                if 'auto_learn_preview' in utterance:
                     auto_learn_preview = utterance.auto_learn_preview
-                if auto_learn_apply in utterance:
+                if 'auto_learn_apply' in utterance:
                     auto_learn_apply = utterance.auto_learn_apply
                 num_disambiguation_utterances += 1
                 if not contain_disambiguation:
@@ -84,10 +84,12 @@ def extract_disambiguation_utterances(df_formatted):
         if contain_disambiguation and contain_more:
             num_both_conversations += 1
 
+
     print('\n\nData Statistics:')
     utterance_statistics = {}
     utterance_statistics['Utterance'] = ['Total', 'Disambiguation', 'More Options', 'Both']
-    utterance_statistics['Count'] = [len(df_formatted.log_id.unique()), num_disambiguation_utterances, num_more_utterances, num_both_utterances]
+    utterance_statistics['Count'] = [len(df_formatted.log_id.unique()), num_disambiguation_utterances, num_more_utterances,
+                                     num_both_utterances]
     utterance_statistics['Percentage'] = ['100.0%', '{}%'.format(round(
         num_disambiguation_utterances / len(df_formatted.log_id.unique()) * 100, 1)), '{}%'.format(round(
         num_more_utterances / len(df_formatted.log_id.unique()) * 100, 1)), '{}%'.format(round(
@@ -95,21 +97,29 @@ def extract_disambiguation_utterances(df_formatted):
 
     statistics_pd = pd.DataFrame.from_dict(utterance_statistics)
     statistics_pd = statistics_pd.set_index('Utterance')
-    utterance_html = statistics_pd.to_html().replace('     <th>Utterance</th>\n      <th></th>\n      <th></th>\n    </tr>\n', '').replace('<th></th>\n', '<th>Utterance</th>\n')
+    utterance_html = statistics_pd.to_html().replace(
+        '     <th>Utterance</th>\n      <th></th>\n      <th></th>\n    </tr>\n', '').replace('<th></th>\n',
+                                                                                              '<th>Utterance</th>\n')
 
     conversation_statistics = {}
     conversation_statistics['Conversation'] = ['Total', 'Disambiguation', 'More Options', 'Both']
-    conversation_statistics['Count'] = [len(conversation_ids), num_disambiguation_conversations, num_more_conversations, num_both_conversations]
+    conversation_statistics['Count'] = [len(conversation_ids), num_disambiguation_conversations, num_more_conversations,
+                                        num_both_conversations]
     conversation_statistics['Percentage'] = ['100.0%', '{}%'.format(round(
         num_disambiguation_conversations / len(conversation_ids) * 100, 1)), '{}%'.format(round(
-        num_more_conversations / len(conversation_ids) * 100, 1)), '{}%'.format(round(num_both_conversations / len(conversation_ids) * 100,
-                                                                   1))]
+        num_more_conversations / len(conversation_ids) * 100, 1)),
+                                             '{}%'.format(round(num_both_conversations / len(conversation_ids) * 100,
+                                                                1))]
 
     statistics_pd = pd.DataFrame.from_dict(conversation_statistics)
     statistics_pd = statistics_pd.set_index('Conversation')
-    conversation_html = statistics_pd.to_html().replace('     <th>Conversation</th>\n      <th></th>\n      <th></th>\n    </tr>\n', '').replace('<th></th>\n', '<th>Conversation</th>\n')
+    conversation_html = statistics_pd.to_html().replace(
+        '     <th>Conversation</th>\n      <th></th>\n      <th></th>\n    </tr>\n', '').replace('<th></th>\n',
+                                                                                                 '<th>Conversation</th>\n')
 
-    display(HTML('<style>.aParent div {{\n float: left;\nclear: none;padding: 20px; \n\}}</style><div class="aParent"><div>{}</div><div>{}</div></div>'.format(utterance_html, conversation_html)))
+    display(HTML(
+        '<style>.aParent div {{\n float: left;\nclear: none;padding: 20px; \n\}}</style><div class="aParent"><div>{}</div><div>{}</div></div>'.format(
+            utterance_html, conversation_html)))
 
     return disambiguation_utterances.sort_values(by='request_timestamp').reset_index(drop=True)
 
@@ -121,10 +131,14 @@ def generate_cooccurrence_matrix(data, workspace_nodes=None):
         suggestion_dialog_node_list = [s[3] for s in item.suggestion_list]
         if len(suggestion_dialog_node_list) > 0:
             all_suggestion_list.append(suggestion_dialog_node_list)
-    combinations = [list(itertools.combinations(i,2)) for i in all_suggestion_list]
-    combinations = list(itertools.chain.from_iterable((i, i[::-1]) for c_ in combinations for i in c_))
-    combination_pd = pd.DataFrame(combinations)
-    cooccurrence_matrix = pd.pivot_table(combination_pd, index=0, columns=1, aggfunc='size', fill_value=0)
+
+    none_above_node_name = list(data[data['is_none_above_node'] == True].selected_dialog_node.unique())
+
+    if len(none_above_node_name) > 1:
+        print('Found more than one \'None of the Above\' nodes.')
+
+    for i in all_suggestion_list:
+        i.remove(none_above_node_name[0])
 
     if workspace_nodes is not None:
         node_title_map = dict()
@@ -132,9 +146,18 @@ def generate_cooccurrence_matrix(data, workspace_nodes=None):
             if str(node['title']) != 'nan':
                 node_title_map[node['dialog_node']] = node['title']
 
-        cooccurrence_matrix.index = [node_title_map[i] if i in node_title_map else i for i in cooccurrence_matrix.index]
-        cooccurrence_matrix.columns = [node_title_map[i] if i in node_title_map else i for i in
-                                       cooccurrence_matrix.columns]
+        def find_node_name(node_list):
+            for idx, node in enumerate(node_list):
+                if node in node_title_map:
+                    node_list[idx] = node_title_map[node]
+            return node_list
+
+        list(map(find_node_name, all_suggestion_list))
+
+    combinations = [list(itertools.combinations(i,2)) for i in all_suggestion_list]
+    combinations = list(itertools.chain.from_iterable((i, i[::-1]) for c_ in combinations for i in c_))
+    combination_pd = pd.DataFrame(combinations)
+    cooccurrence_matrix = pd.pivot_table(combination_pd, index=0, columns=1, aggfunc='size', fill_value=0)
 
     return cooccurrence_matrix
 
@@ -142,16 +165,18 @@ def generate_cooccurrence_matrix(data, workspace_nodes=None):
 def extract_suggestions(items):
     suggestions = list()
     for item in items:
-        if item['label'] == 'None of the above.':
-            dialog_node = 'None of the above.'
+        if len(item['value']['intents']) == 0:
+            dialog_node = item['label']
+            none_node = True
         else:
             dialog_node = item['dialog_node']
+            none_node = False
         if 'intents' in item['value']:
             suggestions.append(
-                (item['value']['input']['suggestion_id'], item['value']['intents'], item['label'], dialog_node))
+                (item['value']['input']['suggestion_id'], item['value']['intents'], item['label'], dialog_node, none_node))
         else:
             suggestions.append((item['value']['input']['suggestion_id'], item['value']['input']['intents'],
-                                item['label'], dialog_node))
+                                item['label'], dialog_node, none_node))
     return suggestions
 
 
@@ -289,56 +314,59 @@ def format_logs(df):
 def get_rank(item):
     suggestion_id_list = [s[0] for s in item.suggestion_list]
     suggestion_dialog_node_list = [s[3] for s in item.suggestion_list]
+    suggestion_none_above_node_list = [s[4] for s in item.suggestion_list]
     if item.request_input_suggestion_id in suggestion_id_list:
         select_pos = suggestion_id_list.index(item.request_input_suggestion_id)
-        return select_pos, None, suggestion_dialog_node_list[select_pos]
+        return select_pos, None, suggestion_dialog_node_list[select_pos], suggestion_none_above_node_list[select_pos]
     elif 'more_option_list' in item.index.values:
         more_option_id_list = [s[0] for s in item.more_option_list]
         more_option_dialog_node_list = [s[3] for s in item.more_option_list]
+        more_option_none_above_node_list = [s[4] for s in item.more_option_list]
         if item.request_input_suggestion_id in more_option_id_list:
             select_pos = more_option_id_list.index(item.request_input_suggestion_id)
-            if item.more_option_list[select_pos][2] == 'None of the above.':
-                select_pos = -1
-            return None, select_pos, more_option_dialog_node_list[select_pos]
+            return None, select_pos, more_option_dialog_node_list[select_pos], more_option_none_above_node_list[select_pos]
         else:
-            return None, None, None
+            return None, None, None, None
     else:
-        return None, None, None
+        return None, None, None, None
 
 
 def calculate_preview_effort(item):
     effort_score = -1
-    preview_data = None
     if 'auto_learn_preview' in item:
         preview_data = item.auto_learn_preview
-    if preview_data is None:
+    else:
         return effort_score
     disambiguation_id_intent = {s[0]: s[1][0]['intent'] if len(s[1]) > 0 else s[2] for s in item.suggestion_list}
+    disambiguation_id_none_above = {s[0]: s[4] for s in item.suggestion_list}
     more_option_id_intent = {s[0]: s[1][0]['intent'] if len(s[1]) > 0 else s[2] for s in item.more_option_list}
+    more_option_id_none_above = {s[0]: s[4] for s in item.more_option_list}
     if item.request_input_suggestion_id in disambiguation_id_intent:
         selected_disambiguation_intent = disambiguation_id_intent[item.request_input_suggestion_id]
         preview_disambiguation_intents = [s['intent'] if 'intent' in s else s['label'] for s in preview_data['disambiguation']]
         if selected_disambiguation_intent in preview_disambiguation_intents:
-            preview_disambiguation_rank = preview_disambiguation_intents.index(selected_disambiguation_intent)
-            if len(preview_disambiguation_intents) == 1:
-                effort_score = 0
+            if disambiguation_id_none_above[item.request_input_suggestion_id] is True:
+                effort_score = NONE_OF_THE_OPTIONS
             else:
-                disambiguation_occurred_multiplier = 1
-                disambiguation_length_multiplier = (1 / (MAX_DISAMBIGUATION_LENGTH - 1)) * (
-                        len(preview_disambiguation_intents) - 1)
-                disambiguation_rank_multiplier = (1 / (MAX_DISAMBIGUATION_LENGTH - 1)) * (preview_disambiguation_rank)
-                effort_score = DISAMBIGUATION_OCCURRED_CONTRIBUTION * disambiguation_occurred_multiplier \
-                               + DISAMBIGUATION_LENGTH_CONTRIBUTION * disambiguation_length_multiplier \
-                               + DISAMBIGUATION_RANK_CONTRIBUTION * disambiguation_rank_multiplier
+                preview_disambiguation_rank = preview_disambiguation_intents.index(selected_disambiguation_intent)
+                if len(preview_disambiguation_intents) == 1:
+                    effort_score = 0
+                else:
+                    disambiguation_occurred_multiplier = 1
+                    disambiguation_length_multiplier = (1 / (MAX_DISAMBIGUATION_LENGTH - 1)) * (
+                            len(preview_disambiguation_intents) - 1)
+                    disambiguation_rank_multiplier = (1 / (MAX_DISAMBIGUATION_LENGTH - 1)) * (preview_disambiguation_rank)
+                    effort_score = DISAMBIGUATION_OCCURRED_CONTRIBUTION * disambiguation_occurred_multiplier \
+                                   + DISAMBIGUATION_LENGTH_CONTRIBUTION * disambiguation_length_multiplier \
+                                   + DISAMBIGUATION_RANK_CONTRIBUTION * disambiguation_rank_multiplier
         else:
             if item.request_input_suggestion_id in more_option_id_intent:
-                print('!!!')
-                selected_more_option_intent = more_option_id_intent[item.request_input_suggestion_id]
-                preview_more_option_intents = [s['intent'] if 'intent' in s else s['label'] for s in
-                                               preview_data['more_option']]
-                if selected_more_option_intent == 'None of the above.':
-                    effort_score = 200
+                if more_option_id_none_above[item.request_input_suggestion_id] is True:
+                    effort_score = NONE_OF_THE_OPTIONS
                 else:
+                    selected_more_option_intent = more_option_id_intent[item.request_input_suggestion_id]
+                    preview_more_option_intents = [s['intent'] if 'intent' in s else s['label'] for s in
+                                                   preview_data['more_option']]
                     if selected_more_option_intent in preview_more_option_intents:
                         preview_more_option_rank = preview_more_option_intents.index(selected_more_option_intent)
                         more_option_occurred_multiplier = 1
@@ -349,7 +377,7 @@ def calculate_preview_effort(item):
                                        MORE_OPTIONS_LENGTH_CONTRIBUTION * more_option_length_multiplier + \
                                        MORE_OPTIONS_RANK_CONTRIBUTION * more_option_rank_multiplier
                     else:
-                        effort_score = 200
+                        effort_score = NONE_OF_THE_OPTIONS
     return effort_score
 
 
@@ -369,29 +397,33 @@ def calculate_effort(data):
             clicked_more_option_rank = None
             effort_score = 0.0
             selected_dialog_node = None
+            is_none_above = False
         else:
-            clicked_suggestion_rank, clicked_more_option_rank, selected_dialog_node = get_rank(item)
+            clicked_suggestion_rank, clicked_more_option_rank, selected_dialog_node, is_none_above = get_rank(item)
             if clicked_suggestion_rank is not None:
-                disambiguation_rank_multiplier = (1 / (MAX_DISAMBIGUATION_LENGTH - 1)) * (clicked_suggestion_rank)
-                effort_score = DISAMBIGUATION_OCCURRED_CONTRIBUTION * disambiguation_occurred_multiplier \
-                               + DISAMBIGUATION_LENGTH_CONTRIBUTION * disambiguation_length_multiplier \
-                               + DISAMBIGUATION_RANK_CONTRIBUTION * disambiguation_rank_multiplier
-            #                 if idx<20:
-            #                     print('suggestion click: {}'.format(clicked_suggestion_rank))
-            #                     print('disambiguation length: {}'.format(len(item.suggestion_list)))
-            #                     print('disambiguation_length_multiplier: {}'.format(disambiguation_length_multiplier))
-            #                     print('disambiguation_occurred_multiplier: {}'.format(disambiguation_occurred_multiplier))
-            #                     print('disambiguation_rank_multiplier: {}'.format(disambiguation_rank_multiplier))
-            #                     print('effort_score: {}*{}+{}*{}+{}*{}={}'.format(DISAMBIGUATION_OCCURRED_CONTRIBUTION,
-            #                                                                    disambiguation_occurred_multiplier,
-            #                                                                    DISAMBIGUATION_LENGTH_CONTRIBUTION,
-            #                                                                    disambiguation_length_multiplier,
-            #                                                                    DISAMBIGUATION_RANK_CONTRIBUTION,
-            #                                                                    disambiguation_rank_multiplier,
-            #                                                                    effort_score))
+                if is_none_above is True:
+                    effort_score = NONE_OF_THE_OPTIONS
+                else:
+                    disambiguation_rank_multiplier = (1 / (MAX_DISAMBIGUATION_LENGTH - 1)) * (clicked_suggestion_rank)
+                    effort_score = DISAMBIGUATION_OCCURRED_CONTRIBUTION * disambiguation_occurred_multiplier \
+                                   + DISAMBIGUATION_LENGTH_CONTRIBUTION * disambiguation_length_multiplier \
+                                   + DISAMBIGUATION_RANK_CONTRIBUTION * disambiguation_rank_multiplier
+#                 if idx<20:
+#                     print('suggestion click: {}'.format(clicked_suggestion_rank))
+#                     print('disambiguation length: {}'.format(len(item.suggestion_list)))
+#                     print('disambiguation_length_multiplier: {}'.format(disambiguation_length_multiplier))
+#                     print('disambiguation_occurred_multiplier: {}'.format(disambiguation_occurred_multiplier))
+#                     print('disambiguation_rank_multiplier: {}'.format(disambiguation_rank_multiplier))
+#                     print('effort_score: {}*{}+{}*{}+{}*{}={}'.format(DISAMBIGUATION_OCCURRED_CONTRIBUTION,
+#                                                                    disambiguation_occurred_multiplier,
+#                                                                    DISAMBIGUATION_LENGTH_CONTRIBUTION,
+#                                                                    disambiguation_length_multiplier,
+#                                                                    DISAMBIGUATION_RANK_CONTRIBUTION,
+#                                                                    disambiguation_rank_multiplier,
+#                                                                    effort_score))
             else:
                 if clicked_more_option_rank is not None:
-                    if clicked_more_option_rank < 0:
+                    if is_none_above is True:
                         effort_score = NONE_OF_THE_OPTIONS
                     else:
                         more_option_rank_multiplier = (1 / (MAX_MORE_OPTION_LENGTH - 1)) * (clicked_more_option_rank)
@@ -401,24 +433,25 @@ def calculate_effort(data):
                 else:
                     effort_score = 0.0
 
-        #                 if idx<20:
-        #                         print('more option click: {}'.format(clicked_more_option_rank))
-        #                         print('more option length: {}'.format(len(item.more_option_list)))
-        #                         print('more_option_length_multiplier: {}'.format(more_option_length_multiplier))
-        #                         print('more_option_occurred_multiplier: {}'.format(more_option_occurred_multiplier))
-        #                         print('more_option_rank_multiplier: {}'.format(more_option_rank_multiplier))
-        #                         print('effort_score: {}*{}+{}*{}+{}*{}={}'.format(MORE_OPTIONS_CONTRIBUTION,
-        #                                                                        more_option_occurred_multiplier,
-        #                                                                        MORE_OPTIONS_LENGTH_CONTRIBUTION,
-        #                                                                        more_option_length_multiplier,
-        #                                                                        MORE_OPTIONS_RANK_CONTRIBUTION,
-        #                                                                        more_option_rank_multiplier,
-        #                                                                        effort_score))
+#                 if idx<20:
+#                         print('more option click: {}'.format(clicked_more_option_rank))
+#                         print('more option length: {}'.format(len(item.more_option_list)))
+#                         print('more_option_length_multiplier: {}'.format(more_option_length_multiplier))
+#                         print('more_option_occurred_multiplier: {}'.format(more_option_occurred_multiplier))
+#                         print('more_option_rank_multiplier: {}'.format(more_option_rank_multiplier))
+#                         print('effort_score: {}*{}+{}*{}+{}*{}={}'.format(MORE_OPTIONS_CONTRIBUTION,
+#                                                                        more_option_occurred_multiplier,
+#                                                                        MORE_OPTIONS_LENGTH_CONTRIBUTION,
+#                                                                        more_option_length_multiplier,
+#                                                                        MORE_OPTIONS_RANK_CONTRIBUTION,
+#                                                                        more_option_rank_multiplier,
+#                                                                        effort_score))
 
         data.at[idx, 'effort_score'] = effort_score
         data.at[idx, 'select_rank_d'] = clicked_suggestion_rank
         data.at[idx, 'select_rank_a'] = clicked_more_option_rank
         data.at[idx, 'selected_dialog_node'] = selected_dialog_node
+        data.at[idx, 'is_none_above_node'] = is_none_above
         data.at[idx, 'preview_effort_score'] = calculate_preview_effort(item)
 
     data['preview_effort_score'] = np.where(data['preview_effort_score'] == -1, data['effort_score'],
