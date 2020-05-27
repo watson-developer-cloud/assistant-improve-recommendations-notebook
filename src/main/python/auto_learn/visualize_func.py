@@ -952,10 +952,12 @@ def show_click_vs_effort(disambiguation_utterances, interval):
         none_above_node_name = list(disambiguation_utterances[disambiguation_utterances[
                                                                   'is_none_above_node'] == True].selected_dialog_node.unique())
 
+        none_above_node_label = 'N/A'
         if len(none_above_node_name) > 1:
+            none_above_node_label = none_above_node_name[0]
             print('Found more than one \'None of the Above\' nodes.')
-        elif len(none_above_node_name) == 0:
-            none_above_node_name = ['None of the Above']
+        elif len(none_above_node_name) == 1:
+            none_above_node_label = none_above_node_name[0]
 
         effort_agg = disambiguation_utterances[['request_datetime_interval', 'effort_score']].groupby(
             ['request_datetime_interval'], as_index=False).agg({'effort_score': ['mean', 'sum', 'count']})
@@ -1018,7 +1020,7 @@ def show_click_vs_effort(disambiguation_utterances, interval):
         p.grid.minor_grid_line_color = '#eeeeee'
 
         names = ['disambiguation_count', 'alternate_click_count', 'none_click_count']
-        legend_names = ['Disambiguation', 'More Options', none_above_node_name[0]]
+        legend_names = ['Disambiguation', 'More Options', none_above_node_label]
         p.vbar_stack(names, x='request_datetime_interval', color=colors, source=effort_data, width=bar_width,
                      legend_label=legend_names, line_color=None, y_range_name="clicks", hover_fill_color='#1C679A',
                      hover_line_color='#1C679A')
@@ -1046,7 +1048,7 @@ def show_click_vs_effort(disambiguation_utterances, interval):
                 ("Datetime", "@request_datetime_interval{%Y-%m-%d %H:%M:%S}"),
                 ("Disambiguation", "@disambiguation_count"),
                 ("More Options", "@alternate_click_count"),
-                (none_above_node_name[0], "@none_click_count"),
+                (none_above_node_label, "@none_click_count"),
                 ("Total Clicks", "@total_clicks"),
                 ("Total Effort", "@effort_score_sum{0}")
             ],

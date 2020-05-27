@@ -136,9 +136,16 @@ def generate_cooccurrence_matrix(data, assistant_nodes=None):
 
     if len(none_above_node_name) > 1:
         print('Found more than one \'None of the Above\' nodes.')
+    elif len(none_above_node_name) == 0:
+        print('No \'None of the Above\' node found')
+    else:
+        for i in all_suggestion_list:
+            if i in none_above_node_name[0]:
+                i.remove(none_above_node_name[0])
 
     for i in all_suggestion_list:
-        i.remove(none_above_node_name[0])
+        if none_above_node_name[0] in i:
+            i.remove(none_above_node_name[0])
 
     if assistant_nodes is not None:
         node_title_map = dict()
