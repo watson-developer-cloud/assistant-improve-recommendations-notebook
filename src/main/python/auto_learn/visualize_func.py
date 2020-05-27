@@ -15,9 +15,10 @@ import numpy as np
 
 def show_top_node_effort(disambiguation_utterances, top=10, assistant_nodes=None):
     node_title_map = dict()
-    for idx, node in assistant_nodes.iterrows():
-        if str(node['title']) != 'nan':
-            node_title_map[node['dialog_node']] = node['title']
+    if assistant_nodes is not None:
+        for idx, node in assistant_nodes.iterrows():
+            if str(node['title']) != 'nan':
+                node_title_map[node['dialog_node']] = node['title']
 
     none_above_node_name = list(disambiguation_utterances[disambiguation_utterances[
                                                               'is_none_above_node'] == True].selected_dialog_node.unique())
