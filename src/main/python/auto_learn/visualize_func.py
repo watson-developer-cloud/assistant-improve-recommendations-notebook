@@ -166,9 +166,10 @@ def show_node_effort(disambiguation_utterances, assistant_nodes=None, interval=N
             valid_effort_nodes = np.delete(valid_effort_nodes, index)
 
         node_title_map = dict()
-        for idx, node in assistant_nodes.iterrows():
-            if str(node['title']) != 'nan':
-                node_title_map[node['dialog_node']] = node['title']
+        if assistant_nodes is not None:
+            for idx, node in assistant_nodes.iterrows():
+                if str(node['title']) != 'nan':
+                    node_title_map[node['dialog_node']] = node['title']
 
         dialog_node_effort_df = disambiguation_utterances[
             ['request_datetime_interval', 'selected_dialog_node', 'effort_score']].groupby(

@@ -124,7 +124,7 @@ def extract_disambiguation_utterances(df_formatted):
     return disambiguation_utterances.sort_values(by='request_timestamp').reset_index(drop=True)
 
 
-def generate_cooccurrence_matrix(data, workspace_nodes=None):
+def generate_cooccurrence_matrix(data, assistant_nodes=None):
 
     all_suggestion_list = list()
     for idx, item in data.iterrows():
@@ -140,9 +140,9 @@ def generate_cooccurrence_matrix(data, workspace_nodes=None):
     for i in all_suggestion_list:
         i.remove(none_above_node_name[0])
 
-    if workspace_nodes is not None:
+    if assistant_nodes is not None:
         node_title_map = dict()
-        for idx, node in workspace_nodes.iterrows():
+        for idx, node in assistant_nodes.iterrows():
             if str(node['title']) != 'nan':
                 node_title_map[node['dialog_node']] = node['title']
 
