@@ -140,12 +140,8 @@ def generate_cooccurrence_matrix(data, assistant_nodes=None):
         print('No \'None of the Above\' node found')
     else:
         for i in all_suggestion_list:
-            if i in none_above_node_name[0]:
+            if none_above_node_name[0] in i:
                 i.remove(none_above_node_name[0])
-
-    for i in all_suggestion_list:
-        if none_above_node_name[0] in i:
-            i.remove(none_above_node_name[0])
 
     if assistant_nodes is not None:
         node_title_map = dict()
