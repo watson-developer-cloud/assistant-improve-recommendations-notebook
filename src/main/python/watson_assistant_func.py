@@ -1,26 +1,30 @@
-import re
 import json
 import pandas as pd
-import time
 import os
+import csv
+import traceback
+import io
+from string import punctuation
 
 
-def get_assistant_definition(sdk_object, assistant_info, project=None, reset=False):
+EN_PUNCTUATION = punctuation + '’'
+
+
+def get_assistant_definition(sdk_object, assistant_info, project=None, reset=False, filename='assistant_definition'):
     workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
 
-    assistant_definition_file = 'definition_'
     if len(workspace_id) > 0:
-        assistant_definition_file += 'workspace_{}.json'.format(workspace_id)
+        filename += '_workspace_{}.json'.format(workspace_id)
     elif len(skill_id) > 0:
-        assistant_definition_file += 'skill_{}.json'.format(skill_id)
+        filename += '_skill_{}.json'.format(skill_id)
     else:
         print('Please provide a valid Workspace ID or Skill ID!')
         return None
 
-    if os.path.isfile(assistant_definition_file) and reset is False:
+    if os.path.isfile(filename) and reset is False:
         # Get file from cloud object storage
-        print('Reading from file:', assistant_definition_file)
-        with open(assistant_definition_file) as data:
+        print('Reading from file:', filename)
+        with open(filename) as data:
             data_json = json.load(data)
         # Read logs into datafram
         print('Assistant definition is loaded into dataframe')
@@ -48,158 +52,58 @@ def get_assistant_definition(sdk_object, assistant_info, project=None, reset=Fal
             # Set `export_file` to True for exporting assistant definition to json file
             if reset:
                 if project is not None:
-                    with open(assistant_definition_file, 'wb') as fp:
-                        project.save_data(assistant_definition_file, json.dumps(assistant_definition), overwrite=True)
+                    with open(filename, 'wb') as fp:
+                        project.save_data(filename, json.dumps(assistant_definition), overwrite=True)
                         # Display success message
                         print('Definition {} exported as a project asset'.format(fp.name))
                 else:
-                    with open(assistant_definition_file, 'w') as f:
+                    with open(filename, 'w') as f:
                         json.dump(assistant_definition, f)
-                        print('Definition {} exported'.format(assistant_definition_file))
+                        print('Definition {} exported'.format(filename))
 
             return df_assistant
         else:
             return None
 
 
-def get_logs(num_logs, log_list, project_creds, log_filter=None):
-    """This function calls Watson Assistant API to retrieve logs, using pagination if necessary.
-       The goal is to retrieve utterances (user inputs) from the logs.
-       Parameters
-       ----------
-       num_logs : int, the number of records to return in each page of results.
-       log_list : list, a list to store returned logs
-       project_creds : dict, containing information on project, cos, credentials, assistant, workspace id and name
-       log_filter: string, a cacheable parameter that limits the results to those matching the specified filter.
-
-       Returns
-       ----------
-       log_df : Dataframe of fetched logs
-    """
-    # Unpack the keys from the dictionary to individual variables
-    project, sdk_object, ws_id, ws_name = [project_creds.get(k) for k in ['project', 'sdk_object', 'ws_id', 'ws_name']]
-    # Create file name by combining workspace name and filter
-    filename = 'logs_' + ws_id + '_' + str(num_logs)
-
-    # Remove all special characters from file name
-    filename = re.sub(r'[^a-zA-Z0-9_\- .]', '', filename) + '.json'
-
-    if [file['name'] for file in project.get_files() if file['name'] == filename]:
-        # Get file from cloud object storage
-        print('Reading from file:', filename)
-        data = project.get_file(filename).getvalue().decode('utf8')
-        data_json = json.loads(data)
-        # Read logs into dataframe
-        log_df = pd.DataFrame.from_records(data_json)
-        # Display success message and return the dataframe
-        print('Workspace logs loaded successfully with', log_df.shape[0], 'records')
-        return log_df
-    else:
-        try:
-            current_cursor = None
-            while num_logs > 0:
-                time.sleep(0.5)  # allow for a short break to avoid reaching rate limit
+def _get_logs_from_api(sdk_object, workspace_id, log_filter, num_logs):
+    log_list = list()
+    try:
+        current_cursor = None
+        while num_logs > 0:
+            if len(workspace_id) > 0:
                 logs_response = sdk_object.list_logs(
-                    workspace_id=ws_id,
+                    workspace_id=workspace_id,
                     page_limit=500,
                     cursor=current_cursor,
                     filter=log_filter
                 ).get_result()
-                min_num = min(num_logs, len(logs_response['logs']))
-                log_list.extend(logs_response['logs'][:min_num])
-                print('\r{} logs retrieved'.format(len(log_list)), end='')
-                num_logs = num_logs - min_num
-
-                current_cursor = None
-                # Check if there is another page of logs to be fetched
-                if 'pagination' in logs_response:
-                    # Get the url from which logs are to fetched
-                    if 'next_cursor' in logs_response['pagination']:
-                        current_cursor = logs_response['pagination']['next_cursor']
-                    else:
-                        break
-
-        except Exception as ex:
-            print(ex)
-        finally:
-            log_df = pd.DataFrame(log_list)
-            if len(log_list) > 0:
-                print('\nWorkspace logs loaded successfully with', log_df.shape[0], 'records')
-                # Write the logs to cloud object storage
-                with open(filename, 'wb') as fp:
-                    project.save_data(filename, log_df.to_json(orient='records'), overwrite=True)
-                    # Display success message
-                    print('File', fp.name, 'written successfully to COS')
-            return log_df
-
-
-def get_logs_jupyter(num_logs, log_list, workspace_creds, log_filter=None):
-    """This function calls Watson Assistant API to retrieve logs, using pagination if necessary.
-       The goal is to retrieve utterances (user inputs) from the logs.
-       Parameters
-       ----------
-       num_logs : int, the number of records to return in each page of results.
-       log_list : list, a list to store returned logs
-       workspace_creds : dict, containing information regarding sdk_object, workspace id, and name
-       log_filter: string, a cacheable parameter that limits the results to those matching the specified filter.
-
-       Returns
-       ----------
-       log_df : Dataframe of fetched logs
-    """
-    # Unpack the keys from the dictionary to individual variables
-    sdk_object, ws_id, ws_name = [workspace_creds.get(k) for k in ['sdk_object', 'ws_id', 'ws_name']]
-    # Create file name by combining workspace name and filter
-    filename = 'logs_' + ws_id + '_' + str(num_logs)
-
-    # Remove all special characters from file name
-    filename = re.sub(r'[^a-zA-Z0-9_\- .]', '', filename) + '.json'
-
-    if os.path.isfile(filename):
-        # Get file from cloud object storage
-        print('Reading from file:', filename)
-        with open(filename) as data:
-            data_json = json.load(data)
-        # Read logs into dataframe
-        log_df = pd.DataFrame.from_records(data_json)
-        # Display success message and return the dataframe
-        print('Workspace logs loaded successfully with', log_df.shape[0], 'records')
-        return log_df
-    else:
-        try:
-            current_cursor = None
-            while num_logs > 0:
-                logs_response = sdk_object.list_logs(
-                    workspace_id=ws_id,
+            else:
+                logs_response = sdk_object.list_all_logs(
                     page_limit=500,
                     cursor=current_cursor,
                     filter=log_filter
                 ).get_result()
-                min_num = min(num_logs, len(logs_response['logs']))
-                log_list.extend(logs_response['logs'][:min_num])
-                print('\r{} logs retrieved'.format(len(log_list)), end='')
-                num_logs = num_logs - min_num
-                current_cursor = None
-                # Check if there is another page of logs to be fetched
-                if 'pagination' in logs_response:
-                    # Get the url from which logs are to fetched
-                    if 'next_cursor' in logs_response['pagination']:
-                        current_cursor = logs_response['pagination']['next_cursor']
-                    else:
-                        break
+            min_num = min(num_logs, len(logs_response['logs']))
+            log_list.extend(logs_response['logs'][:min_num])
+            print('\r{} logs retrieved'.format(len(log_list)), end='')
+            num_logs = num_logs - min_num
+            current_cursor = None
+            # Check if there is another page of logs to be fetched
+            if 'pagination' in logs_response:
+                # Get the url from which logs are to fetched
+                if 'next_cursor' in logs_response['pagination']:
+                    current_cursor = logs_response['pagination']['next_cursor']
+                else:
+                    break
+    except Exception as ex:
+        traceback.print_tb(ex.__traceback__)
+        raise RuntimeError("Error getting logs using API.  Please check if URL/credentials are correct.")
 
-        except Exception as ex:
-            print(ex)
-        finally:
-            log_df = pd.DataFrame(log_list)
-            if len(log_list) > 0:
-                print('\nWorkspace logs loaded successfully with', log_df.shape[0], 'records')
-                log_df.to_json(filename)
-                print('File', filename, 'written successfully to local system')
-            return log_df
+    return log_list
 
 
-def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=None, reset=False):
+def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=[], project=None, overwrite=False):
     """This function calls Watson Assistant API to retrieve logs, using pagination if necessary.
        The goal is to retrieve utterances (user inputs) from the logs.
        Parameters
@@ -208,99 +112,120 @@ def get_logs_filter(sdk_object, assistant_info, num_logs, filters=None, project=
        assistant_info : dict, containing information regarding sdk_object, assistant id, and name
        filters: string, a list of query filters
        reset: boolean, whether to reset log file
+       filename: prefix of the name of the log file
+       generate_csv: if generating a CSV of messages
        Returns
        ----------
        log_df : DataFrame of fetched logs
     """
-    log_list = list()
     workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
-    # Create file name
-    filename = 'logs'
-    if workspace_id is not None and len(workspace_id) > 0:
-        filename += '_workspace_' + workspace_id
+    if (workspace_id is None or len(workspace_id) == 0) \
+            and (skill_id is None or len(skill_id) == 0):
+        raise ValueError('Please provide a valid Workspace ID, or Skill ID!')
+
+    # check if filename exists before retrieving logs
+    if filename and not overwrite:
+        if project:
+            for file in project.get_files():
+                if file['name'] == filename:
+                    raise FileExistsError('{} exists, set overwrite=True to overwrite'.format(filename))
+
+        elif os.path.exists(filename):
+            raise FileExistsError('{} exists, set overwrite=True to overwrite'.format(filename))
+
+    # adding default filters based on assistant_id and workspace_id
     if assistant_id is not None and len(assistant_id) > 0:
-        filename += '_assistant_' + assistant_id
         filters.append('request.context.system.assistant_id::{}'.format(assistant_id))
     if skill_id is not None and len(skill_id) > 0:
-        filename += '_skill_' + skill_id
         filters.append('workspace_id::{}'.format(skill_id))
 
-    if filename == 'logs':
-        print('Please provide a valid Workspace ID, Assistant ID, or Skill ID!')
-        return None
+    logs = _get_logs_from_api(sdk_object=sdk_object,
+                              workspace_id=workspace_id,
+                              log_filter=','.join(filters),
+                              num_logs=num_logs)
+    print('Loaded {} logs'.format(len(logs)))
 
-    print('Fetching logs ... ')
+    if filename:
+        print('Saving {} logs into JSON file... '.format(filename))
+        if project:
+            with open(filename, 'wb') as fp:
+                project.save_data(filename, json.dumps(logs, indent=2), overwrite=overwrite)
+                # Display success message
+                print('File', fp.name, 'saved a project asset')
+        else:
+            with open(filename, 'w') as fp:
+                json.dump(logs, fp, indent=2)
+                print('File', fp.name, 'saved')
 
-    # Remove all special characters from file name
-    filename = re.sub(r'[^a-zA-Z0-9_\- .]', '', filename) + '.json'
+    return logs
 
-    log_filter = ','.join(filters)
 
-    if project and reset is False:
-        if [file['name'] for file in project.get_files() if file['name'] == filename]:
-            # Get file from cloud object storage
-            print('Reading from file:', filename)
-            data = project.get_file(filename).getvalue().decode('utf8')
-            data_json = json.loads(data)
-            # Read logs into dataframe
-            log_df = pd.DataFrame.from_records(data_json)
-            # Display success message and return the dataframe
-            print('Loaded {} logs into dataframe'.format(log_df.shape[0]))
-            return log_df
-    elif os.path.isfile(filename) and reset is False:
+def load_logs_from_file(filename, project=None):
+    print('Reading from file:', filename)
+    logs = None
+    if project:
         # Get file from cloud object storage
-        print('Reading from file:', filename)
-        with open(filename) as data:
-            data_json = json.load(data)
+        data = project.get_file(filename).getvalue().decode('utf8')
+        logs = json.loads(data)
         # Read logs into dataframe
-        log_df = pd.DataFrame.from_records(data_json)
-        # Display success message and return the dataframe
-        print('Loaded {} logs into dataframe'.format(log_df.shape[0]))
-        return log_df
+        # log_df = pd.DataFrame.from_records(data_json)
+        print('Loaded {} logs'.format(len(logs)))
     else:
-        try:
-            current_cursor = None
-            while num_logs > 0:
-                if len(workspace_id) > 0:
-                    logs_response = sdk_object.list_logs(
-                        workspace_id=workspace_id,
-                        page_limit=500,
-                        cursor=current_cursor,
-                        filter=log_filter
-                    ).get_result()
-                else:
-                    logs_response = sdk_object.list_all_logs(
-                        page_limit=500,
-                        cursor=current_cursor,
-                        filter=log_filter
-                    ).get_result()
-                min_num = min(num_logs, len(logs_response['logs']))
-                log_list.extend(logs_response['logs'][:min_num])
-                print('\r{} logs retrieved'.format(len(log_list)), end='')
-                num_logs = num_logs - min_num
-                current_cursor = None
-                # Check if there is another page of logs to be fetched
-                if 'pagination' in logs_response:
-                    # Get the url from which logs are to fetched
-                    if 'next_cursor' in logs_response['pagination']:
-                        current_cursor = logs_response['pagination']['next_cursor']
-                    else:
-                        break
-        except Exception as ex:
-            print(ex)
-        finally:
-            if len(log_list) > 0:
-                print('\nLoading {} logs into dataframe ...'.format(len(log_list)))
-                log_df = pd.DataFrame(log_list)
-                print('Saving logs into {} ... '.format(filename))
-                if project:
-                    with open(filename, 'wb') as fp:
-                        project.save_data(filename, log_df.to_json(orient='records'), overwrite=True)
-                        # Display success message
-                        print('File', fp.name, 'exported a project asset')
-                else:
-                    log_df.to_json(filename)
-                    print('Completed')
-                return log_df
-            else:
-                return None
+        if not os.path.exists(filename) or not os.path.isfile(filename):
+            raise ValueError('{} either does not exist or is a directory'.format(filename))
+        else:
+            with open(filename) as data:
+                logs = json.load(data)
+            print('Loaded {} logs'.format(len(logs)))
+    return logs
+
+
+# From: https://github.ibm.com/watson-engagement-advisor/improve-recommendations-engine/blob/4c996b24bfcac4eb6ab6bbf39cf125cdf30b9027/src/main/python/cluster/utils.py#L44
+def sanitize_text(text, remove_punctuation=True, lower=True, tokenize=True):
+    text = text.strip()
+    if lower:
+        text = text.lower()
+    # if tokenize:
+    #     words = word_tokenize(text)
+    # else:
+    #     words = text.split()
+    # if remove_punctuation:
+    #     words = [word for word in words if word not in EN_PUNCTUATION]
+    # return ' '.join(words)
+    if remove_punctuation:
+        text = text.translate(str.maketrans('', '', EN_PUNCTUATION))
+    return text
+
+
+def export_csv_for_intent_recommendation(logs,
+                                         filename,
+                                         deduplicate=True,
+                                         project=None,
+                                         overwrite=False,
+                                         min_length=3,
+                                         max_length=20):
+
+    messages = [sanitize_text(l['request']['input']['text']) for l in logs]
+    messages = filter(lambda m: min_length < len(m.split()) < max_length, messages)
+    if deduplicate:
+        messages = [[m] for m in set(messages)]
+    else:
+        messages = [[m] for m in messages]
+    print('\nExporting {} messages into CSV...'.format(len(messages)))
+
+    if project:
+        with open(filename, 'wb') as fp:
+            data = io.StringIO()
+            writer = csv.writer(data, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            writer.writerows(messages)
+            project.save_data(filename, data.getvalue(), overwrite=overwrite)
+            data.close()
+            # Display success message
+            print('File', fp.name, 'saved a project asset')
+    else:
+        with open(filename, 'w') as f:
+            writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            writer.writerows(messages)
+            print('File', f.name, 'saved')
+
+    return messages
