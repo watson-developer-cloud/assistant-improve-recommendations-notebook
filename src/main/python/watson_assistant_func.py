@@ -124,14 +124,16 @@ def get_logs(sdk_object, assistant_info, num_logs, filename, filters=None, proje
     workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
 
     # check if filename exists before retrieving logs
+    file_exist = False
     if filename and not overwrite:
         if project:
             for file in project.get_files():
                 if file['name'] == filename:
-                    raise FileExistsError('{} exists, set overwrite=True to overwrite'.format(filename))
-
+                    file_exist = True
+                    print('Load logs from existing file {}, set overwrite=True to overwrite'.format(filename))
         elif os.path.exists(filename):
-            raise FileExistsError('{} exists, set overwrite=True to overwrite'.format(filename))
+            file_exist = True
+            print('Load logs from existing file {}, set overwrite=True to overwrite'.format(filename))
 
     # adding default filters based on assistant_id and workspace_id
     if assistant_id is not None and len(assistant_id) > 0:
@@ -145,7 +147,7 @@ def get_logs(sdk_object, assistant_info, num_logs, filename, filters=None, proje
                               num_logs=num_logs)
     print('\nLoaded {} logs'.format(len(logs)))
 
-    if filename and overwrite:
+    if not file_exist or overwrite:
         print('Saving {} logs into JSON file... '.format(filename))
         if project:
             with open(filename, 'wb') as fp:
