@@ -123,6 +123,12 @@ def get_logs(sdk_object, assistant_info, num_logs, filename, filters=None, proje
 
     workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
 
+    if (workspace_id is None or len(workspace_id) == 0) \
+            and (assistant_id is None or len(assistant_id) == 0) \
+            and (skill_id is None or len(skill_id) == 0):
+        print('Please provide a valid Workspace ID, Assistant ID, or Skill ID!')
+        return None
+
     # check if filename exists before retrieving logs
     file_exist = False
     if filename:
