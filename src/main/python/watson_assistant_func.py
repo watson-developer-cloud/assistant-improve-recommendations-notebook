@@ -118,6 +118,10 @@ def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=None, 
        ----------
        log_df : DataFrame of fetched logs
     """
+    if filename is None:
+        print('Please provide output filename')
+        return None
+
     if filters is None:
         filters = []
 
