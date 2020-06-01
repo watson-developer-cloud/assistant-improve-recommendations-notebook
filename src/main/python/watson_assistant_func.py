@@ -10,7 +10,7 @@ from string import punctuation
 EN_PUNCTUATION = punctuation + '’'
 
 
-def get_assistant_definition(sdk_object, assistant_info, project=None, reset=False, filename='assistant_definition'):
+def get_assistant_definition(sdk_object, assistant_info, project=None, overwrite=False, filename='assistant_definition'):
     workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
 
     if len(workspace_id) > 0:
@@ -21,12 +21,12 @@ def get_assistant_definition(sdk_object, assistant_info, project=None, reset=Fal
         print('Please provide a valid Workspace ID or Skill ID!')
         return None
 
-    if os.path.isfile(filename) and reset is False:
+    if os.path.isfile(filename) and overwrite is False:
         # Get file from cloud object storage
         print('Reading from file:', filename)
         with open(filename) as data:
             data_json = json.load(data)
-        # Read logs into datafram
+        # Read logs into dataframe
         print('Assistant definition is loaded into dataframe')
         df_assistant = pd.json_normalize(data_json)
         return df_assistant
@@ -49,8 +49,8 @@ def get_assistant_definition(sdk_object, assistant_info, project=None, reset=Fal
             # Store the workspace details in a dataframe
             df_assistant = pd.json_normalize(assistant_definition)
 
-            # Set `export_file` to True for exporting assistant definition to json file
-            if reset:
+            # Set `overwrite` to True for exporting assistant definition to json file
+            if overwrite:
                 if project is not None:
                     with open(filename, 'wb') as fp:
                         project.save_data(filename, json.dumps(assistant_definition), overwrite=True)
