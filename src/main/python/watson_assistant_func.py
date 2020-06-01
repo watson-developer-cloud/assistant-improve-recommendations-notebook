@@ -103,7 +103,7 @@ def _get_logs_from_api(sdk_object, workspace_id, log_filter, num_logs):
     return log_list
 
 
-def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=[], project=None, overwrite=False):
+def get_logs(sdk_object, assistant_info, num_logs, filename, filters=None, project=None, overwrite=False):
     """This function calls Watson Assistant API to retrieve logs, using pagination if necessary.
        The goal is to retrieve utterances (user inputs) from the logs.
        Parameters
@@ -111,24 +111,39 @@ def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=[], pr
        num_logs : int, the number of records to return in each page of results
        assistant_info : dict, containing information regarding sdk_object, assistant id, and name
        filters: string, a list of query filters
-       reset: boolean, whether to reset log file
+       overwrite: boolean, whether to reset log file
+       project: project io of studio project
        filename: prefix of the name of the log file
-       generate_csv: if generating a CSV of messages
        Returns
        ----------
        log_df : DataFrame of fetched logs
     """
+    if filters is None:
+        filters = []
+
     workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
 
     # check if filename exists before retrieving logs
-    if filename and not overwrite:
+    file_exist = False
+    if filename:
         if project:
             for file in project.get_files():
                 if file['name'] == filename:
-                    raise FileExistsError('{} exists, set overwrite=True to overwrite'.format(filename))
+                    if not overwrite:
+                        print('Load logs from existing file {}, set overwrite=True to overwrite'.format(filename))
+                        return load_logs_from_file(filename, project)
+                    else:
+                        file_exist = True
 
         elif os.path.exists(filename):
-            raise FileExistsError('{} exists, set overwrite=True to overwrite'.format(filename))
+            if not overwrite:
+                print('Load logs from existing file {}, set overwrite=True to overwrite'.format(filename))
+                return load_logs_from_file(filename, None)
+            else:
+                file_exist = True
+    else:
+        print('Please provide a valid filename.')
+        return None
 
     # adding default filters based on assistant_id and workspace_id
     if assistant_id is not None and len(assistant_id) > 0:
@@ -140,9 +155,9 @@ def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=[], pr
                               workspace_id=workspace_id,
                               log_filter=','.join(filters),
                               num_logs=num_logs)
-    print('Loaded {} logs'.format(len(logs)))
+    print('\nLoaded {} logs'.format(len(logs)))
 
-    if filename:
+    if not file_exist or overwrite:
         print('Saving {} logs into JSON file... '.format(filename))
         if project:
             with open(filename, 'wb') as fp:
