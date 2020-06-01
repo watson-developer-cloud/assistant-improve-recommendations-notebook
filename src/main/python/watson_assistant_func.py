@@ -103,7 +103,7 @@ def _get_logs_from_api(sdk_object, workspace_id, log_filter, num_logs):
     return log_list
 
 
-def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=[], project=None, overwrite=False):
+def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=None, project=None, overwrite=False):
     """This function calls Watson Assistant API to retrieve logs, using pagination if necessary.
        The goal is to retrieve utterances (user inputs) from the logs.
        Parameters
@@ -111,13 +111,16 @@ def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=[], pr
        num_logs : int, the number of records to return in each page of results
        assistant_info : dict, containing information regarding sdk_object, assistant id, and name
        filters: string, a list of query filters
-       reset: boolean, whether to reset log file
+       overwrite: boolean, whether to reset log file
+       project: project io of studio project
        filename: prefix of the name of the log file
-       generate_csv: if generating a CSV of messages
        Returns
        ----------
        log_df : DataFrame of fetched logs
     """
+    if filters is None:
+        filters = []
+
     workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
 
     # check if filename exists before retrieving logs
