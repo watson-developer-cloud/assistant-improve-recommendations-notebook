@@ -119,9 +119,6 @@ def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=[], pr
        log_df : DataFrame of fetched logs
     """
     workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
-    if (workspace_id is None or len(workspace_id) == 0) \
-            and (skill_id is None or len(skill_id) == 0):
-        raise ValueError('Please provide a valid Workspace ID, or Skill ID!')
 
     # check if filename exists before retrieving logs
     if filename and not overwrite:
