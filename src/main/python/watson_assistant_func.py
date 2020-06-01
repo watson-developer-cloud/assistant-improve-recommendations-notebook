@@ -140,9 +140,9 @@ def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=[], pr
                               workspace_id=workspace_id,
                               log_filter=','.join(filters),
                               num_logs=num_logs)
-    print('Loaded {} logs'.format(len(logs)))
+    print('\nLoaded {} logs'.format(len(logs)))
 
-    if filename:
+    if filename or overwrite:
         print('Saving {} logs into JSON file... '.format(filename))
         if project:
             with open(filename, 'wb') as fp:
