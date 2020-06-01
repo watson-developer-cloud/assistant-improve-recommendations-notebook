@@ -118,10 +118,6 @@ def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=None, 
        ----------
        log_df : DataFrame of fetched logs
     """
-    if filename is None:
-        print('Please provide output filename')
-        return None
-
     if filters is None:
         filters = []
 
@@ -149,7 +145,7 @@ def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=None, 
                               num_logs=num_logs)
     print('\nLoaded {} logs'.format(len(logs)))
 
-    if filename or overwrite:
+    if filename and overwrite:
         print('Saving {} logs into JSON file... '.format(filename))
         if project:
             with open(filename, 'wb') as fp:
