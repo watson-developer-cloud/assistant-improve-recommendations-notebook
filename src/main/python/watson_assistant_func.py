@@ -125,15 +125,22 @@ def get_logs(sdk_object, assistant_info, num_logs, filename, filters=None, proje
 
     # check if filename exists before retrieving logs
     file_exist = False
-    if filename and not overwrite:
+    if filename:
         if project:
             for file in project.get_files():
                 if file['name'] == filename:
-                    file_exist = True
-                    print('Load logs from existing file {}, set overwrite=True to overwrite'.format(filename))
+                    if not overwrite:
+                        print('Load logs from existing file {}, set overwrite=True to overwrite'.format(filename))
+                        return load_logs_from_file(filename, project)
+                    else:
+                        file_exist = True
+
         elif os.path.exists(filename):
-            file_exist = True
-            print('Load logs from existing file {}, set overwrite=True to overwrite'.format(filename))
+            if not overwrite:
+                print('Load logs from existing file {}, set overwrite=True to overwrite'.format(filename))
+                return load_logs_from_file(filename, None)
+            else:
+                file_exist = True
 
     # adding default filters based on assistant_id and workspace_id
     if assistant_id is not None and len(assistant_id) > 0:
