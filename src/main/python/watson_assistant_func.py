@@ -27,7 +27,7 @@ def get_assistant_definition(sdk_object, assistant_info, project=None, overwrite
         with open(filename) as data:
             data_json = json.load(data)
         # Read logs into dataframe
-        print('Assistant definition is loaded into dataframe')
+        print('Assistant definition is loaded into as a dataframe.')
         df_assistant = pd.json_normalize(data_json)
         return df_assistant
     else:
@@ -50,7 +50,7 @@ def get_assistant_definition(sdk_object, assistant_info, project=None, overwrite
             df_assistant = pd.json_normalize(assistant_definition)
 
             # Set `overwrite` to True for exporting assistant definition to json file
-            if overwrite:
+            if not os.path.isfile(filename) or overwrite:
                 if project is not None:
                     with open(filename, 'wb') as fp:
                         project.save_data(filename, json.dumps(assistant_definition), overwrite=True)
