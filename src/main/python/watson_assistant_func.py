@@ -141,6 +141,9 @@ def get_logs(sdk_object, assistant_info, num_logs, filename, filters=None, proje
                 return load_logs_from_file(filename, None)
             else:
                 file_exist = True
+    else:
+        print('Please provide a valid filename.')
+        return None
 
     # adding default filters based on assistant_id and workspace_id
     if assistant_id is not None and len(assistant_id) > 0:
