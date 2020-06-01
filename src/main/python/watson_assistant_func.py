@@ -103,7 +103,7 @@ def _get_logs_from_api(sdk_object, workspace_id, log_filter, num_logs):
     return log_list
 
 
-def get_logs(sdk_object, assistant_info, num_logs, filename=None, filters=None, project=None, overwrite=False):
+def get_logs(sdk_object, assistant_info, num_logs, filename, filters=None, project=None, overwrite=False):
     """This function calls Watson Assistant API to retrieve logs, using pagination if necessary.
        The goal is to retrieve utterances (user inputs) from the logs.
        Parameters
