@@ -168,22 +168,32 @@ def generate_cooccurrence_matrix(data, assistant_nodes=None):
 def extract_suggestions(items):
     suggestions = list()
     for item in items:
-        if len(item['value']['intents']) == 0:
-            dialog_node = item['label']
-            if len(item['output']['generic']) > 0:
-                if item['output']['generic'][0]['response_type'] == 'search_skill':
-                    none_node = False
-            else:
-                none_node = True
-        else:
-            dialog_node = item['dialog_node']
-            none_node = False
         if 'intents' in item['value']:
-            suggestions.append(
-                (item['value']['input']['suggestion_id'], item['value']['intents'], item['label'], dialog_node, none_node))
-        else:
+            if len(item['value']['intents']) == 0:
+                dialog_node = item['label']
+                none_node = True
+                if len(item['output']['generic']) > 0:
+                    if item['output']['generic'][0]['response_type'] == 'search_skill':
+                        none_node = False
+            else:
+                dialog_node = item['dialog_node']
+                none_node = False
+            suggestions.append((item['value']['input']['suggestion_id'], item['value']['intents'], item['label'],
+                                dialog_node, none_node))
+        elif 'input' in item['value']:
+            if len(item['value']['input']['intents']) == 0:
+                dialog_node = item['label']
+                none_node = True
+                if len(item['output']['generic']) > 0:
+                    if item['output']['generic'][0]['response_type'] == 'search_skill':
+                        none_node = False
+            else:
+                dialog_node = item['dialog_node']
+                none_node = False
             suggestions.append((item['value']['input']['suggestion_id'], item['value']['input']['intents'],
                                 item['label'], dialog_node, none_node))
+        else:
+            print('Please check item value {}'.format(item))
     return suggestions
 
 
