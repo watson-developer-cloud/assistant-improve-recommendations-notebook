@@ -346,8 +346,12 @@ def calculate_preview_effort(item):
         return effort_score
     disambiguation_id_intent = {s[0]: s[1][0]['intent'] if len(s[1]) > 0 else s[2] for s in item.suggestion_list}
     disambiguation_id_none_above = {s[0]: s[4] for s in item.suggestion_list}
-    more_option_id_intent = {s[0]: s[1][0]['intent'] if len(s[1]) > 0 else s[2] for s in item.more_option_list}
-    more_option_id_none_above = {s[0]: s[4] for s in item.more_option_list}
+    if 'more_option_list' in item:
+        more_option_id_intent = {s[0]: s[1][0]['intent'] if len(s[1]) > 0 else s[2] for s in item.more_option_list}
+        more_option_id_none_above = {s[0]: s[4] for s in item.more_option_list}
+    else:
+        more_option_id_intent = {}
+        more_option_id_none_above = {}
     if item.request_input_suggestion_id in disambiguation_id_intent:
         selected_disambiguation_intent = disambiguation_id_intent[item.request_input_suggestion_id]
         preview_disambiguation_intents = [s['intent'] if 'intent' in s else s['label'] for s in preview_data['disambiguation']]
