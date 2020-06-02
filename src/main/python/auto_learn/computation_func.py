@@ -342,6 +342,8 @@ def calculate_preview_effort(item):
     effort_score = -1
     if 'auto_learn_preview' in item:
         preview_data = item.auto_learn_preview
+        if preview_data is None:
+            return effort_score
     else:
         return effort_score
     disambiguation_id_intent = {s[0]: s[1][0]['intent'] if len(s[1]) > 0 else s[2] for s in item.suggestion_list}
