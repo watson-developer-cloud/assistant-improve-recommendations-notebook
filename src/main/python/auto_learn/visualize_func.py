@@ -1499,13 +1499,13 @@ def show_effort_over_time(disambiguation_utterances, interval):
         detailed_data['request_datetime_interval'] = detailed_data['request_datetime_interval'].dt.tz_convert(
             None).apply(
             lambda x: str(x))
-        detailed_data['improve'] = detailed_data['improve'].apply(lambda x: "{0:.1f}%".format(x))
+        detailed_data['improve'] = detailed_data['improve'].apply(lambda x: round(x, 1))
         detailed_data['effort_score_sum'] = detailed_data['effort_score_sum'].apply(lambda x: round(x, 0))
         detailed_data['preview_effort_score_sum'] = detailed_data['preview_effort_score_sum'].apply(
             lambda x: round(x, 0))
-        detailed_data['effort_score_mean'] = detailed_data['effort_score_mean'].apply(lambda x: "{0:.1f}".format(x))
+        detailed_data['effort_score_mean'] = detailed_data['effort_score_mean'].apply(lambda x: round(x, 1))
         detailed_data['preview_effort_score_mean'] = detailed_data['preview_effort_score_mean'].apply(
-            lambda x: "{0:.1f}".format(x))
+            lambda x: round(x, 1))
 
         detailed_data.columns = ['Time Interval', 'Average Effort', 'Total Effort', 'Number of Utterances',
                                  'Average Effort (preview)',
