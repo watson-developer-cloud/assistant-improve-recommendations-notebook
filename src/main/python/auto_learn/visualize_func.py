@@ -26,7 +26,7 @@ def show_top_node_effort(disambiguation_utterances, top=10, assistant_nodes=None
         print('Found more than one \'None of the Above\' nodes.')
 
     dialog_node_effort_overall_df = disambiguation_utterances[['selected_dialog_node', 'effort_score']].groupby(
-        'selected_dialog_node').agg({'effort_score': 'mean', 'selected_dialog_node': 'size'}).sort_values(
+        'selected_dialog_node').agg({'effort_score': 'sum', 'selected_dialog_node': 'size'}).sort_values(
         ['effort_score'],
         ascending=False)
     dialog_node_effort_overall_df.columns = ['effort_score', 'num_utterances']
@@ -152,7 +152,7 @@ def show_node_effort(disambiguation_utterances, assistant_nodes=None, interval=N
     if delta:
         dialog_node_effort_df = disambiguation_utterances[
             ['request_datetime_interval', 'selected_dialog_node', 'effort_score']].groupby(
-            ['request_datetime_interval', 'selected_dialog_node'], as_index=False).agg({'effort_score': 'mean'})
+            ['request_datetime_interval', 'selected_dialog_node'], as_index=False).agg({'effort_score': 'sum'})
 
         valid_effort_nodes = dialog_node_effort_df['selected_dialog_node'].unique()
 
@@ -173,7 +173,7 @@ def show_node_effort(disambiguation_utterances, assistant_nodes=None, interval=N
 
         dialog_node_effort_df = disambiguation_utterances[
             ['request_datetime_interval', 'selected_dialog_node', 'effort_score']].groupby(
-            ['request_datetime_interval', 'selected_dialog_node'], as_index=False).agg({'effort_score': 'mean'})
+            ['request_datetime_interval', 'selected_dialog_node'], as_index=False).agg({'effort_score': 'sum'})
 
         start_datetime = dialog_node_effort_df.request_datetime_interval.iloc[0]
         end_datetime = dialog_node_effort_df.request_datetime_interval.iloc[-1]
@@ -338,7 +338,7 @@ def show_input_effort(disambiguation_utterances, top, interval=None):
         input_effort_df = disambiguation_utterances[
             ['request_datetime_interval', 'request_input_text', 'effort_score']].groupby(
             ['request_datetime_interval', 'request_input_text']).agg(
-            {'effort_score': 'mean', 'request_input_text': 'count'})
+            {'effort_score': 'sum', 'request_input_text': 'count'})
 
         input_effort_df.columns = ['effort_score', 'count']
 
