@@ -57,7 +57,7 @@ def show_top_node_effort(disambiguation_utterances, top=10, assistant_nodes=None
         tooltips=[
             ("Node Name", "@selected_dialog_node_name"),
             ("Number of Logs", "@num_utterances"),
-            ("Avg Customer Effort", "@effort_score{0.0f}")
+            ("Total Customer Effort", "@effort_score{0.0f}")
         ]
     )
     p.title.align = 'center'
