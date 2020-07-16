@@ -551,7 +551,7 @@ def show_node_effort(disambiguation_utterances, assistant_nodes=None, interval=N
     if delta:
         dialog_node_effort_df = disambiguation_utterances[
             ['request_datetime_interval', 'selected_dialog_node', 'effort_score']].groupby(
-            ['request_datetime_interval', 'selected_dialog_node'], as_index=False).agg({'effort_score': 'mean'})
+            ['request_datetime_interval', 'selected_dialog_node'], as_index=False).agg({'effort_score': 'sum'})
 
         valid_effort_nodes = dialog_node_effort_df['selected_dialog_node'].unique()
 
@@ -744,7 +744,7 @@ def show_input_effort(disambiguation_utterances, top, interval=None):
         input_effort_df = input_effort_df.reset_index()
 
         input_effort_top = disambiguation_utterances[['request_input_text', 'effort_score']].groupby(
-            'request_input_text').agg({'effort_score': 'mean', 'request_input_text': 'size'}).sort_values(
+            'request_input_text').agg({'effort_score': 'sum', 'request_input_text': 'size'}).sort_values(
             ['effort_score'], ascending=False)
         input_effort_options = input_effort_top.index.tolist()[:top]
 
@@ -2172,7 +2172,7 @@ def show_disambiguation_percentage(df_formatted, interval):
         output_notebook(hide_banner=True)
 
         p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
-                   x_range=(start_datetime - start_delta, end_datetime + end_delta))
+                   x_range=(start_datetime - start_delta, end_datetime + end_delta), title='Disambiguation vs single answer over time')
 
         source = ColumnDataSource(df_comb)
         p.vbar(x='request_datetime_interval', bottom=0, top='dis_h', width=bar_width, source=source, color='#4b86b4',
