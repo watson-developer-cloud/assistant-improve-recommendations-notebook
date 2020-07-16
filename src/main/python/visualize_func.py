@@ -1318,7 +1318,7 @@ def show_click_vs_effort(disambiguation_utterances, interval):
             time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=0)
     elif interval == 'week':
         disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(days=(d.day // 7) * 7) for d in
+            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(minutes=(d.day // 7) * 7) for d in
             disambiguation_utterances.request_timestamp]
         delta = timedelta(days=7)
         start_delta = timedelta(days=3)
@@ -1396,6 +1396,10 @@ def show_click_vs_effort(disambiguation_utterances, interval):
         effort_data['total_clicks'] = effort_data[
             ['disambiguation_count', 'alternate_click_count', 'none_click_count']].sum(axis=1)
 
+        enable_more_options = False
+        if effort_data['alternate_click_count'].sum() > 0:
+            enable_more_options = True
+
         output_notebook(hide_banner=True)
 
         colors = tuple(
@@ -1411,20 +1415,45 @@ def show_click_vs_effort(disambiguation_utterances, interval):
 
         # Setting the second y axis range name and range
 
-        p.extra_y_ranges["clicks"] = Range1d(start=0, end=effort_data['total_clicks'].max() * 1.5)
+        p.extra_y_ranges["clicks"] = Range1d(start=0, end=effort_data['total_clicks'].max() * 1.6)
         p.add_layout(LinearAxis(y_range_name="clicks", axis_label='Number of Clicks'), 'right')
 
         p.grid.minor_grid_line_color = '#eeeeee'
 
         names = ['disambiguation_count', 'alternate_click_count', 'none_click_count']
         legend_names = ['Disambiguation', 'More Options', none_above_node_name[0]]
-        p.vbar_stack(names, x='request_datetime_interval', color=colors, source=effort_data, width=bar_width,
-                     legend_label=legend_names, line_color=None, y_range_name="clicks", hover_fill_color='#1C679A',
-                     hover_line_color='#1C679A')
-        p.line(x='request_datetime_interval', y='effort_score_sum', source=effort_data, line_width=1.5, color='#D82377',
-               legend_label='Total Effort')
-        p.circle(x='request_datetime_interval', y='effort_score_sum', source=effort_data, size=5, color="#D82377",
-                 alpha=1)
+        bars = p.vbar_stack(names, x='request_datetime_interval', color=colors, source=effort_data, width=bar_width,
+                            legend_label=legend_names, line_color=None, y_range_name="clicks",
+                            hover_fill_color='#1C679A',
+                            hover_line_color='#1C679A')
+        if not enable_more_options:
+            bars[1].visible = False
+        for bar in bars:
+            p.add_layout(bar)
+
+        sum_line = p.line(x='request_datetime_interval', y='effort_score_sum', source=effort_data, line_width=1.5,
+                          color='#D82377',
+                          legend_label='Total Effort')
+        sum_circle = p.circle(x='request_datetime_interval', y='effort_score_sum', source=effort_data, size=5,
+                              color="#D82377", alpha=1)
+        p.add_layout(sum_line)
+        p.add_layout(sum_circle)
+
+        p.extra_y_ranges["effort_score_mean"] = Range1d(start=0, end=effort_data['effort_score_mean'].max() * 1.6)
+        normal_line = p.line(x='request_datetime_interval', y='effort_score_mean', source=effort_data,
+                             legend_label='Average Effort',
+                             line_width=1.5, color='#4fa8f6', y_range_name="effort_score_mean", visible=False)
+        p.add_layout(normal_line)
+
+        effort_data['normal_mean_color'] = '#4fa8f6'
+        effort_data['normal_mean_size'] = 5
+        effort_data['normal_mean_fill_color'] = '#4fa8f6'
+        normal_source_circle = ColumnDataSource(effort_data)
+        normal_circle = p.circle(x='request_datetime_interval', y='effort_score_mean', source=normal_source_circle,
+                                 size='normal_mean_size',
+                                 legend_label='Average Effort', fill_color="normal_mean_fill_color",
+                                 color='normal_mean_color', alpha=1, y_range_name="effort_score_mean", visible=False)
+        p.add_layout(normal_line)
 
         p.legend.click_policy = "hide"
         p.legend.orientation = "horizontal"
@@ -1447,6 +1476,7 @@ def show_click_vs_effort(disambiguation_utterances, interval):
                 ("More Options", "@alternate_click_count"),
                 (none_above_node_name[0], "@none_click_count"),
                 ("Total Clicks", "@total_clicks"),
+                ("Average Effort", "@effort_score_mean{0}"),
                 ("Total Effort", "@effort_score_sum{0}")
             ],
             formatters={
@@ -1463,6 +1493,8 @@ def show_click_vs_effort(disambiguation_utterances, interval):
         p.legend.location = 'top_center'
 
         toggle = Toggle(label="Auto Learning Applied Period", button_type="default", active=False, align='center')
+        toggle_mean = Toggle(label="Average Customer Effort", button_type="default", active=False, align='center')
+        toggle_sum = Toggle(label="Total Customer Effort", button_type="default", active=True, align='center')
 
         if len(time_intervals) > 0:
 
@@ -1484,7 +1516,69 @@ def show_click_vs_effort(disambiguation_utterances, interval):
 
             toggle.js_on_change('active', select_callback)
 
-        layout = column(p, toggle)
+        total_items = p.legend[0].items[:4]
+        avg_items = p.legend[0].items[0:3] + p.legend[0].items[4:]
+        p.legend[0].items = total_items
+        element_dict = dict(legend=p.legend[0], title=p.title, y_axis=p.yaxis[0], y_range=p.y_range,
+                            total_range=effort_data['effort_score_sum'].max() * 1.6,
+                            normal_range=effort_data['effort_score_mean'].max() * 1.6, total_items=total_items,
+                            avg_items=avg_items, toggle_mean=toggle_mean, toggle_sum=toggle_sum,
+                            actual_line=sum_line,
+                            actual_circle=sum_circle,
+                            normal_line=normal_line, normal_circle=normal_circle)
+        normalize_callback = CustomJS(args=element_dict, code="""
+            if(toggle_mean.active==true) {
+                 normal_line.visible = true
+                 normal_circle.visible = true
+                 actual_line.visible = false
+                 actual_circle.visible = false
+                 legend.items = avg_items
+                 y_range.end = normal_range
+                 y_axis.axis_label='Average Customer Effort'
+                 title.text='Average customer effort over time'
+                 toggle_sum.active=false
+
+            } else {
+                normal_line.visible = false
+                normal_circle.visible = false
+                actual_line.visible = true
+                actual_circle.visible = true
+                legend.items = total_items
+                y_range.end = total_range
+                y_axis.axis_label='Total Customer Effort'
+                title.text='Total customer effort over time'
+                toggle_sum.active=true
+            }
+        """)
+        normalize_callback_sum = CustomJS(args=element_dict, code="""
+            if(toggle_sum.active==true) {
+                        normal_line.visible = false
+                normal_circle.visible = false
+                actual_line.visible = true
+                actual_circle.visible = true
+                legend.items = total_items
+                y_range.end = total_range
+                y_axis.axis_label='Total Customer Effort'
+                title.text='Total customer effort over time'
+
+                 toggle_mean.active=false
+
+            } else {
+                 normal_line.visible = true
+                 normal_circle.visible = true
+                 actual_line.visible = false
+                 actual_circle.visible = false
+                 legend.items = avg_items
+                 y_range.end = normal_range
+                 y_axis.axis_label='Average Customer Effort'
+                 title.text='Average customer effort over time'
+                toggle_mean.active=true
+            }
+        """)
+        toggle_mean.js_on_change('active', normalize_callback)
+        toggle_sum.js_on_change('active', normalize_callback_sum)
+
+        layout = column(p, row(toggle_sum, toggle_mean, toggle, sizing_mode="stretch_width"))
         show(layout)
 
 

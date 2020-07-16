@@ -506,7 +506,7 @@ def extract_disambiguation_utterances(df_formatted):
     return disambiguation_utterances.sort_values(by='request_timestamp').reset_index(drop=True)
 
 
-def generate_cooccurrence_matrix1(data, assistant_nodes=None, exclude_nodes=None):
+def generate_cooccurrence_matrix(data, assistant_nodes=None, exclude_nodes=None):
     if exclude_nodes is None:
         exclude_nodes = set()
     all_suggestion_list = list()
