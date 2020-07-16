@@ -339,7 +339,7 @@ def show_coverage_over_time(df_coverage, interval='day'):
         delta = timedelta(days=1)
     elif interval == 'week':
         df_coverage['response_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(minutes=(d.day // 7) * 7) for d in
+            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(days=(d.day // 7) * 7) for d in
             df_coverage['response.timestamp']]
         delta = timedelta(days=7)
     elif interval == 'month':
@@ -530,7 +530,7 @@ def show_node_effort(disambiguation_utterances, assistant_nodes=None, interval=N
         bar_width = 20 * 60 * 60 * 1000
     elif interval == 'week':
         disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(minutes=(d.day // 7) * 7) for d in
+            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(days=(d.day // 7) * 7) for d in
             disambiguation_utterances.request_timestamp]
         start_delta = timedelta(days=3)
         end_delta = timedelta(days=3)
@@ -715,7 +715,7 @@ def show_input_effort(disambiguation_utterances, top, interval=None):
         bar_width = 20 * 60 * 60 * 1000
     elif interval == 'week':
         disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(minutes=(d.day // 7) * 7) for d in
+            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(days=(d.day // 7) * 7) for d in
             disambiguation_utterances.request_timestamp]
         delta = timedelta(days=7)
         start_delta = timedelta(days=3)
@@ -887,7 +887,7 @@ def show_disambiguation_click(disambiguation_utterances, interval=None):
         bar_width = 20 * 60 * 60 * 1000
     elif interval == 'week':
         disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(minutes=(d.day // 7) * 7) for d in
+            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(days=(d.day // 7) * 7) for d in
             disambiguation_utterances.request_timestamp]
         delta = timedelta(days=7)
         start_delta = timedelta(days=3)
@@ -1048,7 +1048,7 @@ def show_more_options_click(disambiguation_utterances, interval=None):
         bar_width = 20 * 60 * 60 * 1000
     elif interval == 'week':
         disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(minutes=(d.day // 7) * 7) for d in
+            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(days=(d.day // 7) * 7) for d in
             disambiguation_utterances.request_timestamp]
         delta = timedelta(days=7)
         start_delta = timedelta(days=3)
@@ -1318,7 +1318,7 @@ def show_click_vs_effort(disambiguation_utterances, interval):
             time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=0)
     elif interval == 'week':
         disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(minutes=(d.day // 7) * 7) for d in
+            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(days=(d.day // 7) * 7) for d in
             disambiguation_utterances.request_timestamp]
         delta = timedelta(days=7)
         start_delta = timedelta(days=3)
@@ -1607,7 +1607,7 @@ def show_effort_over_time(disambiguation_utterances, interval):
             time_intervals[idx][1] = end_timestamp.replace(second=0, microsecond=0, minute=0, hour=0)
     elif interval == 'week':
         disambiguation_utterances['request_datetime_interval'] = [
-            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(minutes=(d.day // 7) * 7) for d in
+            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(days=(d.day // 7) * 7) for d in
             disambiguation_utterances.request_timestamp]
         delta = timedelta(days=7)
         for idx, [start_timestamp, end_timestamp] in enumerate(time_intervals):
@@ -1968,3 +1968,152 @@ def show_effort_over_time(disambiguation_utterances, interval):
                         row(data_table, sizing_mode="stretch_width"),
                         row(detailed_data_table, sizing_mode="stretch_width"))
         show(layout)
+
+
+def show_disambiguation_percentage(df_formatted, interval):
+    start_delta = None
+    end_delta = None
+    delta = None
+    bar_width = None
+    if interval == 'minute':
+        df_formatted['request_datetime_interval'] = [
+            d.replace(second=0, microsecond=0, minute=d.minute, hour=d.hour) + timedelta(minutes=(d.second // 30)) for d
+            in df_formatted.request_timestamp]
+        delta = timedelta(minutes=1)
+        start_delta = timedelta(minutes=1)
+        end_delta = timedelta(minutes=1)
+        bar_width = 50 * 1000
+    elif interval == '5-minute':
+        df_formatted['request_datetime_interval'] = [
+            d.replace(second=0, microsecond=0, minute=0, hour=d.hour) + timedelta(minutes=(d.minute // 5) * 5) for d in
+            df_formatted.request_timestamp]
+        delta = timedelta(minutes=5)
+        start_delta = timedelta(minutes=3)
+        end_delta = timedelta(minutes=3)
+        bar_width = 4 * 60 * 1000
+    elif interval == '15-minute':
+        df_formatted['request_datetime_interval'] = [
+            d.replace(second=0, microsecond=0, minute=0, hour=d.hour) + timedelta(minutes=(d.minute // 15) * 15) for d
+            in df_formatted.request_timestamp]
+        delta = timedelta(minutes=15)
+        start_delta = timedelta(minutes=8)
+        end_delta = timedelta(minutes=8)
+        bar_width = 13 * 60 * 1000
+    elif interval == '30-minute':
+        df_formatted['request_datetime_interval'] = [
+            d.replace(second=0, microsecond=0, minute=0, hour=d.hour) + timedelta(minutes=(d.minute // 30) * 30) for d
+            in df_formatted.request_timestamp]
+        delta = timedelta(minutes=30)
+        start_delta = timedelta(minutes=15)
+        end_delta = timedelta(minutes=15)
+        bar_width = 25 * 60 * 1000
+    elif interval == 'hour':
+        df_formatted['request_datetime_interval'] = [
+            d.replace(second=0, microsecond=0, minute=0, hour=d.hour) for d in
+            df_formatted.request_timestamp]
+        delta = timedelta(minutes=60)
+        start_delta = timedelta(minutes=30)
+        end_delta = timedelta(minutes=30)
+        bar_width = 50 * 60 * 1000
+    elif interval == 'day':
+        df_formatted['request_datetime_interval'] = [d.replace(second=0, microsecond=0, minute=0, hour=0)
+                                                     for d in df_formatted.request_timestamp]
+        delta = timedelta(days=1)
+        start_delta = timedelta(days=1)
+        end_delta = timedelta(days=1)
+        bar_width = 20 * 60 * 60 * 1000
+    elif interval == 'week':
+        df_formatted['request_datetime_interval'] = [
+            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) + timedelta(days=(d.day // 7) * 7) for d in
+            df_formatted.request_timestamp]
+        delta = timedelta(days=7)
+        start_delta = timedelta(days=5)
+        end_delta = timedelta(days=5)
+        bar_width = 5 * 24 * 60 * 60 * 1000
+    elif interval == 'month':
+        df_formatted['request_datetime_interval'] = [
+            d.replace(second=0, microsecond=0, minute=0, hour=0, day=1) for d in
+            df_formatted.request_timestamp]
+        delta = timedelta(days=30)
+        start_delta = timedelta(days=15)
+        end_delta = timedelta(days=15)
+        bar_width = 15 * 24 * 60 * 60 * 1000
+    else:
+        print(
+            'Invalid interval, please choose from {"minute", "5-minute", "15-minute", "30-minute", "hour", "day", "week", "month"}')
+
+    if delta:
+
+        start_datetime = df_formatted.request_datetime_interval.iloc[0]
+        end_datetime = df_formatted.request_datetime_interval.iloc[-1]
+
+        if start_datetime == end_datetime:
+            start_datetime -= delta
+            end_datetime += delta
+
+        df_formatted['disambiguation_model_type'] = df_formatted.auto_learn_apply.apply(
+            lambda x: x['disambiguation']['model_type'] if x and 'model_type' in x['disambiguation'] else 'None')
+        df_formatted['response_type'] = df_formatted.response_generic_0_suggestions.apply(
+            lambda x: 'suggestions' if len(x) > 0 else 'direct_answer')
+
+        model_suggestion = df_formatted[['request_datetime_interval', 'response_type']].groupby(
+            ['request_datetime_interval', 'response_type']).size()
+        model_suggestion = model_suggestion.apply(pd.Series)
+
+        res = list()
+        for date_interval in df_formatted['request_datetime_interval'].unique():
+            res.append(model_suggestion.loc[(date_interval)].reset_index(drop=True).T)
+
+        df = pd.concat(res).reset_index(drop=True)
+        df = df[[1, 0]]
+
+        df_comb = df.join(df.divide(df.sum(axis=1), axis=0), rsuffix='_w')
+        df_comb = df_comb.join(df.divide(df.sum(axis=1) * 3, axis=0), rsuffix='_w_labelheights')
+        df_time_interval = pd.DataFrame(df_formatted['request_datetime_interval'].unique())
+        df_comb = pd.concat([df_time_interval, df_comb], axis=1)
+        df_comb.columns = ['request_datetime_interval', 'Disambiguation', 'Single', 'dis_h', 'single_h', 'dis_l',
+                           'single_l']
+
+        df_comb['Total'] = df_comb['Disambiguation'] + df_comb['Single']
+        output_notebook(hide_banner=True)
+
+        p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
+                   x_range=(start_datetime - start_delta, end_datetime + end_delta))
+
+        source = ColumnDataSource(df_comb)
+        p.vbar(x='request_datetime_interval', bottom=0, top='dis_h', width=bar_width, source=source, color='#4b86b4',
+               legend_label='Disambiguation')
+        p.vbar(x='request_datetime_interval', bottom='dis_h', top=1, width=bar_width, source=source, color='#adcbe3',
+               legend_label='Single Answer')
+
+        p.yaxis.axis_label = 'Percentage'
+
+        p.legend.location = 'top_right'
+        p.legend.click_policy = "hide"
+        p.xaxis.formatter = DatetimeTickFormatter(
+            seconds=["%Y-%m-%d %H:%M:%S"],
+            minsec=["%Y-%m-%d %H:%M:%S"],
+            minutes=["%Y-%m-%d %H:%M:%S"],
+            hourmin=["%Y-%m-%d %H:%M:%S"],
+            hours=["%Y-%m-%d %H:%M:%S"],
+            days=["%Y-%m-%d %H:%M:%S"],
+            months=["%Y-%m-%d %H:%M:%S"],
+            years=["%Y-%m-%d %H:%M:%S"],
+        )
+
+        p.xaxis.major_label_orientation = 0.5
+
+        hover = HoverTool(
+            tooltips=[
+                ("Datetime", "@request_datetime_interval{%Y-%m-%d %H:%M:%S}"),
+                ("Single Answer", "@Single"),
+                ("Disambiguation", "@Disambiguation"),
+                ("Total", "@Total")
+            ],
+            formatters={
+                '@request_datetime_interval': 'datetime'
+            },
+        )
+        p.add_tools(hover)
+
+        show(p)

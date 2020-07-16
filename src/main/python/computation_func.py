@@ -506,8 +506,9 @@ def extract_disambiguation_utterances(df_formatted):
     return disambiguation_utterances.sort_values(by='request_timestamp').reset_index(drop=True)
 
 
-def generate_cooccurrence_matrix(data, assistant_nodes=None):
-
+def generate_cooccurrence_matrix1(data, assistant_nodes=None, exclude_nodes=None):
+    if exclude_nodes is None:
+        exclude_nodes = set()
     all_suggestion_list = list()
     for idx, item in data.iterrows():
         suggestion_dialog_node_list = [s[3] for s in item.suggestion_list]
@@ -539,7 +540,8 @@ def generate_cooccurrence_matrix(data, assistant_nodes=None):
 
         list(map(find_node_name, all_suggestion_list))
 
-    combinations = [list(itertools.combinations(i,2)) for i in all_suggestion_list]
+    combinations = [list(itertools.combinations(i, 2)) for i in all_suggestion_list if
+                    len(set(i) & set(exclude_nodes)) == 0]
     combinations = list(itertools.chain.from_iterable((i, i[::-1]) for c_ in combinations for i in c_))
     combination_pd = pd.DataFrame(combinations)
     cooccurrence_matrix = pd.pivot_table(combination_pd, index=0, columns=1, aggfunc='size', fill_value=0)
