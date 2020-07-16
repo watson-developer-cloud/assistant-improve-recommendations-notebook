@@ -1868,7 +1868,7 @@ def show_effort_over_time(disambiguation_utterances, interval):
         toggle_sum.js_on_change('active', normalize_callback_sum)
         p.legend.click_policy = "hide"
         p.legend.orientation = "horizontal"
-        p.legend.location = 'bottom_right'
+        p.legend.location = 'top_right'
         #     table_source = ColumnDataSource(top_confused_pairs)
         effort_data['improve'] = (effort_data['effort_score_mean'] - effort_data['preview_effort_score_mean']) / \
                                  effort_data['effort_score_mean'] * 100
