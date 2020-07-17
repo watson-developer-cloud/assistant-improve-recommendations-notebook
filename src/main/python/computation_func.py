@@ -480,8 +480,8 @@ def extract_disambiguation_utterances(df_formatted):
             num_both_conversations += 1
 
     print('\n\nData Statistics:')
-    print('Number of days:{}'.format(len(unique_days)))
-    print('Disambiguation events per day:{}'.format(round(num_disambiguation_utterances / len(unique_days))))
+    print('Number of days: {}'.format(len(unique_days)))
+    print('Disambiguation events per day: {}'.format(round(num_disambiguation_utterances / len(unique_days))))
 
     utterance_statistics = {}
     utterance_statistics['Utterance'] = ['Total', 'Disambiguation', 'More Options', 'Both']
