@@ -572,7 +572,7 @@ def show_node_effort(disambiguation_utterances, assistant_nodes=None, interval=N
 
         dialog_node_effort_df = disambiguation_utterances[
             ['request_datetime_interval', 'selected_dialog_node', 'effort_score']].groupby(
-            ['request_datetime_interval', 'selected_dialog_node'], as_index=False).agg({'effort_score': 'mean'})
+            ['request_datetime_interval', 'selected_dialog_node'], as_index=False).agg({'effort_score': 'sum'})
 
         start_datetime = dialog_node_effort_df.request_datetime_interval.iloc[0]
         end_datetime = dialog_node_effort_df.request_datetime_interval.iloc[-1]
