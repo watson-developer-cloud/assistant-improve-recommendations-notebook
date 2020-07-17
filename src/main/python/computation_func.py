@@ -409,6 +409,9 @@ def format_logs_disambiguation(df):
 
 
 def extract_disambiguation_utterances(df_formatted):
+    df_formatted['request_datetime_interval'] = [d.replace(second=0, microsecond=0, minute=0, hour=0)
+                                                          for d in df_formatted.request_timestamp]
+    unique_days = df_formatted['request_datetime_interval'].unique()
     conversation_ids = df_formatted.response_context_conversation_id.unique()
     print('Extracting disambiguation logs from {} conversations ...'.format(len(conversation_ids)))
     list_conversations = list()
@@ -477,6 +480,9 @@ def extract_disambiguation_utterances(df_formatted):
             num_both_conversations += 1
 
     print('\n\nData Statistics:')
+    print('Num of days:{}'.format(len(unique_days)))
+    print('Disambiguation per day:{}'.format(round(num_disambiguation_utterances / len(unique_days) , 0)))
+
     utterance_statistics = {}
     utterance_statistics['Utterance'] = ['Total', 'Disambiguation', 'More Options', 'Both']
     utterance_statistics['Count'] = [len(df_formatted.log_id.unique()), num_disambiguation_utterances, num_more_utterances, num_both_utterances]
