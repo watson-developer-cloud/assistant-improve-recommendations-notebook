@@ -23,7 +23,7 @@ import base64
 import decimal
 from datetime import timedelta
 import pandas as pd
-from bokeh.io import show, output_notebook, push_notebook
+from bokeh.io import show, output_notebook
 from bokeh.models import HoverTool, ColumnDataSource, DataTable, TableColumn, LinearColorMapper, ColorBar, LinearColorMapper, BasicTicker, PrintfTickFormatter, Select, CustomJS, LinearAxis, Range1d, BoxAnnotation, Toggle
 from bokeh.layouts import row, column
 from bokeh.plotting import figure
@@ -1762,7 +1762,6 @@ def show_effort_over_time(disambiguation_utterances, interval):
         effort_data['count'] = effort_data['count'].fillna(0)
 
         min_sum = effort_agg[['effort_score_sum', 'preview_effort_score_sum']][len(effort_agg)//4*3:].min().min()
-        min_mean = effort_agg[['effort_score_mean', 'preview_effort_score_mean']][len(effort_agg)//4*3:].min().min()
 
         half_axis_sum = effort_data['effort_score_sum'].max() * 1.1 // 2
         legend_position = 'top_right'

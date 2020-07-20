@@ -102,9 +102,9 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
 
         node_stack_list = item['response_dialog_stack']
         for stack_id, stack_item in enumerate(node_stack_list):
-            for key, item in stack_item.items():
-                if item in node_title_map:
-                    stack_item[key] = node_title_map[item]
+            for key, value in stack_item.items():
+                if value in node_title_map:
+                    stack_item[key] = node_title_map[value]
 
     ineffective_nodes = None
     if df_escalate_nodes.size > 0:
