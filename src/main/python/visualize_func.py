@@ -1439,7 +1439,7 @@ def show_click_vs_effort(disambiguation_utterances, interval):
         p.add_layout(sum_line)
         p.add_layout(sum_circle)
 
-        p.extra_y_ranges["effort_score_mean"] = Range1d(start=0, end=effort_data['effort_score_mean'].max() * 1.6)
+        p.extra_y_ranges["effort_score_mean"] = Range1d(start=0, end=effort_data['effort_score_mean'].max() * 1.3)
         normal_line = p.line(x='request_datetime_interval', y='effort_score_mean', source=effort_data,
                              legend_label='Average Effort',
                              line_width=1.5, color='#4fa8f6', y_range_name="effort_score_mean", visible=False)
@@ -1631,9 +1631,6 @@ def show_effort_over_time(disambiguation_utterances, interval):
     else:
         preview_data = True
 
-    # start_timestamp = disambiguation_utterances.iloc[start_applied_idx].request_timestamp
-    # end_timestamp = disambiguation_utterances.iloc[end_applied_idx].request_timestamp
-
     if interval == 'minute':
         disambiguation_utterances['request_datetime_interval'] = [
             d.replace(second=0, microsecond=0, minute=d.minute, hour=d.hour) + timedelta(minutes=(d.second // 30)) for d
@@ -1747,6 +1744,14 @@ def show_effort_over_time(disambiguation_utterances, interval):
         effort_data['preview_effort_score_mean'] = effort_data['preview_effort_score_mean'].fillna(0)
         effort_data['preview_effort_score_sum'] = effort_data['preview_effort_score_sum'].fillna(0)
         effort_data['count'] = effort_data['count'].fillna(0)
+
+        min_sum = effort_agg[['effort_score_sum', 'preview_effort_score_sum']][len(effort_agg)//4*3:].min().min()
+        min_mean = effort_agg[['effort_score_mean', 'preview_effort_score_mean']][len(effort_agg)//4*3:].min().min()
+
+        half_axis_sum = effort_data['effort_score_sum'].max() * 1.1 // 2
+        legend_position = 'top_right'
+        if min_sum < half_axis_sum:
+            legend_position = 'bottom_right'
 
         output_notebook(hide_banner=True)
 
@@ -1962,7 +1967,8 @@ def show_effort_over_time(disambiguation_utterances, interval):
         toggle_sum.js_on_change('active', normalize_callback_sum)
         p.legend.click_policy = "hide"
         p.legend.orientation = "horizontal"
-        p.legend.location = 'top_right'
+        p.legend.location = legend_position
+
         #     table_source = ColumnDataSource(top_confused_pairs)
         effort_data['improve'] = (effort_data['effort_score_mean'] - effort_data['preview_effort_score_mean']) / \
                                  effort_data['effort_score_mean'] * 100
