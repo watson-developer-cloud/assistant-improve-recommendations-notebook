@@ -1,9 +1,10 @@
-# Standardize specific versions
-matplotlib>=2.2.3
-pandas==0.20.3
-numpy>=1.16.0
-XlsxWriter==1.2.7
-xlrd==1.2.0
-scikit-learn==0.22.1
-pillow
 jupyter
+ibm-watson==4.1.0
+pandas==1.0.3
+matplotlib==3.2.1
+numpy==1.18.2
+XlsxWriter==1.2.8
+bokeh==2.0.0
+xlrd==1.2.0
+scikit-learn==0.22.2.post1
+tqdm==4.43.0
