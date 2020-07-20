@@ -1520,8 +1520,8 @@ def show_click_vs_effort(disambiguation_utterances, interval):
         avg_items = p.legend[0].items[0:3] + p.legend[0].items[4:]
         p.legend[0].items = total_items
         element_dict = dict(legend=p.legend[0], title=p.title, y_axis=p.yaxis[0], y_range=p.y_range,
-                            total_range=effort_data['effort_score_sum'].max() * 1.6,
-                            normal_range=effort_data['effort_score_mean'].max() * 1.6, total_items=total_items,
+                            total_range=effort_data['effort_score_sum'].max() * 1.3,
+                            normal_range=effort_data['effort_score_mean'].max() * 1.3, total_items=total_items,
                             avg_items=avg_items, toggle_mean=toggle_mean, toggle_sum=toggle_sum,
                             actual_line=sum_line,
                             actual_circle=sum_circle,
