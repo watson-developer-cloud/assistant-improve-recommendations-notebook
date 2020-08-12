@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0, './src')
 from assistant_improve_toolkit import intersection
 
 
