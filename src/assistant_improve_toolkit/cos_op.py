@@ -193,6 +193,9 @@ def generate_excel_effectiveness(dataframe_list, sheet_name_list, filename, proj
 
 
 def export_result_excel(df_effective, sample_size=100, project_io=None):
+    if df_effective.size == 0:
+        print('No ineffective conversations found in logs')
+        return
     # Copy the effective dataframe
     df_excel = df_effective.copy(deep=True)
     # Rename columns to generate excel
