@@ -29,12 +29,12 @@ deploy:
   skip_cleanup: true
   on:
     python: 3.8
-    branch: master
+    branch: lib
 - provider: pypi
   user: "$PYPI_USER"
   password: "$PYPI_PASSWORD"
   server: https://test.pypi.org/legacy/
   skip_cleanup: true
   on:
-    python: 3.7
+    python: 3.8
     tags: true
