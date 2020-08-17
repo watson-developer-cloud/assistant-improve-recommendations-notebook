@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.0.0...v1.0.1) (2020-08-17)
+
+
+### Bug Fixes
+
+* releaserc ([eb6b2b2](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/eb6b2b260ef7bb43aaa3aab5cbb9b992c3f5049d))
+
 # 1.0.0 (2020-08-17)
 
 
