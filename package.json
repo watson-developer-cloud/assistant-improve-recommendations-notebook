@@ -1,0 +1,15 @@
+{
+  "name": "assistant_improve_toolkit",
+  "version": "1.0.0",
+  "description": "To help improving your Watson Assistant after you have deployed it to production, we prepared the following two Jupyter notebooks. These notebooks include practical steps for measuring, analyzing, and actively improving your virtual assistant in a continuous manner. Check out IBM Watson Assistant Continuous Improvement Best Practices for more details.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook.git"
+  },
+  "author": "IBM",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues"
+  },
+  "homepage": "https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook#readme"
+}
