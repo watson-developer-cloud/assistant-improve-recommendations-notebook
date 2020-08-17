@@ -29,7 +29,7 @@ deploy:
   skip_cleanup: true
   on:
     python: 3.8
-    branch: lib
+    branch: master
 - provider: pypi
   user: "$PYPI_USER"
   password: "$PYPI_PASSWORD"
