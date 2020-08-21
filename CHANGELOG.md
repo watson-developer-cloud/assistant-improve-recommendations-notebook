@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.1...v1.1.2) (2020-08-21)
+
+
+### Bug Fixes
+
+* remove tqdm for watson studio support ([#91](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/91)) ([e183b0d](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/e183b0d36a82660484cb3516d4f34b04ee0897e2))
+
 ## [1.1.1](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.0...v1.1.1) (2020-08-21)
 
 
