@@ -21,7 +21,6 @@ import re
 import itertools
 import numpy as np
 from IPython.display import HTML
-from tqdm.notebook import tqdm
 
 MAX_DISAMBIGUATION_LENGTH = 5
 MAX_MORE_OPTION_LENGTH = 5
@@ -438,7 +437,7 @@ def extract_disambiguation_utterances(df_formatted):
     num_both_utterances = 0
     num_more_conversations = 0
     num_both_conversations = 0
-    for conversation_id in tqdm(conversation_ids):
+    for conversation_id in conversation_ids:
         utterances = df_formatted.loc[df_formatted.response_context_conversation_id == conversation_id].sort_values(
             by='request_timestamp').reset_index(drop=True)
         utterances['suggestion_list'] = np.empty((len(utterances), 0)).tolist()
