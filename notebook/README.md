@@ -1,14 +1,12 @@
-Below are descriptions for the contents in this directory.
+## Table of Contents
 
-#### IBM Watson Assistant Continuous Improvement Best Practices.pdf ####
-
-#### Effectiveness Notebook.ipynb ####
+#### `Effectiveness Notebook.ipynb` ####
 - A Jupytor notebook file. Effectiveness notebook helps you understand relative performance of each intent and entity as well as the confusion between your intents. This information helps you prioritize your improvement effort.
 
-#### Measure Notebook.ipynb ####
+#### `Measure Notebook.ipynb` ####
 - A Jupytor notebook file. Measure notebook contains a set of automated metrics that help you monitor and understand the behavior of your system. The goal is to understand where your assistant is doing well vs where it isn’t, and to focus your improvement effort to one of the problem areas identified.
 
-#### Logs Notebook.ipynb ####
+#### `Logs Notebook.ipynb` ####
 - A Jupytor notebook file. Logs notebook helps you fetch logs using Watson Assistant API.  You can fetch logs with various filters, and save them as a JSON file, or export the utterances in the logs into a CSV file.  The JSON file can be loaded into the Measure notebook.  The CSV file can be updated to Watson Assistant service for intent recommendation. Alternatively, you can run python scripts [`fetch_logs`](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/src/main/python/fetch_logs.py) and [`export_csv_for_intent_recommendation`](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/src/main/python/export_csv_for_intent_recommendation.py) to fetch logs and export them to [intent recommendation CSV](https://cloud.ibm.com/docs/assistant?topic=assistant-intent-recommendations#intent-recommendations-data-resources), respectively.  Run `python get_logs -h` and `python export_csv_for_intent_recommendation.py -h` for usage.  For example, to generate intent recommendation CSV from logs:
 
 ```
@@ -27,8 +25,11 @@ Below are descriptions for the contents in this directory.
   --deduplicate --min_length 3 --max_length 20
   ```
 
-#### Customer Effort Notebook.ipynb ####
+#### `Customer Effort Notebook.ipynb` ####
 - A Jupytor notebook file. Customer Effort notebook helps you measure and analyze the performance improvement after enabling the [Disambiguation](https://cloud.ibm.com/docs/assistant?topic=assistant-dialog-runtime#dialog-runtime-disambiguation) and [Autolearning](https://cloud.ibm.com/docs/assistant?topic=assistant-autolearn) features.
+
+#### `IBM Watson Assistant Continuous Improvement Best Practices.pdf` ####
+- IBM Watson Assistant Continuous Improvement Best Practices document.
 
 #### `data` ####
 - A folder contains an example workspace with sample logs and an annotated log file for demonstration in notebooks. 
