@@ -1,9 +1,9 @@
-# Watson Assistant Recommendation Notebooks
+# Watson Assistant Improve Notebooks
 
-This repository houses Watson Assistant notebooks with a set of data operation and visualization functions.
+This repository houses Watson Assistant Improve notebooks and the underlying assistant improve toolkit library.
 
 ## Introduction
-To help improving your Watson Assistant after you have deployed it to production, we prepared the following two Jupyter notebooks. These notebooks include practical steps for measuring, analyzing, and actively improving your virtual assistant in a continuous manner. Check out [IBM Watson Assistant Continuous Improvement Best Practices](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/raw/master/notebook/IBM%20Watson%20Assistant%20Continuous%20Improvement%20Best%20Practices.pdf) for more details.
+To help improving your Watson Assistant after you have deployed it to production, we prepared the following four Jupyter notebooks. These notebooks include practical steps for measuring, analyzing, and actively improving your assistant in a continuous manner. Check out [IBM Watson Assistant Continuous Improvement Best Practices](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/raw/master/notebook/IBM%20Watson%20Assistant%20Continuous%20Improvement%20Best%20Practices.pdf) for more details.
 
 ### Measure Notebook 
 The Measure notebook contains a set of automated metrics that help you monitor and understand the behavior of your system. The goal is to understand where your assistant is doing well vs where it isn’t, and to focus your improvement effort to one of the problem areas identified. 
@@ -11,10 +11,11 @@ The Measure notebook contains a set of automated metrics that help you monitor a
 ### Effectiveness Notebook 
 The Effectiveness notebook helps you understand relative performance of each intent and entity as well as the confusion between your intents. This information helps you prioritize your improvement effort. 
 
-### Logs Notebook
-The Logs notebook helps you fetch logs using Watson Assistant API.  You can fetch logs with various filters, and save them as a JSON file, or export the utterances in the logs into a CSV file.  The JSON file can be loaded into the Measure notebook.  The CSV file can be updated to Watson Assistant service for intent recommendation.  
+### Customer Effort Notebook 
+The Effectiveness notebook helps you measure and analyze the performance improvement after enabling the [Disambiguation](https://cloud.ibm.com/docs/assistant?topic=assistant-dialog-runtime#dialog-runtime-disambiguation) and [Autolearning](https://cloud.ibm.com/docs/assistant?topic=assistant-autolearn) features
 
-Alternatively, you can run python scripts [`fetch_logs`](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/src/main/python/fetch_logs.py) and [`export_csv_for_intent_recommendation`](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/src/main/python/export_csv_for_intent_recommendation.py) to fetch logs and export them to [intent recommendation CSV](https://cloud.ibm.com/docs/assistant?topic=assistant-intent-recommendations#intent-recommendations-data-resources), respectively.  Run `python get_logs -h` and `python export_csv_for_intent_recommendation.py -h` for usage.  For example, to generate intent recommendation CSV from logs:
+### Logs Notebook
+The Logs notebook helps you fetch logs using Watson Assistant API.  You can fetch logs with various filters, and save them as a JSON file, or export the utterances in the logs into a CSV file.  The JSON file can be loaded into the Measure notebook.  The CSV file can be used for [intent recommendation service](https://cloud.ibm.com/docs/assistant?topic=assistant-intent-recommendations#intent-recommendations-get-intent-recommendations-task). Alternatively, you can run python scripts [`fetch_logs`](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/src/main/python/fetch_logs.py) and [`export_csv_for_intent_recommendation`](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/blob/master/src/main/python/export_csv_for_intent_recommendation.py) to fetch logs and export them to [intent recommendation CSV](https://cloud.ibm.com/docs/assistant?topic=assistant-intent-recommendations#intent-recommendations-data-resources), respectively.  Run `python get_logs -h` and `python export_csv_for_intent_recommendation.py -h` for usage.  For example, to generate intent recommendation CSV from logs:
 
 - Fetch logs by keeping first user utterances in conversations with confidence `response.intents::confidence` between 0.1 and 0.6, and save to JSON file `OUTPUT_JSON_FILE`
   ```angular2
@@ -33,9 +34,9 @@ Alternatively, you can run python scripts [`fetch_logs`](https://github.com/wats
 
 ## Getting Started
 
-We provide two versions of the above notebooks Jupyter Notebook and [Watson Studio Notebook](https://dataplatform.cloud.ibm.com/docs/content/wsj/analyze-data/notebooks-parent.html).
+You can run the notebooks locally or in [Watson Studio](https://dataplatform.cloud.ibm.com/docs/content/wsj/analyze-data/notebooks-parent.html).
 
-- _**Jupyter Notebook**_
+- _**Run locally**_
 
     1. Install Jupyter Notebook, see [Jupyter/IPython Notebook Quick Start Guide](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/install.html) for more details.
 
@@ -51,7 +52,7 @@ We provide two versions of the above notebooks Jupyter Notebook and [Watson Stud
 
     4. Follow the instructions in each of the notebooks. Be sure to add your Watson Assistant credentials if necessary.
 
-- _**Watson Studio Notebook**_
+- _**Run in Watson Studio**_
     
     1. Create a Watson Studio account.
     
@@ -65,6 +66,9 @@ We provide two versions of the above notebooks Jupyter Notebook and [Watson Stud
     
     4. Follow the instructions in each notebook to add project tokens and Watson Assistant credentials if necessary.
 
-## License
+## Contributing 
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [DEVELOPER.MD](DEVELOPER.MD) for more details on how to contribute
 
+## License
 This library is licensed under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0).
+

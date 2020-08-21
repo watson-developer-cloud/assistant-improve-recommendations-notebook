@@ -51,14 +51,14 @@ setuptools.setup(
     package_dir={'': 'src'},
     packages=setuptools.find_packages('src'),
     install_requires=[
-        'pandas==1.0.1',
+        'pandas>=1.0.3',
         'bokeh==2.0.0',
         'tqdm==4.43.0',
         'scikit-learn>=0.21.3',
         'matplotlib==3.2.1',
         'XlsxWriter==1.2.8',
         'ibm-watson>=4.3.0',
-        'numpy==1.18.2',
+        'numpy>=1.18.2',
         'requests>=2.18.4',
         'scikit-learn==0.22.2.post1',
         'xlrd==1.2.0'
