@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.0.1...v1.1.0) (2020-08-21)
+
+
+### Features
+
+* improve ReadMe.md to include all of the related notebooks ([#89](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/89)) ([68c3325](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/68c3325ddfc84e5866728360880f4dca5991303e))
+
 ## [1.0.1](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.0.0...v1.0.1) (2020-08-17)
 
 
