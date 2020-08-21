@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.0...v1.1.1) (2020-08-21)
+
+
+### Bug Fixes
+
+* fix pypi url ([#90](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/90)) ([b0f39f4](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/b0f39f45341729eba954cfdb387abfddaa91ec0f))
+
 # [1.1.0](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.0.1...v1.1.0) (2020-08-21)
 
 
