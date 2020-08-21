@@ -33,7 +33,7 @@ deploy:
 - provider: pypi
   user: "$PYPI_USER"
   password: "$PYPI_PASSWORD"
-  server: https://test.pypi.org/legacy/
+  server: https://upload.pypi.org/legacy
   skip_cleanup: true
   on:
     python: 3.8
