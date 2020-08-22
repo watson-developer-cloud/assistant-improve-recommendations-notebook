@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.2...v1.1.3) (2020-08-22)
+
+
+### Bug Fixes
+
+* fix a bug in show disambiguation click api ([#93](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/93)) ([a7eddca](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/a7eddca0b55f9520e1438a646416937ddfc3458e))
+
 ## [1.1.2](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.1...v1.1.2) (2020-08-21)
 
 
