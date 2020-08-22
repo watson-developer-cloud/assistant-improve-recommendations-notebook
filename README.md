@@ -1,5 +1,10 @@
 # Watson Assistant Improve Notebooks
 
+[![Build Status](https://travis-ci.org/watson-developer-cloud/assistant-improve-recommendations-notebook.svg?branch=master)](https://travis-ci.org/github/watson-developer-cloud/assistant-improve-recommendations-notebook)
+[![Slack](https://wdc-slack-inviter.mybluemix.net/badge.svg)](https://wdc-slack-inviter.mybluemix.net)
+[![Latest Stable Version](https://img.shields.io/pypi/v/assistant-improve-toolkit)](https://pypi.org/project/assistant-improve-toolkit/)
+[![CLA assistant](https://cla-assistant.io/readme/badge/watson-developer-cloud/assistant-improve-recommendations-notebook)](https://cla-assistant.io/watson-developer-cloud/assistant-improve-recommendations-notebook)
+
 This repository houses Watson Assistant Improve notebooks and the underlying assistant improve toolkit library.
 
 ## Introduction
