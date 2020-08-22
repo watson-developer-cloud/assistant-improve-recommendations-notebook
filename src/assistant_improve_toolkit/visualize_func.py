@@ -923,7 +923,7 @@ def show_disambiguation_click(disambiguation_utterances, interval=None):
 
     if delta:
         click_detail_pd = disambiguation_utterances[['request_datetime_interval', 'select_rank_d']].groupby(
-            ['request_datetime_interval', 'select_rank_d'], as_index=False).size().reset_index(drop=True)
+            ['request_datetime_interval', 'select_rank_d'], as_index=False).size().reset_index()
 
         if click_detail_pd.shape[0] == 0:
             print('No Disambiguation click found.')
@@ -1084,7 +1084,7 @@ def show_more_options_click(disambiguation_utterances, interval=None):
 
     if delta:
         click_detail_pd = disambiguation_utterances[['request_datetime_interval', 'select_rank_a']].groupby(
-            ['request_datetime_interval', 'select_rank_a'], as_index=False).size().reset_index(drop=True)
+            ['request_datetime_interval', 'select_rank_a'], as_index=False).size().reset_index()
 
         if click_detail_pd.shape[0] == 0:
             print('No More Options click found.')
