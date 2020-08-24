@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.3...v1.1.4) (2020-08-24)
+
+
+### Bug Fixes
+
+* delete watson_assistant_func_skip.py ([0da1456](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/0da145654157796a58a50d6a90348ff6b32478a2))
+
 ## [1.1.3](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.2...v1.1.3) (2020-08-22)
 
 
