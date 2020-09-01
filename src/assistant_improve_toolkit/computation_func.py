@@ -21,7 +21,7 @@ import re
 import itertools
 import numpy as np
 from IPython.display import HTML
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 
 MAX_DISAMBIGUATION_LENGTH = 5
 MAX_MORE_OPTION_LENGTH = 5
@@ -174,14 +174,17 @@ def get_coverage_df(df_tbot_raw, df_coverage_nodes, conf_threshold):
     df_tbot_raw['Not Covered cause'] = None
 
     # Filter all the valid dialog node ids for non-coverage
-    df_coverage_valid = df_coverage_nodes[df_coverage_nodes['Valid']]  # ['dialog_node'].tolist()
+    df_coverage_valid = df_coverage_nodes[df_coverage_nodes['Valid']]
+    df_coverage_valid_dict = dict()
+    for idx, row in df_coverage_nodes[df_coverage_nodes['Valid']].iterrows():
+        df_coverage_valid_dict[row['Node ID']] = {row['Node ID'], row['Node Name']}
 
     # (1) Mark all messages that hit any non-coverage node including but not limited to 'anything_else' as 'Not covered'
     #  and update the 'Not Covered cause' column
-    for node in df_coverage_valid['Node ID'].tolist():
-        cause = "'{}' node".format(df_coverage_valid.loc[df_coverage_valid['Node ID'] == node, 'Condition'].values[0])
+    for node_id, name_set in df_coverage_valid_dict.items():
+        cause = "'{}' node".format(df_coverage_valid.loc[df_coverage_valid['Node ID'] == node_id, 'Condition'].values[0])
         df_tbot_raw.loc[
-            (df_tbot_raw['response.output.nodes_visited_s'].apply(lambda x: bool(intersection(x, node)))), [
+            (df_tbot_raw['response.output.nodes_visited_s'].apply(lambda x: bool(intersection(x, name_set)))), [
                 'Covered', 'Not Covered cause']] = [False, cause]
 
     # (2) Mark all messages  that did not meet confidence threshold set as 'Not covered' and update the 'Not Covered
