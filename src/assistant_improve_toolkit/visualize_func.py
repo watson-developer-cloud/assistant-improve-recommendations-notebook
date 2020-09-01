@@ -382,7 +382,7 @@ def show_coverage_over_time(df_coverage, interval='day'):
             start_datetime -= delta
             end_datetime += delta
 
-        time_index_df = pd.DataFrame([dt for dt in datetime_range(start_datetime, end_datetime, delta)],
+        time_index_df = pd.DataFrame([dt for dt in coverage_time.response_datetime_interval],
                                      columns=['response_datetime_interval'])
 
         coverage_data = time_index_df.merge(coverage_time, how='left', on=['response_datetime_interval'])
