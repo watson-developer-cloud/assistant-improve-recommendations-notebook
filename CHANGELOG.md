@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.4...v1.1.5) (2020-09-01)
+
+
+### Bug Fixes
+
+* fix a bug when calculating coverage ([#95](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/95)) ([06ba033](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/06ba03380c1f309309f3e7cb484d736b7d3df1c3))
+
 ## [1.1.4](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.3...v1.1.4) (2020-08-24)
 
 
