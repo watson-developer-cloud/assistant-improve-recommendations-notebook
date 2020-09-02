@@ -315,13 +315,6 @@ def round_decimal(x, digits=0):
     return float(x.quantize(decimal.Decimal(string), rounding='ROUND_HALF_UP'))
 
 
-def datetime_range(start, end, delta):
-    current = start
-    while current <= end:
-        yield current
-        current += delta
-
-
 def show_coverage_over_time(df_coverage, interval='day'):
     delta = None
     if interval == 'minute':
@@ -381,9 +374,11 @@ def show_coverage_over_time(df_coverage, interval='day'):
         if start_datetime == end_datetime:
             start_datetime -= delta
             end_datetime += delta
-
-        time_index_df = pd.DataFrame([dt for dt in coverage_time.response_datetime_interval],
-                                     columns=['response_datetime_interval'])
+            time_index_df = pd.DataFrame([dt for dt in [start_datetime] + coverage_time.response_datetime_interval.tolist() + [end_datetime]],
+                                         columns=['response_datetime_interval'])
+        else:
+            time_index_df = pd.DataFrame([dt for dt in coverage_time.response_datetime_interval.tolist()],
+                             columns=['response_datetime_interval'])
 
         coverage_data = time_index_df.merge(coverage_time, how='left', on=['response_datetime_interval'])
         coverage_data['Count'] = coverage_data['Count'].fillna(0)
@@ -482,13 +477,6 @@ def show_top_node_effort(disambiguation_utterances, top=10, assistant_nodes=None
     p.add_tools(hover)
 
     show(p)
-
-
-def datetime_range(start, end, delta):
-    current = start
-    while current <= end:
-        yield current
-        current += delta
 
 
 def show_node_effort(disambiguation_utterances, assistant_nodes=None, interval=None):
@@ -596,8 +584,12 @@ def show_node_effort(disambiguation_utterances, assistant_nodes=None, interval=N
         if start_datetime == end_datetime:
             start_datetime -= delta
             end_datetime += delta
-        time_index_df = pd.DataFrame([dt for dt in datetime_range(start_datetime, end_datetime, delta)],
-                                     columns=['request_datetime_interval'])
+            time_index_df = pd.DataFrame([dt for dt in [start_datetime] + dialog_node_effort_df.request_datetime_interval.tolist() + [end_datetime]],
+                                         columns=['request_datetime_interval'])
+        else:
+            time_index_df = pd.DataFrame([dt for dt in dialog_node_effort_df.request_datetime_interval.tolist()],
+                             columns=['request_datetime_interval'])
+
         for node_id in valid_effort_nodes:
             node_effort_df = dialog_node_effort_df.loc[dialog_node_effort_df['selected_dialog_node'] == node_id][
                 ['request_datetime_interval', 'effort_score']]
@@ -770,9 +762,12 @@ def show_input_effort(disambiguation_utterances, top, interval=None):
         if start_datetime == end_datetime:
             start_datetime -= delta
             end_datetime += delta
+            time_index_df = pd.DataFrame([dt for dt in [start_datetime] + input_effort_df.request_datetime_interval.tolist() + [end_datetime]],
+                                         columns=['request_datetime_interval'])
+        else:
+            time_index_df = pd.DataFrame([dt for dt in input_effort_df.request_datetime_interval.tolist()],
+                             columns=['request_datetime_interval'])
 
-        time_index_df = pd.DataFrame([dt for dt in datetime_range(start_datetime, end_datetime, delta)],
-                                     columns=['request_datetime_interval'])
         for input_id, input_text in enumerate(input_effort_options):
             node_effort_df = input_effort_df.loc[input_effort_df['request_input_text'] == input_text][
                 ['request_datetime_interval', 'effort_score']]
@@ -934,9 +929,11 @@ def show_disambiguation_click(disambiguation_utterances, interval=None):
         if start_datetime == end_datetime:
             start_datetime -= delta
             end_datetime += delta
-
-        time_index_df = pd.DataFrame([dt for dt in datetime_range(start_datetime, end_datetime, delta)],
-                                     columns=['request_datetime_interval'])
+            time_index_df = pd.DataFrame([dt for dt in [start_datetime] + click_detail_pd.request_datetime_interval.tolist() + [end_datetime]],
+                                         columns=['request_datetime_interval'])
+        else:
+            time_index_df = pd.DataFrame([dt for dt in click_detail_pd.request_datetime_interval.tolist()],
+                             columns=['request_datetime_interval'])
 
         select_rank_df = None
         for i in range(5):
@@ -1096,9 +1093,11 @@ def show_more_options_click(disambiguation_utterances, interval=None):
         if start_datetime == end_datetime:
             start_datetime -= delta
             end_datetime += delta
-
-        time_index_df = pd.DataFrame([dt for dt in datetime_range(start_datetime, end_datetime, delta)],
-                                     columns=['request_datetime_interval'])
+            time_index_df = pd.DataFrame([dt for dt in [start_datetime] + click_detail_pd.request_datetime_interval.tolist() + [end_datetime]],
+                                         columns=['request_datetime_interval'])
+        else:
+            time_index_df = pd.DataFrame([dt for dt in click_detail_pd.request_datetime_interval.tolist()],
+                             columns=['request_datetime_interval'])
 
         select_rank_df = None
         for i in range(5):
@@ -1382,6 +1381,11 @@ def show_click_vs_effort(disambiguation_utterances, interval):
         if start_datetime == end_datetime:
             start_datetime -= delta
             end_datetime += delta
+            time_index_df = pd.DataFrame([dt for dt in [start_datetime] + effort_agg.request_datetime_interval.tolist() + [end_datetime]],
+                                         columns=['request_datetime_interval'])
+        else:
+            time_index_df = pd.DataFrame([dt for dt in effort_agg.request_datetime_interval.tolist()],
+                             columns=['request_datetime_interval'])
 
         disambiguation_count = disambiguation_utterances.loc[disambiguation_utterances.select_rank_d.notnull()][
             ['request_datetime_interval', 'request_input_suggestion_id']].groupby(['request_datetime_interval'],
@@ -1396,8 +1400,6 @@ def show_click_vs_effort(disambiguation_utterances, interval):
                                                                                   as_index=False).agg(
             {'request_input_suggestion_id': 'count'})
 
-        time_index_df = pd.DataFrame([dt for dt in datetime_range(start_datetime, end_datetime, delta)],
-                                     columns=['request_datetime_interval'])
         click_agg = time_index_df.merge(disambiguation_count, how='left', on=['request_datetime_interval'])
         click_agg = click_agg.merge(alternate_click_count, how='left', on=['request_datetime_interval'])
         click_agg = click_agg.merge(none_click_count, how='left', on=['request_datetime_interval']).fillna(0)
@@ -1750,9 +1752,11 @@ def show_effort_over_time(disambiguation_utterances, interval):
         if start_datetime == end_datetime:
             start_datetime -= delta
             end_datetime += delta
-
-        time_index_df = pd.DataFrame([dt for dt in datetime_range(start_datetime, end_datetime, delta)],
-                                     columns=['request_datetime_interval'])
+            time_index_df = pd.DataFrame([dt for dt in [start_datetime] + effort_agg.request_datetime_interval.tolist() + [end_datetime]],
+                                         columns=['request_datetime_interval'])
+        else:
+            time_index_df = pd.DataFrame([dt for dt in effort_agg.request_datetime_interval.tolist()],
+                             columns=['request_datetime_interval'])
 
         effort_data = time_index_df.merge(effort_agg, how='left', on=['request_datetime_interval'])
         effort_data['effort_score_mean'] = effort_data['effort_score_mean'].fillna(0)
