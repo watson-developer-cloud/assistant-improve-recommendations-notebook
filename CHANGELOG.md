@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.5...v1.1.6) (2020-09-02)
+
+
+### Bug Fixes
+
+* fix visualization with 'week' interval ([#96](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/96)) ([fa0d9e0](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/fa0d9e0fae5eb7901a9b77b580d41c940451f543))
+
 ## [1.1.5](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.4...v1.1.5) (2020-09-01)
 
 
