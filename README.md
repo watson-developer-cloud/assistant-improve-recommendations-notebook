@@ -10,9 +10,9 @@ This repository houses Watson Assistant Improve notebooks and the underlying ass
 ## Introduction
 To help improving your Watson Assistant after you have deployed it to production, we prepared the following Jupyter notebooks. These notebooks include practical steps for measuring, analyzing, and actively improving your assistant in a continuous manner. Check out [IBM Watson Assistant Continuous Improvement Best Practices](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/raw/master/notebook/IBM%20Watson%20Assistant%20Continuous%20Improvement%20Best%20Practices.pdf) for more details.
 
-- __Measure notebook__ contains a set of automated metrics that help you monitor and understand the behavior of your system. The goal is to understand where your assistant is doing well vs where it isn’t, and to focus your improvement effort to one of the problem areas identified. 
+- __Measure notebook__ contains a set of automated metrics that help you monitor and understand the behavior of your system. The goal is to understand where your assistant is doing well vs where it isn’t, and to focus your improvement effort to one of the problem areas identified. This notebook generates an assessment spreadsheet for you to use to label problematic conversations, and then feed to the Effectiveness notebook.    
 
-- __Effectiveness notebook__ helps you understand relative performance of each intent and entity as well as the confusion between your intents. This information helps you prioritize your improvement effort. 
+- __Effectiveness notebook__ helps you understand the relative performance of each intent and entity as well as the confusion between your intents. This information helps you prioritize your improvement effort. The input to this notebook is an assessment spreadsheet generated from the Measure notebook.
 
 - __Customer Effort notebook__ helps you measure and analyze the performance improvement after enabling the [Disambiguation](https://cloud.ibm.com/docs/assistant?topic=assistant-dialog-runtime#dialog-runtime-disambiguation) and [Autolearning](https://cloud.ibm.com/docs/assistant?topic=assistant-autolearn) features
 
