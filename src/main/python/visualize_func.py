@@ -381,9 +381,11 @@ def show_coverage_over_time(df_coverage, interval='day'):
         if start_datetime == end_datetime:
             start_datetime -= delta
             end_datetime += delta
-
-        time_index_df = pd.DataFrame([dt for dt in datetime_range(start_datetime, end_datetime, delta)],
-                                     columns=['response_datetime_interval'])
+            time_index_df = pd.DataFrame([dt for dt in [start_datetime] + coverage_time.response_datetime_interval.tolist() + [end_datetime]],
+                                         columns=['response_datetime_interval'])
+        else:
+            time_index_df = pd.DataFrame([dt for dt in coverage_time.response_datetime_interval.tolist()],
+                             columns=['response_datetime_interval'])
 
         coverage_data = time_index_df.merge(coverage_time, how='left', on=['response_datetime_interval'])
         coverage_data['Count'] = coverage_data['Count'].fillna(0)
