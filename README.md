@@ -12,7 +12,7 @@ To help improving your Watson Assistant after you have deployed it to production
 
 - __Measure notebook__ contains a set of automated metrics that help you monitor and understand the behavior of your system. The goal is to understand where your assistant is doing well vs where it isn’t, and to focus your improvement effort to one of the problem areas identified. This notebook generates an assessment spreadsheet for you to use to label problematic conversations, and then feed to the Effectiveness notebook.    
 
-- __Effectiveness notebook__ helps you understand the relative performance of each intent and entity as well as the confusion between your intents. This information helps you prioritize your improvement effort. The input to this notebook is an assessment spreadsheet generated from the Measure notebook.
+- __Effectiveness notebook__ helps you understand the relative performance of each intent and entity as well as the confusion between your intents. This information helps you prioritize your improvement effort. The input to this notebook is an assessment spreadsheet generated from the Measure notebook. Update the marked columns in the spreadsheet with your labels and load it into the Effectiveness notebook for analysis.
 
 - __Customer Effort notebook__ helps you measure and analyze the performance improvement after enabling the [Disambiguation](https://cloud.ibm.com/docs/assistant?topic=assistant-dialog-runtime#dialog-runtime-disambiguation) and [Autolearning](https://cloud.ibm.com/docs/assistant?topic=assistant-autolearn) features
 
@@ -20,7 +20,7 @@ To help improving your Watson Assistant after you have deployed it to production
 
 - __Dialog Flow Analysis notebook__ help you assess and analyze user journeys and issues related to the dialog flow of ineffective (low quality) conversations based on production logs. Check out [Dialog Flow Analysis](https://github.com/watson-developer-cloud/assistant-dialog-flow-analysis) for more details.
 
-- __Dialog Skill Analysis notebook__ help you analyze characteristics of your data such as the number of training examples for each intent or the terms which seem to be characteristic of a specific intent. Check out [Dalog Skill Analysis](https://github.com/watson-developer-cloud/assistant-dialog-skill-analysis) for more details.
+- __Dialog Skill Analysis notebook__ help you analyze characteristics of your data such as the number of training examples for each intent or the terms which seem to be characteristic of a specific intent. Check out [Dialog Skill Analysis](https://github.com/watson-developer-cloud/assistant-dialog-skill-analysis) for more details.
 
 ## Getting Started
 
