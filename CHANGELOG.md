@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.6...v1.2.0) (2021-05-21)
+
+
+### Features
+
+* add support for assistant v2 log apis ([#100](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/100)) ([2c8d7bb](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/2c8d7bb3fab4f4dad4a7ba3849aa3fc2763c803d))
+
 ## [1.1.6](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.5...v1.1.6) (2020-09-02)
 
 
