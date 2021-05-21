@@ -12,7 +12,7 @@ install:
 before_script:
 - pip3 install -r requirements.txt
 script:
-- pip3 install -U python-dotenv
+- pip3 install python-dotenv
 - tox
 before_deploy:
 - pip3 install bumpversion pypandoc
