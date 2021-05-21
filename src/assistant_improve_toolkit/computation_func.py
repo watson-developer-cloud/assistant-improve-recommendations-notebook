@@ -22,6 +22,8 @@ import itertools
 import numpy as np
 from IPython.display import HTML
 from tqdm import tqdm
+import json
+import base64
 
 MAX_DISAMBIGUATION_LENGTH = 5
 MAX_MORE_OPTION_LENGTH = 5
@@ -100,11 +102,12 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
             if node_id in node_title_map:
                 node_id_visit_list[seq_id] = node_title_map[node_id]
 
-        node_stack_list = item['response_dialog_stack']
-        for stack_id, stack_item in enumerate(node_stack_list):
-            for key, value in stack_item.items():
-                if value in node_title_map:
-                    stack_item[key] = node_title_map[value]
+        if 'response_dialog_stack' in item:
+            node_stack_list = item['response_dialog_stack']
+            for stack_id, stack_item in enumerate(node_stack_list):
+                for key, value in stack_item.items():
+                    if value in node_title_map:
+                        stack_item[key] = node_title_map[value]
 
     ineffective_nodes = None
     if df_escalate_nodes.size > 0:
@@ -249,6 +252,13 @@ def chk_is_valid_node(node_ids, node_name, node_conditions, nodes):
     df_valid_nodes = df_valid_nodes.drop('Type', 1)
     return df_valid_nodes
 
+def extract_dialog_stack(payload):
+    res = []
+    if 'main skill' in payload:
+        if 'system' in payload['main skill']:
+            if 'state' in payload['main skill']['system']:
+                res = json.loads(base64.b64decode(payload['main skill']['system']['state']))['dialog_stack']
+    return res
 
 def format_data(df):
     """This function formats the log data from watson assistant by separating columns and changing datatypes
@@ -284,16 +294,22 @@ def format_data(df):
                      df2['response_context_system'].apply(pd.Series).add_prefix('response_')],
                     axis=1)  # type: pd.DataFrame
 
+    if 'response_context_skills' in df3:
+        df3['response_dialog_stack'] = df3['response_context_skills'].apply(lambda x: extract_dialog_stack(x))
+
     if 'response_context_response_context_IntentStarted' in df3.columns \
             and 'response_context_response_context_IntentCompleted' in df3.columns:
         cols = ['log_id', 'response_timestamp', 'response_context_conversation_id', 'request_input', 'response_text',
                 'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_request_counter',
-                'response_dialog_stack', 'response_dialog_turn_counter',
+                'response_dialog_turn_counter',
                 'response_context_response_context_IntentStarted', 'response_context_response_context_IntentCompleted']
     else:
         cols = ['log_id', 'response_timestamp', 'response_context_conversation_id', 'request_input', 'response_text',
                 'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_request_counter',
-                'response_dialog_stack', 'response_dialog_turn_counter']
+                'response_dialog_turn_counter']
+
+    if 'response_dialog_stack' in df3.columns:
+        cols.append('response_dialog_stack')
 
     print('Extracting intents ...')
     # Select a few required columns
@@ -365,6 +381,10 @@ def format_data(df):
     df6['response.timestamp'] = pd.to_datetime(df6['response.timestamp'])
     df6['Date'] = [datetime.datetime.date(d) for d in df6['response.timestamp']]  # extracting date from timestamp
     df6['Customer ID (must retain for delete)'] = ''  # Adding a column to retain customer id
+
+    df6.loc[df6['response.output.nodes_visited_s'].isnull(), 'response.output.nodes_visited_s'] = df6.loc[
+        df6['response.output.nodes_visited_s'].isnull(), 'response.output.nodes_visited_s'].apply(
+        lambda x: [])
 
     print('Completed!')
     return df6

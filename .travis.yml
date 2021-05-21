@@ -12,8 +12,8 @@ install:
 before_script:
 - pip3 install -r requirements.txt
 script:
-- pip3 install -U python-dotenv
-- tox
+- pip3 install python-dotenv
+#- travis_wait tox
 before_deploy:
 - pip3 install bumpversion pypandoc
 - sudo apt-get update

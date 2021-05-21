@@ -81,8 +81,7 @@ def get_assistant_definition(sdk_object, assistant_info, project=None, overwrite
         else:
             return None
 
-
-def _get_logs_from_api(sdk_object, workspace_id, log_filter, num_logs):
+def _get_logs_from_v1_api(sdk_object, workspace_id, log_filter, num_logs):
     log_list = list()
     try:
         current_cursor = None
@@ -119,7 +118,38 @@ def _get_logs_from_api(sdk_object, workspace_id, log_filter, num_logs):
     return log_list
 
 
-def get_logs(sdk_object, assistant_info, num_logs, filename, filters=None, project=None, overwrite=False):
+def _get_logs_from_v2_api(sdk_object, assistant_id, log_filter, num_logs):
+    log_list = list()
+    try:
+        current_cursor = None
+        while num_logs > 0:
+            logs_response = sdk_object.list_logs(
+                    assistant_id=assistant_id,
+                    page_limit=500,
+                    cursor=current_cursor,
+                    filter=log_filter
+                ).get_result()
+            min_num = min(num_logs, len(logs_response['logs']))
+            log_list.extend(logs_response['logs'][:min_num])
+            print('\r{} logs retrieved'.format(len(log_list)), end='')
+            num_logs = num_logs - min_num
+            current_cursor = None
+            # Check if there is another page of logs to be fetched
+            if 'pagination' in logs_response:
+                # Get the url from which logs are to fetched
+                if 'next_cursor' in logs_response['pagination']:
+                    current_cursor = logs_response['pagination']['next_cursor']
+                else:
+                    break
+    except Exception as ex:
+        traceback.print_tb(ex.__traceback__)
+        raise RuntimeError("Error getting logs using API.  Please check if URL/credentials are correct.")
+
+    return log_list
+
+
+def get_logs(sdk_v1_object, sdk_v2_object, assistant_info, num_logs, filename, filters=None, project=None,
+                 overwrite=False, version=1):
     """This function calls Watson Assistant API to retrieve logs, using pagination if necessary.
        The goal is to retrieve utterances (user inputs) from the logs.
        Parameters
@@ -173,10 +203,16 @@ def get_logs(sdk_object, assistant_info, num_logs, filename, filters=None, proje
     if skill_id is not None and len(skill_id) > 0:
         filters.append('workspace_id::{}'.format(skill_id))
 
-    logs = _get_logs_from_api(sdk_object=sdk_object,
-                              workspace_id=workspace_id,
-                              log_filter=','.join(filters),
-                              num_logs=num_logs)
+    if version == 1:
+        logs = _get_logs_from_v1_api(sdk_object=sdk_v1_object,
+                                     workspace_id=workspace_id,
+                                     log_filter=','.join(filters),
+                                     num_logs=num_logs)
+    elif version == 2:
+        logs = _get_logs_from_v2_api(sdk_object=sdk_v2_object,
+                                     assistant_id=assistant_id,
+                                     log_filter=','.join(filters),
+                                     num_logs=num_logs)
     print('\nLoaded {} logs'.format(len(logs)))
 
     if not file_exist or overwrite:
