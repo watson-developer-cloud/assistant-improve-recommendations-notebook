@@ -8,7 +8,7 @@
 
 import setuptools
 
-__version__ = '1.1.6'
+__version__ = '1.2.0'
 
 # Convert README.md to README.rst for pypi
 try:
