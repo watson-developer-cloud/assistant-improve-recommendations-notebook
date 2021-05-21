@@ -9,12 +9,11 @@ before_install:
 - npm install npm@latest -g
 install:
 - pip3 install tox-travis
-- travis_wait mvn install
 before_script:
 - pip3 install -r requirements.txt
 script:
 - pip3 install python-dotenv
-- tox
+- travis_wait tox
 before_deploy:
 - pip3 install bumpversion pypandoc
 - sudo apt-get update
