@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.2.0...v1.2.1) (2021-05-27)
+
+
+### Bug Fixes
+
+* support cp4d format ([#102](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/102)) ([1e75b80](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/1e75b804a75d3d0745395371405e4d881cf953fa))
+
 # [1.2.0](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.1.6...v1.2.0) (2021-05-21)
 
 
