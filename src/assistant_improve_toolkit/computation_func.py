@@ -300,16 +300,19 @@ def format_data(df):
     if 'response_context_response_context_IntentStarted' in df3.columns \
             and 'response_context_response_context_IntentCompleted' in df3.columns:
         cols = ['log_id', 'response_timestamp', 'response_context_conversation_id', 'request_input', 'response_text',
-                'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_request_counter',
-                'response_dialog_turn_counter',
+                'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_stack',
+                'response_dialog_request_counter', 'response_dialog_turn_counter',
                 'response_context_response_context_IntentStarted', 'response_context_response_context_IntentCompleted']
     else:
         cols = ['log_id', 'response_timestamp', 'response_context_conversation_id', 'request_input', 'response_text',
-                'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_request_counter',
-                'response_dialog_turn_counter']
+                'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_stack',
+                'response_dialog_request_counter', 'response_dialog_turn_counter']
 
-    if 'response_dialog_stack' in df3.columns:
-        cols.append('response_dialog_stack')
+    if 'response_nodes_visited' not in df3.columns:
+        df3['response_nodes_visited'] = [[] for _ in range(len(df3))]
+
+    if 'response_dialog_stack' not in df3.columns:
+        df3['response_dialog_stack'] = [[] for _ in range(len(df3))]
 
     print('Extracting intents ...')
     # Select a few required columns
