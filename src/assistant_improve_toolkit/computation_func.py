@@ -252,6 +252,7 @@ def chk_is_valid_node(node_ids, node_name, node_conditions, nodes):
     df_valid_nodes = df_valid_nodes.drop('Type', 1)
     return df_valid_nodes
 
+
 def extract_dialog_stack(payload):
     res = []
     if 'main skill' in payload:
@@ -259,6 +260,25 @@ def extract_dialog_stack(payload):
             if 'state' in payload['main skill']['system']:
                 res = json.loads(base64.b64decode(payload['main skill']['system']['state']))['dialog_stack']
     return res
+
+
+def extract_intent_start(payload):
+    res = None
+    if 'main skill' in payload:
+        if 'user_defined' in payload['main skill']:
+            if 'response_context_IntentStarted' in payload['main skill']['user_defined']:
+                res = payload['main skill']['user_defined']['response_context_IntentStarted']
+    return res
+
+
+def extract_intent_completed(payload):
+    res = None
+    if 'main skill' in payload:
+        if 'user_defined' in payload['main skill']:
+            if 'response_context_IntentCompleted' in payload['main skill']['user_defined']:
+                res = payload['main skill']['user_defined']['response_context_IntentCompleted']
+    return res
+
 
 def format_data(df):
     """This function formats the log data from watson assistant by separating columns and changing datatypes
@@ -297,6 +317,8 @@ def format_data(df):
     if 'response_context_skills' in df3:
         df3['response_context_skills'] = df3['response_context_skills'].fillna({i: {} for i in df3.index})
         df3['response_dialog_stack'] = df3['response_context_skills'].apply(lambda x: extract_dialog_stack(x))
+        df3['response_context_response_context_IntentStarted'] = df3['response_context_skills'].apply(lambda x: extract_intent_start(x))
+        df3['response_context_response_context_IntentCompleted'] = df3['response_context_skills'].apply(lambda x: extract_intent_completed(x))
 
     if 'response_context_response_context_IntentStarted' in df3.columns \
             and 'response_context_response_context_IntentCompleted' in df3.columns:
