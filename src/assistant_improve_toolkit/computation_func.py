@@ -295,6 +295,7 @@ def format_data(df):
                     axis=1)  # type: pd.DataFrame
 
     if 'response_context_skills' in df3:
+        df3['response_context_skills'] = df3['response_context_skills'].fillna({i: {} for i in df3.index})
         df3['response_dialog_stack'] = df3['response_context_skills'].apply(lambda x: extract_dialog_stack(x))
 
     if 'response_context_response_context_IntentStarted' in df3.columns \
