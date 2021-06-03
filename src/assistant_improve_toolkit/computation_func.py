@@ -262,7 +262,7 @@ def extract_dialog_stack(payload):
     return res
 
 
-def extract_intent_start(payload):
+def extract_intent_started(payload):
     res = None
     if 'main skill' in payload:
         if 'user_defined' in payload['main skill']:
@@ -290,7 +290,6 @@ def format_data(df):
        ----------
        df6 : Dataframe formatted by separating columns and changing datatypes
     """
-
     if len(df) == 0:
         print('No logs found, please check your data')
         return None
@@ -318,7 +317,7 @@ def format_data(df):
     if 'response_context_skills' in df3:
         df3['response_context_skills'] = df3['response_context_skills'].fillna({i: {} for i in df3.index})
         df3['response_dialog_stack'] = df3['response_context_skills'].apply(lambda x: extract_dialog_stack(x))
-        df3['response_context_response_context_IntentStarted'] = df3['response_context_skills'].apply(lambda x: extract_intent_start(x))
+        df3['response_context_response_context_IntentStarted'] = df3['response_context_skills'].apply(lambda x: extract_intent_started(x))
         df3['response_context_response_context_IntentCompleted'] = df3['response_context_skills'].apply(lambda x: extract_intent_completed(x))
 
     if 'response_context_response_context_IntentStarted' in df3.columns \
