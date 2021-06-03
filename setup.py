@@ -41,7 +41,6 @@ setuptools.setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Operating System :: OS Independent',
@@ -51,15 +50,15 @@ setuptools.setup(
     package_dir={'': 'src'},
     packages=setuptools.find_packages('src'),
     install_requires=[
-        'pandas==1.0.3',
+        'pandas==1.2.1',
         'bokeh==2.0.0',
         'tqdm==4.43.0',
         'scikit-learn>=0.21.3',
         'matplotlib==3.2.1',
         'XlsxWriter==1.2.8',
-        'ibm-watson>=4.3.0',
-        'numpy>=1.18.2',
-        'requests>=2.18.4',
+        'ibm-watson==5.1.0',
+        'numpy==1.20.3',
+        'requests==2.25.1',
         'xlrd==1.2.0'
     ],
 
