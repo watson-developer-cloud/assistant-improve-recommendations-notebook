@@ -289,6 +289,7 @@ def format_data(df):
                      df1['response_context'].apply(pd.Series).add_prefix('response_context_'),
                      pd.DataFrame(df1['response_output'].tolist()).add_prefix('response_')],
                     axis=1)  # type: pd.DataFrame
+    
     # Add context_system fields
     df3 = pd.concat([df2.drop(['response_context_system'], axis=1),
                      df2['response_context_system'].apply(pd.Series).add_prefix('response_')],
