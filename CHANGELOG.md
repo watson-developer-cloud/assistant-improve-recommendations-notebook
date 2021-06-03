@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.2.2...v1.2.3) (2021-06-03)
+
+
+### Bug Fixes
+
+* fix a bug ([#107](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/107)) ([dd7aca8](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/dd7aca876b2f98a2547b87f31181824c4a3fd7f1))
+
 ## [1.2.2](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.2.1...v1.2.2) (2021-06-03)
 
 
