@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.2.1...v1.2.2) (2021-06-03)
+
+
+### Bug Fixes
+
+* add handler for nan value in context field ([#105](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/105)) ([41e68ef](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/41e68effbfbb55afb79e9f6daf1725fb92b553bc))
+
 ## [1.2.1](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.2.0...v1.2.1) (2021-05-27)
 
 
