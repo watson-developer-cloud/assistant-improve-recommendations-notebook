@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.2.3...v1.3.0) (2021-06-04)
+
+
+### Features
+
+* log notebook for cp4d ([#111](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/111)) ([526f8f1](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/526f8f1d3bc2a1e1f6bc4404459684073bbdf3e4))
+
 ## [1.2.3](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.2.2...v1.2.3) (2021-06-03)
 
 
