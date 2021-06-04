@@ -216,7 +216,7 @@ def get_logs(sdk_v1_object, sdk_v2_object, assistant_info, num_logs, filename, f
     print('\nLoaded {} logs'.format(len(logs)))
 
     if not file_exist or overwrite:
-        print('Saving {} logs into JSON file... '.format(filename))
+        print('Saving {} logs into {}... '.format(len(logs), filename))
         if project:
             with open(filename, 'wb') as fp:
                 project.save_data(filename, json.dumps(logs, indent=2), overwrite=overwrite)
