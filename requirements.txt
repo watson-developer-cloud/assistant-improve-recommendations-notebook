@@ -8,4 +8,3 @@ ibm-watson==5.1.0
 numpy==1.20.3
 requests==2.25.1
 scikit-learn>=0.21.3
-xlrd==1.2.0
