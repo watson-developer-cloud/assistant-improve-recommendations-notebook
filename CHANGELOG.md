@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.0...v1.3.1) (2021-06-09)
+
+
+### Bug Fixes
+
+* update requirement and fix typos in notebooks ([#113](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/113)) ([bc96b95](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/bc96b95e4deae6b7b5ad77ba066b5dc936669ab6))
+
 # [1.3.0](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.2.3...v1.3.0) (2021-06-04)
 
 
