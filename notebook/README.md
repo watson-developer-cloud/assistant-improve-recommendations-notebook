@@ -25,9 +25,6 @@
   --deduplicate --min_length 3 --max_length 20
   ```
 
-#### `Customer Effort Notebook.ipynb` ####
-- A Jupytor notebook file. Customer Effort notebook helps you measure and analyze the performance improvement after enabling the [Disambiguation](https://cloud.ibm.com/docs/assistant?topic=assistant-dialog-runtime#dialog-runtime-disambiguation) and [Autolearning](https://cloud.ibm.com/docs/assistant?topic=assistant-autolearn) features.
-
 #### `IBM Watson Assistant Continuous Improvement Best Practices.pdf` ####
 - IBM Watson Assistant Continuous Improvement Best Practices document.
 
