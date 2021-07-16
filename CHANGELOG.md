@@ -1,3 +1,20 @@
+## [1.3.3](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.2...v1.3.3) (2021-07-16)
+
+
+### Bug Fixes
+
+* add github actions settings ([ed00f97](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/ed00f9700113e01fc096c20d8a80073b9e185511))
+* add github actions settings ([320bfd2](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/320bfd2e915df1655759c97e0c03d31e55c88880))
+* deploy config ([63df0d8](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/63df0d8fd12d9898ef0b20b0754b24dcb8a929eb))
+* deploy config ([358fe32](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/358fe32dacddf66576111fcabc076a1a188ffc8d))
+* deploy config ([a3b5d7e](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/a3b5d7ea4542c9d81a2a748efa2caa5689ce0a0a))
+* deploy file ([13495c8](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/13495c890d0e9e3da68180507300419b82b69c12))
+* release version number ([be2b821](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/be2b8212cbf95c5ae29edface6857e3387ef4de5))
+* release version number ([9f2cbdc](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/9f2cbdc4385899604d22a31c4c5447b342c23730))
+* remove response_dialog fiedlds ([923cdf6](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/923cdf654dd25bd6526a2ea8c3a48106c34a2244))
+* remove response_dialog fields ([b09f905](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/b09f905bb32979af15b620ca6741c9fb0d7e241c))
+* remove response_dialog fields ([2c0b91a](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/2c0b91a50f9c29e8dbec68aebf4eb2c64d4760c3))
+
 ## [1.3.2](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.1...v1.3.2) (2021-07-15)
 
 
