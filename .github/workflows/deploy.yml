@@ -7,7 +7,7 @@
 name: Deploy and Publish
 
 on:
-  workflow_run:
+  release:
     branches: [ master ]
     types:
       - completed
