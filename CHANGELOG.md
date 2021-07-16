@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.1...v1.3.2) (2021-07-15)
+
+
+### Bug Fixes
+
+* Remove response_dialog fields ([#119](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/pull/119)) ([2c0b91a50f](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commits/2c0b91a50f9c29e8dbec68aebf4eb2c64d4760c3))
+
 ## [1.3.1](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.0...v1.3.1) (2021-06-09)
 
 
