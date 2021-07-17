@@ -1,3 +1,10 @@
+## [1.3.4](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.3...v1.3.4) (2021-07-17)
+
+
+### Bug Fixes
+
+* deploy config ([244fe3f](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/244fe3fbe04e274997d912d501cbc6cf6ab596d9))
+
 ## [1.3.3](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.2...v1.3.3) (2021-07-16)
 
 
