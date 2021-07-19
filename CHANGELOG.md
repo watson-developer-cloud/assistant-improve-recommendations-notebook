@@ -1,3 +1,15 @@
+## [1.3.5](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.4...v1.3.5) (2021-07-19)
+
+
+### Bug Fixes
+
+* deploy config ([e045930](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/e045930686b85e870f2201d02850f86040b49788))
+* deploy config ([bf66c2b](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/bf66c2b9a5c0e4b2b92397360d481d3fd93aceae))
+* deploy config ([7e88da9](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/7e88da9fb48d35239518e81db87f50a52647d6e0))
+* deploy config ([ae7ccf9](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/ae7ccf959225b14a8b585eec26b3fa9fc4588bc1))
+* deploy config ([0c0096c](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/0c0096c214d43fa304479cd70db14fcca0564fae))
+* readme parsing for pypi ([a6fbbad](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/a6fbbaddd530b4a4487219a41819231df3456257))
+
 ## [1.3.4](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.3...v1.3.4) (2021-07-17)
 
 
