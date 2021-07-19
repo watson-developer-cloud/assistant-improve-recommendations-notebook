@@ -28,6 +28,7 @@ setuptools.setup(
     description='Assistant Improve Toolkit',
     license='Apache 2.0',
     long_description=readme_file,
+    long_description_content_type='text/markdown',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
