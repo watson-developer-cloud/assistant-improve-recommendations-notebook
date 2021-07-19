@@ -7,22 +7,14 @@
 #
 
 import setuptools
+from os import path
 
 __version__ = '1.3.4'
 
-# Convert README.md to README.rst for pypi
-try:
-    from pypandoc import convert_file
-
-    def read_md(f):
-        return convert_file(f, 'rst')
-
-except:
-    print('warning: pypandoc module not found, '
-          'could not convert Markdown to RST')
-
-    def read_md(f):
-        return open(f, 'rb').read().decode(encoding='utf-8')
+# read contents of README file
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as file:
+    readme_file = file.read()
 
 setuptools.setup(
     # Basic info
@@ -35,7 +27,7 @@ setuptools.setup(
     url='https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook',
     description='Assistant Improve Toolkit',
     license='Apache 2.0',
-    long_description=read_md('README.md'),
+    long_description=readme_file,
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
