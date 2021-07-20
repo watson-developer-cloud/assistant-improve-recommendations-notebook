@@ -1,3 +1,11 @@
+## [1.3.6](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.5...v1.3.6) (2021-07-20)
+
+
+### Bug Fixes
+
+* deploy config and setup ([27d8de0](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/27d8de0b41e0a6df300551460d7ec665f34d3d8c))
+* drop reference to dialog_stack field and update deploy config ([c43c8cd](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/c43c8cd243c2779453434826c21054ec7a1ed6df))
+
 ## [1.3.5](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.4...v1.3.5) (2021-07-19)
 
 
