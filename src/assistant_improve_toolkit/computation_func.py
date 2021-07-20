@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# (C) Copyright IBM Corp. 2019, 2020.
+# (C) Copyright IBM Corp. 2019, 2020, 2021.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -95,19 +95,12 @@ def get_effective_df(df_tbot_raw, ineffective_intents, df_escalate_nodes, filter
         if str(node['title']) != 'nan':
             node_title_map[node['dialog_node']] = node['title']
 
-    # Use node title in nodes_visited_s and response_dialog_stack if it exists
+    # Use node title in nodes_visited_s if it exists
     for idx, item in df_tbot_raw.iterrows():
         node_id_visit_list = item['response.output.nodes_visited_s']
         for seq_id, node_id in enumerate(node_id_visit_list):
             if node_id in node_title_map:
                 node_id_visit_list[seq_id] = node_title_map[node_id]
-
-        if 'response_dialog_stack' in item:
-            node_stack_list = item['response_dialog_stack']
-            for stack_id, stack_item in enumerate(node_stack_list):
-                for key, value in stack_item.items():
-                    if value in node_title_map:
-                        stack_item[key] = node_title_map[value]
 
     ineffective_nodes = None
     if df_escalate_nodes.size > 0:
@@ -253,15 +246,6 @@ def chk_is_valid_node(node_ids, node_name, node_conditions, nodes):
     return df_valid_nodes
 
 
-def extract_dialog_stack(payload):
-    res = []
-    if 'main skill' in payload:
-        if 'system' in payload['main skill']:
-            if 'state' in payload['main skill']['system']:
-                res = json.loads(base64.b64decode(payload['main skill']['system']['state']))['dialog_stack']
-    return res
-
-
 def extract_intent_started(payload):
     res = None
     if 'main skill' in payload:
@@ -316,24 +300,21 @@ def format_data(df):
 
     if 'response_context_skills' in df3:
         df3['response_context_skills'] = df3['response_context_skills'].fillna({i: {} for i in df3.index})
-        df3['response_dialog_stack'] = df3['response_context_skills'].apply(lambda x: extract_dialog_stack(x))
         df3['response_context_response_context_IntentStarted'] = df3['response_context_skills'].apply(lambda x: extract_intent_started(x))
         df3['response_context_response_context_IntentCompleted'] = df3['response_context_skills'].apply(lambda x: extract_intent_completed(x))
 
     if 'response_context_response_context_IntentStarted' in df3.columns \
             and 'response_context_response_context_IntentCompleted' in df3.columns:
         cols = ['log_id', 'response_timestamp', 'response_context_conversation_id', 'request_input', 'response_text',
-                'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_stack',
+                'response_intents', 'response_entities', 'response_nodes_visited',
                 'response_context_response_context_IntentStarted', 'response_context_response_context_IntentCompleted']
     else:
         cols = ['log_id', 'response_timestamp', 'response_context_conversation_id', 'request_input', 'response_text',
-                'response_intents', 'response_entities', 'response_nodes_visited', 'response_dialog_stack']
+                'response_intents', 'response_entities', 'response_nodes_visited']
 
     if 'response_nodes_visited' not in df3.columns:
         df3['response_nodes_visited'] = [[] for _ in range(len(df3))]
 
-    if 'response_dialog_stack' not in df3.columns:
-        df3['response_dialog_stack'] = [[] for _ in range(len(df3))]
 
     print('Extracting intents ...')
     # Select a few required columns
