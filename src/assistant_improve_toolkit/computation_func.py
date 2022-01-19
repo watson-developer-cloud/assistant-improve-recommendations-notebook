@@ -315,6 +315,7 @@ def format_data(df):
                      pd.DataFrame(df1['response_output'].tolist()).add_prefix('response_')], axis=1)  # type: pd.DataFrame
 
     print('Extract from response generic array ...')
+    # Apply function to extract options and suggestions data
     df2['response_text'] = df2['response_generic'].apply(lambda x: extract_response_generic(x))
 
     # Add context_system fields
