@@ -264,6 +264,28 @@ def extract_intent_completed(payload):
     return res
 
 
+def extract_response_generic(payload):
+    res = ''
+    rt = ''
+    if len(payload) > 0:
+        for member in payload:
+            if 'response_type' in member:
+                rt = member['response_type']
+                if rt == 'text':
+                    if 'text' in member:
+                        res = res + member['text']
+                if rt == 'option':
+                    if 'title' in member:
+                        res = res + member['title'] + ' '
+                    if 'options' in member:
+                        res = res + extract_label(member['options'])
+                if rt == 'suggestion':
+                    if 'title' in member:
+                        res = res + member['title'] + ' '
+                    if 'suggestions' in member:
+                        res = res + extract_label(member['suggestions'])
+    return res
+
 def format_data(df):
     """This function formats the log data from watson assistant by separating columns and changing datatypes
        Parameters
@@ -282,17 +304,19 @@ def format_data(df):
     print('Extracting request and response ...')
     df1 = pd.concat([df.drop(['request', 'response'], axis=1).reset_index(drop=True),
                      df['request'].apply(pd.Series).add_prefix('request_').reset_index(drop=True),
-                     pd.DataFrame(df['response']
-                                  .tolist()).add_prefix('response_')], axis=1)  # type: pd.DataFrame
+                     pd.DataFrame(df['response'].tolist()).add_prefix('response_')], axis=1)  # type: pd.DataFrame
+
     df1['request_input'] = pd.json_normalize(df['request'])['input.text']
 
     # Add context and output fields
     print('Extracting context and output ...')
     df2 = pd.concat([df1.drop(['response_context', 'response_output'], axis=1),
                      df1['response_context'].apply(pd.Series).add_prefix('response_context_'),
-                     pd.DataFrame(df1['response_output'].tolist()).add_prefix('response_')],
-                    axis=1)  # type: pd.DataFrame
-    
+                     pd.DataFrame(df1['response_output'].tolist()).add_prefix('response_')], axis=1)  # type: pd.DataFrame
+
+    print('Extract from response generic array ...')
+    df2['response_text'] = df2['response_generic'].apply(lambda x: extract_response_generic(x))
+
     # Add context_system fields
     df3 = pd.concat([df2.drop(['response_context_system'], axis=1),
                      df2['response_context_system'].apply(pd.Series).add_prefix('response_')],
