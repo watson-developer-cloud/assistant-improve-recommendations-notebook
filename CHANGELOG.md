@@ -1,3 +1,16 @@
+## [1.3.7](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.6...v1.3.7) (2022-05-06)
+
+
+### Bug Fixes
+
+* keep __version__ variable ([#147](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/147)) ([2714d14](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/2714d146b7e69669eed3474f3b700b3789084927))
+* remove version from setup.py ([#146](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/146)) ([2d62284](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/2d622842a4ec002fa340810fe745ef04987f161c))
+
+
+### Reverts
+
+* Revert "chore (github_actions): deploy and build configs (#141)" (#144) ([68f0610](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/68f0610e0950d53e4732f428122669b7503353a3)), closes [#141](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/141) [#144](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/144)
+
 ## [1.3.6](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.5...v1.3.6) (2021-07-20)
 
 
