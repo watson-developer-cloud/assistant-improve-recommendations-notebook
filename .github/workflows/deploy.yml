@@ -47,6 +47,7 @@ jobs:
           npm install -g @semantic-release/github
           npm install -g @semantic-release/commit-analyzer
           npm install -g @semantic-release/release-notes-generator
+          npm install -g semantic-release-pypi
       - name: Publish to Git Releases and Tags
         run: npx semantic-release
         env:
