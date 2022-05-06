@@ -28,7 +28,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.7'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -40,7 +40,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 16
       - name: Install Semantic Release dependencies
         run: |
           sudo apt-get install bumpversion
