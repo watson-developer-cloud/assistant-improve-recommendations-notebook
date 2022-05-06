@@ -9,7 +9,7 @@
 import setuptools
 from os import path
 
-__version__ = '1.3.6'
+__version__ = '1.3.7'
 
 # read contents of README file
 this_directory = path.abspath(path.dirname(__file__))
