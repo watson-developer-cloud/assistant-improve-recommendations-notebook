@@ -48,6 +48,8 @@ jobs:
           npm install -g @semantic-release/commit-analyzer
           npm install -g @semantic-release/release-notes-generator
           npm install -g semantic-release-pypi
+      - name: Install setuptools
+        run: python -m pip install --upgrade setuptools wheel twine
       - name: Publish to Git Releases and Tags
         run: npx semantic-release
         env:
