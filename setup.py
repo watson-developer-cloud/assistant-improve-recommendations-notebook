@@ -9,8 +9,6 @@
 import setuptools
 from os import path
 
-__version__ = '1.3.6'
-
 # read contents of README file
 this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.md'), encoding='utf-8') as file:
@@ -19,7 +17,6 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as file:
 setuptools.setup(
     # Basic info
     name='assistant_improve_toolkit',
-    version=__version__,
     author='IBM Watson',
     author_email='watdevex@us.ibm.com',
     maintainer='Zhe Zhang',
