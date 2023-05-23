@@ -50,7 +50,7 @@ setuptools.setup(
         'XlsxWriter==1.2.8',
         'ibm-watson==5.1.0',
         'numpy==1.20.3',
-        'requests==2.26'
+        'requests==2.31.0'
     ],
 
     zip_safe=False,
