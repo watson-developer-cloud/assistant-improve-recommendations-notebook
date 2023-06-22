@@ -1,3 +1,11 @@
+## [1.3.9](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.8...v1.3.9) (2023-06-22)
+
+
+### Bug Fixes
+
+* update node version ([#153](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/153)) ([4ec5aa8](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/4ec5aa8a3f9410655b6e34eeed4d7d192a3315e4))
+* update numpy version to be compatible with python 3.10 ([#152](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/152)) ([bbd5686](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/bbd568696f8f44ee3dff4e0a9f3cadb1d0b87083))
+
 ## [1.3.8](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.7...v1.3.8) (2022-06-14)
 
 
