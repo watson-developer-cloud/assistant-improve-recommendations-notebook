@@ -49,7 +49,7 @@ setuptools.setup(
         'matplotlib==3.2.1',
         'XlsxWriter==1.2.8',
         'ibm-watson==5.1.0',
-        'numpy==1.22.0',
+        'numpy==1.25.0',
         'requests==2.26'
     ],
 
