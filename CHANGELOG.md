@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.9...v1.4.0) (2023-06-30)
+
+
+### Features
+
+* support watson assistant sdk v2 ([#154](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/154)) ([0ec1075](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/0ec107522993a549f6d96cbd07a58d1d25920574))
+
 ## [1.3.9](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.8...v1.3.9) (2023-06-22)
 
 
