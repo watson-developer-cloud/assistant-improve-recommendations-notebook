@@ -22,6 +22,7 @@ import traceback
 import io
 from string import punctuation
 
+from ibm_watson import AssistantV1, AssistantV2
 
 EN_PUNCTUATION = punctuation + '’'
 
@@ -47,19 +48,38 @@ def get_assistant_definition(sdk_object, assistant_info, project=None, overwrite
         df_assistant = pd.json_normalize(data_json)
         return df_assistant
     else:
-        if len(workspace_id) > 0:
-            # Fetch the workspace definition
-            print('Loading workspace definition using workspace id: {}'.format(workspace_id))
-            assistant_definition = sdk_object.get_workspace(workspace_id=workspace_id, export=True,
-                                                            include_audit=True).get_result()
-        elif len(skill_id) > 0:
-            # Fetch the skill definition
-            print('Loading skill definition using skill id: {}'.format(skill_id))
-            assistant_definition = sdk_object.get_workspace(workspace_id=skill_id, export=True,
-                                                            include_audit=True).get_result()
+        if type(sdk_object) == AssistantV1:
+            if len(workspace_id) > 0:
+                # Fetch the workspace definition
+                print('Loading workspace definition using workspace id: {}'.format(workspace_id))
+                assistant_definition = sdk_object.get_workspace(workspace_id=workspace_id, export=True,
+                                                                include_audit=True).get_result()
+            elif len(skill_id) > 0:
+                # Fetch the skill definition
+                print('Loading skill definition using skill id: {}'.format(skill_id))
+                assistant_definition = sdk_object.get_workspace(workspace_id=skill_id, export=True,
+                                                                include_audit=True).get_result()
+            else:
+                print('Please provide a valid Workspace ID or Skill ID!')
+                assistant_definition = None
+        elif type(sdk_object) == AssistantV2:
+            if len(assistant_id) > 0:
+                print('Loading skill definition using assistant id: {}'.format(assistant_id))
+                assistant_definition = None
+                assistants = sdk_object.export_skills(assistant_id=assistant_id, include_audit=True).get_result()
+                for assistant in assistants["assistant_skills"]:
+                    if assistant["type"] == "dialog":
+                        assistant_definition = assistant["workspace"]
+
+                if assistant_definition is None:
+                    print('Your assistant does not support dialog')
+            else:
+                print('Please provide a valid Assistant ID!')
+                assistant_definition = None
         else:
-            print('Please provide a valid Workspace ID or Skill ID!')
+            print("Please provide a valid watson sdk object")
             assistant_definition = None
+
 
         if assistant_definition:
             # Store the workspace details in a dataframe
@@ -118,13 +138,13 @@ def _get_logs_from_v1_api(sdk_object, workspace_id, log_filter, num_logs):
     return log_list
 
 
-def _get_logs_from_v2_api(sdk_object, assistant_id, log_filter, num_logs):
+def _get_logs_from_v2_api(sdk_object, environment_id, log_filter, num_logs):
     log_list = list()
     try:
         current_cursor = None
         while num_logs > 0:
             logs_response = sdk_object.list_logs(
-                    assistant_id=assistant_id,
+                    assistant_id=environment_id,
                     page_limit=500,
                     cursor=current_cursor,
                     filter=log_filter
@@ -167,7 +187,7 @@ def get_logs(sdk_v1_object, sdk_v2_object, assistant_info, num_logs, filename, f
     if filters is None:
         filters = []
 
-    workspace_id, assistant_id, skill_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id']]
+    workspace_id, assistant_id, skill_id, environment_id = [assistant_info.get(k) for k in ['workspace_id', 'assistant_id', 'skill_id', 'environment_id']]
 
     if (workspace_id is None or len(workspace_id) == 0) \
             and (assistant_id is None or len(assistant_id) == 0) \
@@ -210,7 +230,7 @@ def get_logs(sdk_v1_object, sdk_v2_object, assistant_info, num_logs, filename, f
                                      num_logs=num_logs)
     elif version == 2:
         logs = _get_logs_from_v2_api(sdk_object=sdk_v2_object,
-                                     assistant_id=assistant_id,
+                                     environment_id=environment_id,
                                      log_filter=','.join(filters),
                                      num_logs=num_logs)
     print('\nLoaded {} logs'.format(len(logs)))
