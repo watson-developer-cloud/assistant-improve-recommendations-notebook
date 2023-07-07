@@ -217,13 +217,13 @@ def get_logs(sdk_v1_object, sdk_v2_object, assistant_info, num_logs, filename, f
         print('Please provide a valid filename.')
         return None
 
-    # adding default filters based on assistant_id and workspace_id
-    if assistant_id is not None and len(assistant_id) > 0:
-        filters.append('request.context.system.assistant_id::{}'.format(assistant_id))
-    if skill_id is not None and len(skill_id) > 0:
-        filters.append('workspace_id::{}'.format(skill_id))
-
     if version == 1:
+        # adding default filters based on assistant_id and workspace_id
+        if assistant_id is not None and len(assistant_id) > 0:
+            filters.append('request.context.system.assistant_id::{}'.format(assistant_id))
+        if skill_id is not None and len(skill_id) > 0:
+            filters.append('workspace_id::{}'.format(skill_id))
+        
         logs = _get_logs_from_v1_api(sdk_object=sdk_v1_object,
                                      workspace_id=workspace_id,
                                      log_filter=','.join(filters),
