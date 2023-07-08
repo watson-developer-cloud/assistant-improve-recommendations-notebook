@@ -294,9 +294,11 @@ def format_data(df):
                     axis=1)  # type: pd.DataFrame
     
     # Add context_system fields
-    df3 = pd.concat([df2.drop(['response_context_system'], axis=1),
-                     df2['response_context_system'].apply(pd.Series).add_prefix('response_')],
-                    axis=1)  # type: pd.DataFrame
+    # df3 = pd.concat([df2.drop(['response_context_system'], axis=1),
+    #                  df2['response_context_system'].apply(pd.Series).add_prefix('response_')],
+    #                 axis=1)  # type: pd.DataFrame
+
+    df3 = df2
 
     if 'response_context_skills' in df3:
         df3['response_context_skills'] = df3['response_context_skills'].fillna({i: {} for i in df3.index})

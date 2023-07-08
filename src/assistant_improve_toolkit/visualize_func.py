@@ -369,58 +369,59 @@ def show_coverage_over_time(df_coverage, interval='day'):
         coverage_grp = coverage_grp.merge(covered_counts, how='left', on=['response_datetime_interval', 'Covered'])
         coverage_time = coverage_grp[coverage_grp['Covered']==True].reset_index(drop=True)
 
-        start_datetime = coverage_time.response_datetime_interval.iloc[0]
-        end_datetime = coverage_time.response_datetime_interval.iloc[-1]
-        if start_datetime == end_datetime:
-            start_datetime -= delta
-            end_datetime += delta
-            time_index_df = pd.DataFrame([dt for dt in [start_datetime] + coverage_time.response_datetime_interval.tolist() + [end_datetime]],
-                                         columns=['response_datetime_interval'])
-        else:
-            time_index_df = pd.DataFrame([dt for dt in coverage_time.response_datetime_interval.tolist()],
-                             columns=['response_datetime_interval'])
+        if len(coverage_time) > 0:
+            start_datetime = coverage_time.response_datetime_interval.iloc[0]
+            end_datetime = coverage_time.response_datetime_interval.iloc[-1]
+            if start_datetime == end_datetime:
+                start_datetime -= delta
+                end_datetime += delta
+                time_index_df = pd.DataFrame([dt for dt in [start_datetime] + coverage_time.response_datetime_interval.tolist() + [end_datetime]],
+                                            columns=['response_datetime_interval'])
+            else:
+                time_index_df = pd.DataFrame([dt for dt in coverage_time.response_datetime_interval.tolist()],
+                                columns=['response_datetime_interval'])
 
-        coverage_data = time_index_df.merge(coverage_time, how='left', on=['response_datetime_interval'])
-        coverage_data['Count'] = coverage_data['Count'].fillna(0)
-        coverage_data['Coverage'] = coverage_data['Coverage'].fillna(0)
+            coverage_data = time_index_df.merge(coverage_time, how='left', on=['response_datetime_interval'])
+            coverage_data['Count'] = coverage_data['Count'].fillna(0)
+            coverage_data['Coverage'] = coverage_data['Coverage'].fillna(0)
 
-        output_notebook(hide_banner=True)
+            output_notebook(hide_banner=True)
 
-        p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
-                   x_range=(start_datetime, end_datetime),
-                   y_range=(max(np.floor(coverage_data['Coverage'].min()) - 10, 0),
-                            min(np.floor(coverage_data['Coverage'].max()) + 10, 100)), title='Coverage over time')
+            p = figure(width=950, height=350, x_axis_type="datetime",
+                    x_range=(start_datetime, end_datetime),
+                    y_range=(max(np.floor(coverage_data['Coverage'].min()) - 10, 0),
+                                min(np.floor(coverage_data['Coverage'].max()) + 10, 100)), title='Coverage over time')
 
-        p.line(x='response_datetime_interval', y='Coverage', source=coverage_data, line_width=1.5, color='#4fa8f6')
+            p.line(x='response_datetime_interval', y='Coverage', source=coverage_data, line_width=1.5, color='#4fa8f6')
 
-        p.xaxis.formatter = DatetimeTickFormatter(
-            seconds=["%Y-%m-%d %H:%M:%S"],
-            minsec=["%Y-%m-%d %H:%M:%S"],
-            minutes=["%Y-%m-%d %H:%M:%S"],
-            hourmin=["%Y-%m-%d %H:%M:%S"],
-            hours=["%Y-%m-%d %H:%M:%S"],
-            days=["%Y-%m-%d %H:%M:%S"],
-            months=["%Y-%m-%d %H:%M:%S"],
-            years=["%Y-%m-%d %H:%M:%S"],
-        )
-        p.xaxis.major_label_orientation = 0.5
-        p.yaxis.axis_label = 'Coverage %'
+            p.xaxis.formatter = DatetimeTickFormatter(
+                seconds=["%Y-%m-%d %H:%M:%S"],
+                minsec=["%Y-%m-%d %H:%M:%S"],
+                minutes=["%Y-%m-%d %H:%M:%S"],
+                hourmin=["%Y-%m-%d %H:%M:%S"],
+                hours=["%Y-%m-%d %H:%M:%S"],
+                days=["%Y-%m-%d %H:%M:%S"],
+                months=["%Y-%m-%d %H:%M:%S"],
+                years=["%Y-%m-%d %H:%M:%S"],
+            )
+            p.xaxis.major_label_orientation = 0.5
+            p.yaxis.axis_label = 'Coverage %'
 
-        hover = HoverTool(
-            tooltips=[
-                ("Datetime", "@response_datetime_interval{%Y-%m-%d %H:%M:%S}"),
-                ("Count", "@Count"),
-                ("Coverage", "@Coverage{0.00}%")
-            ],
-            formatters={
-                '@response_datetime_interval': 'datetime'
-            },
-        )
-        p.add_tools(hover)
-        p.title.align = 'center'
-        p.title.text_font_size = '12pt'
-        p.axis.major_label_text_font_size = "10pt"
-        show(p)
+            hover = HoverTool(
+                tooltips=[
+                    ("Datetime", "@response_datetime_interval{%Y-%m-%d %H:%M:%S}"),
+                    ("Count", "@Count"),
+                    ("Coverage", "@Coverage{0.00}%")
+                ],
+                formatters={
+                    '@response_datetime_interval': 'datetime'
+                },
+            )
+            p.add_tools(hover)
+            p.title.align = 'center'
+            p.title.text_font_size = '12pt'
+            p.axis.major_label_text_font_size = "10pt"
+            show(p)
 
 
 def show_top_node_effort(disambiguation_utterances, top=10, assistant_nodes=None):
@@ -456,7 +457,7 @@ def show_top_node_effort(disambiguation_utterances, top=10, assistant_nodes=None
 
     source = ColumnDataSource(dialog_node_effort_overall_df.head(top))
 
-    p = figure(plot_width=950, plot_height=350,
+    p = figure(width=950, height=350,
                y_range=dialog_node_effort_overall_df.head(top)['selected_dialog_node_name'].iloc[::-1],
                x_range=DataRange1d(start=0), title='Nodes yield the highest customer effort')
 
@@ -612,7 +613,7 @@ def show_node_effort(disambiguation_utterances, assistant_nodes=None, interval=N
         source = ColumnDataSource(node_effort_df)
         source_all = ColumnDataSource(time_index_df)
 
-        p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
+        p = figure(width=950, height=350, x_axis_type="datetime",
                    x_range=(start_datetime - start_delta, end_datetime + end_delta),
                    y_range=DataRange1d(start=0), title='Dialog node: "{}"'.format(default_node_name))
 
@@ -782,7 +783,7 @@ def show_input_effort(disambiguation_utterances, top, interval=None):
         source = ColumnDataSource(node_effort_df)
         source_all = ColumnDataSource(time_index_df)
 
-        p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
+        p = figure(width=950, height=350, x_axis_type="datetime",
                    x_range=(start_datetime - start_delta, end_datetime + end_delta),
                    y_range=DataRange1d(start=0), title='Utterance: "{}"'.format(input_effort_options[0]))
 
@@ -960,7 +961,7 @@ def show_disambiguation_click(disambiguation_utterances, interval=None):
 
         output_notebook(hide_banner=True)
 
-        p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
+        p = figure(width=950, height=350, x_axis_type="datetime",
                    x_range=(start_datetime - start_delta, end_datetime + end_delta),
                    y_range=DataRange1d(start=0), title='Disambiguation click distribution over time')
         p.grid.minor_grid_line_color = '#eeeeee'
@@ -1119,7 +1120,7 @@ def show_more_options_click(disambiguation_utterances, interval=None):
 
         output_notebook(hide_banner=True)
 
-        p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
+        p = figure(width=950, height=350, x_axis_type="datetime",
                    x_range=(start_datetime - start_delta, end_datetime + end_delta),
                    y_range=DataRange1d(start=0), title='More options click distribution over time')
         p.grid.minor_grid_line_color = '#eeeeee'
@@ -1190,7 +1191,7 @@ def show_cooccured_heatmap(cooccurrence_matrix):
     mapper = LinearColorMapper(palette=tuple(reversed(brewer['Blues'][256])), low=df['count'].min(),
                                high=df['count'].max())
     num_elements = cooccurrence_matrix.shape[0]
-    p = figure(plot_width=700 + 8 * num_elements, plot_height=600 + 8 * num_elements, title="Node Co-occurrence Map",
+    p = figure(width=700 + 8 * num_elements, height=600 + 8 * num_elements, title="Node Co-occurrence Map",
                x_range=list(cooccurrence_matrix.index), y_range=list(reversed(cooccurrence_matrix.columns)),
                toolbar_location=None, tools="hover")
 
@@ -1425,7 +1426,7 @@ def show_click_vs_effort(disambiguation_utterances, interval):
              in
              range(3)])
 
-        p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
+        p = figure(width=950, height=350, x_axis_type="datetime",
                    x_range=(start_datetime - start_delta, end_datetime + end_delta),
                    y_range=(0, effort_data['effort_score_sum'].max() * 1.3),
                    title='Customer effort vs clicks over time')
@@ -1774,7 +1775,7 @@ def show_effort_over_time(disambiguation_utterances, interval):
 
         output_notebook(hide_banner=True)
 
-        p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
+        p = figure(width=950, height=350, x_axis_type="datetime",
                    x_range=(start_datetime, end_datetime),
                    y_range=(0, effort_data['effort_score_sum'].max() * 1.1), title='Total customer effort over time')
         p.yaxis.axis_label = 'Total Customer Effort'
@@ -2196,7 +2197,7 @@ def show_disambiguation_percentage(df_formatted, interval):
         df_comb['Total'] = df_comb['Disambiguation'] + df_comb['Single']
         output_notebook(hide_banner=True)
 
-        p = figure(plot_width=950, plot_height=350, x_axis_type="datetime",
+        p = figure(width=950, height=350, x_axis_type="datetime",
                    x_range=(start_datetime - start_delta, end_datetime + end_delta), title='Disambiguation vs single answer over time')
 
         source = ColumnDataSource(df_comb)
