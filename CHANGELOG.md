@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.4.0...v1.4.1) (2023-07-08)
+
+
+### Bug Fixes
+
+* remove outdated log filter for v2 api ([#155](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/issues/155)) ([58a9407](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/commit/58a9407e89a5ce2abf9fe2de5a82d7269c6be440))
+
 # [1.4.0](https://github.com/watson-developer-cloud/assistant-improve-recommendations-notebook/compare/v1.3.9...v1.4.0) (2023-06-30)
 
 
